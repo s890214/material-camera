@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 /**
  * @author Aidan Follestad (afollestad)
  */
-interface VideoActivityInterface {
+interface BaseCaptureInterface {
 
     void onRetry(@Nullable String outputUri);
 
@@ -29,7 +29,7 @@ interface VideoActivityInterface {
 
     Object getCurrentCameraId();
 
-    @BaseVideoRecorderActivity.CameraPosition
+    @BaseCaptureActivity.CameraPosition
     int getCurrentCameraPosition();
 
     void setFrontCamera(Object id);

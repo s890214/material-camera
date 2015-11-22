@@ -19,6 +19,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.afollestad.materialcamera.R;
+import com.afollestad.materialcamera.util.CameraUtil;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.internal.MDTintHelper;
 import com.telly.mrvector.MrVector;
@@ -41,7 +42,7 @@ public class PlaybackVideoFragment extends Fragment implements
 
     private String mOutputUri;
     private boolean mWasPlaying;
-    private VideoActivityInterface mInterface;
+    private BaseCaptureInterface mInterface;
 
     private static Drawable mPlayIcon;
     private static Drawable mPauseIcon;
@@ -50,7 +51,7 @@ public class PlaybackVideoFragment extends Fragment implements
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        mInterface = (VideoActivityInterface) activity;
+        mInterface = (BaseCaptureInterface) activity;
     }
 
     private Handler mPositionHandler;

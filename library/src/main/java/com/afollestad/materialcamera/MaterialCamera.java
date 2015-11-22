@@ -9,9 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 
-import com.afollestad.materialcamera.internal.CameraUtil;
-import com.afollestad.materialcamera.internal.VideoRecorderActivity;
-import com.afollestad.materialcamera.internal.VideoRecorderActivity2;
+import com.afollestad.materialcamera.util.CameraUtil;
 import com.afollestad.materialdialogs.util.DialogUtils;
 
 import java.io.File;
@@ -95,7 +93,7 @@ public class MaterialCamera {
 
     public Intent getIntent() {
         final Class<?> cls = CameraUtil.hasCamera2(mContext) ?
-                VideoRecorderActivity2.class : VideoRecorderActivity.class;
+                CaptureActivity2.class : CaptureActivity.class;
         return new Intent(mContext, cls)
                 .putExtra("length_limit", mLengthLimit)
                 .putExtra("allow_retry", mAllowRetry)

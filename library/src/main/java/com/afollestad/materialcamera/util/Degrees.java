@@ -1,4 +1,4 @@
-package com.afollestad.materialcamera.internal;
+package com.afollestad.materialcamera.util;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,7 +15,7 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * @author Aidan Follestad (afollestad)
  */
-class Degrees {
+public class Degrees {
 
     @IntDef({ActivityInfo.SCREEN_ORIENTATION_PORTRAIT, ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE,
             ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT, ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE})

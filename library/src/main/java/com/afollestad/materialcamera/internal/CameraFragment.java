@@ -16,22 +16,23 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.afollestad.materialcamera.R;
+import com.afollestad.materialcamera.util.Degrees;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.afollestad.materialcamera.internal.BaseVideoRecorderActivity.CAMERA_POSITION_BACK;
-import static com.afollestad.materialcamera.internal.BaseVideoRecorderActivity.CAMERA_POSITION_FRONT;
-import static com.afollestad.materialcamera.internal.BaseVideoRecorderActivity.CAMERA_POSITION_UNKNOWN;
+import static com.afollestad.materialcamera.internal.BaseCaptureActivity.CAMERA_POSITION_BACK;
+import static com.afollestad.materialcamera.internal.BaseCaptureActivity.CAMERA_POSITION_FRONT;
+import static com.afollestad.materialcamera.internal.BaseCaptureActivity.CAMERA_POSITION_UNKNOWN;
 
 /**
  * @author Aidan Follestad (afollestad)
  */
 @SuppressWarnings("deprecation")
 @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
-public class CameraVideoFragment extends BaseCameraVideoFragment implements View.OnClickListener {
+public class CameraFragment extends BaseCameraFragment implements View.OnClickListener {
 
     CameraPreview mPreviewView;
     RelativeLayout mPreviewFrame;
@@ -41,8 +42,8 @@ public class CameraVideoFragment extends BaseCameraVideoFragment implements View
     private Point mWindowSize;
     private int mDisplayOrientation;
 
-    public static CameraVideoFragment newInstance() {
-        CameraVideoFragment fragment = new CameraVideoFragment();
+    public static CameraFragment newInstance() {
+        CameraFragment fragment = new CameraFragment();
         fragment.setRetainInstance(true);
         return fragment;
     }
@@ -57,7 +58,7 @@ public class CameraVideoFragment extends BaseCameraVideoFragment implements View
             }
         }
         if (backupSize != null) return backupSize;
-        LOG(CameraVideoFragment.class, "Couldn't find any suitable video size");
+        LOG(CameraFragment.class, "Couldn't find any suitable video size");
         return choices.get(choices.size() - 1);
     }
 
@@ -77,7 +78,7 @@ public class CameraVideoFragment extends BaseCameraVideoFragment implements View
         if (bigEnough.size() > 0) {
             return Collections.min(bigEnough, new CompareSizesByArea());
         } else {
-            LOG(CameraVideoFragment.class, "Couldn't find any suitable preview size");
+            LOG(CameraFragment.class, "Couldn't find any suitable preview size");
             return choices.get(0);
         }
     }
@@ -208,7 +209,7 @@ public class CameraVideoFragment extends BaseCameraVideoFragment implements View
         final int deviceOrientation = Degrees.getDisplayRotation(getActivity());
         mDisplayOrientation = Degrees.getDisplayOrientation(
                 info.orientation, deviceOrientation, info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT);
-        Log.d("CameraVideoFragment", String.format("Orientations: Sensor = %d˚, Device = %d˚, Display = %d˚",
+        Log.d("CameraFragment", String.format("Orientations: Sensor = %d˚, Device = %d˚, Display = %d˚",
                 info.orientation, deviceOrientation, mDisplayOrientation));
 
         int previewOrientation = mDisplayOrientation;

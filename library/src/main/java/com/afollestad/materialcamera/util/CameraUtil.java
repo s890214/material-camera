@@ -1,4 +1,4 @@
-package com.afollestad.materialcamera.internal;
+package com.afollestad.materialcamera.util;
 
 import android.annotation.TargetApi;
 import android.content.Context;

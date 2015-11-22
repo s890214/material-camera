@@ -24,10 +24,10 @@
 
         <!-- Register library Activities -->
         <activity
-            android:name="com.afollestad.materialcamera.internal.VideoRecorderActivity"
+            android:name="com.afollestad.materialcamera.CaptureActivity"
             android:theme="@style/MaterialCamera.Recorder" />
         <activity
-            android:name="com.afollestad.materialcamera.internal.VideoRecorderActivity2"
+            android:name="com.afollestad.materialcamera.CaptureActivity2"
             android:theme="@style/MaterialCamera.Recorder" />
 
     </application>

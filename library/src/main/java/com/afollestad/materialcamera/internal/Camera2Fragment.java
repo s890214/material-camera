@@ -34,6 +34,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.afollestad.materialcamera.R;
+import com.afollestad.materialcamera.util.Degrees;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -44,15 +45,15 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-import static com.afollestad.materialcamera.internal.BaseVideoRecorderActivity.CAMERA_POSITION_BACK;
-import static com.afollestad.materialcamera.internal.BaseVideoRecorderActivity.CAMERA_POSITION_FRONT;
-import static com.afollestad.materialcamera.internal.BaseVideoRecorderActivity.CAMERA_POSITION_UNKNOWN;
+import static com.afollestad.materialcamera.internal.BaseCaptureActivity.CAMERA_POSITION_BACK;
+import static com.afollestad.materialcamera.internal.BaseCaptureActivity.CAMERA_POSITION_FRONT;
+import static com.afollestad.materialcamera.internal.BaseCaptureActivity.CAMERA_POSITION_UNKNOWN;
 
 /**
  * @author Aidan Follestad (afollestad)
  */
 @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-public class Camera2VideoFragment extends BaseCameraVideoFragment implements View.OnClickListener {
+public class Camera2Fragment extends BaseCameraFragment implements View.OnClickListener {
 
     private CameraDevice mCameraDevice;
     private CameraCaptureSession mPreviewSession;
@@ -120,8 +121,8 @@ public class Camera2VideoFragment extends BaseCameraVideoFragment implements Vie
         }
     };
 
-    public static Camera2VideoFragment newInstance() {
-        Camera2VideoFragment fragment = new Camera2VideoFragment();
+    public static Camera2Fragment newInstance() {
+        Camera2Fragment fragment = new Camera2Fragment();
         fragment.setRetainInstance(true);
         return fragment;
     }
@@ -143,7 +144,7 @@ public class Camera2VideoFragment extends BaseCameraVideoFragment implements Vie
             }
         }
         if (backupSize != null) return backupSize;
-        LOG(Camera2VideoFragment.class, "Couldn't find any suitable video size");
+        LOG(Camera2Fragment.class, "Couldn't find any suitable video size");
         return choices[choices.length - 1];
     }
 
@@ -163,7 +164,7 @@ public class Camera2VideoFragment extends BaseCameraVideoFragment implements Vie
         if (bigEnough.size() > 0) {
             return Collections.min(bigEnough, new CompareSizesByArea());
         } else {
-            LOG(Camera2VideoFragment.class, "Couldn't find any suitable preview size");
+            LOG(Camera2Fragment.class, "Couldn't find any suitable preview size");
             return choices[0];
         }
     }
@@ -284,7 +285,7 @@ public class Camera2VideoFragment extends BaseCameraVideoFragment implements Vie
             int deviceRotation = Degrees.getDisplayRotation(getActivity());
             mDisplayOrientation = Degrees.getDisplayOrientation(
                     mSensorOrientation, deviceRotation, getCurrentCameraPosition() == CAMERA_POSITION_FRONT);
-            Log.d("Camera2VideoFragment", String.format("Orientations: Sensor = %d˚, Device = %d˚, Display = %d˚",
+            Log.d("Camera2Fragment", String.format("Orientations: Sensor = %d˚, Device = %d˚, Display = %d˚",
                     mSensorOrientation, deviceRotation, mDisplayOrientation));
 
             int orientation = VideoStreamView.getScreenOrientation(activity);

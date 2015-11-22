@@ -19,6 +19,8 @@ import android.widget.TextView;
 
 import com.afollestad.materialcamera.MaterialCamera;
 import com.afollestad.materialcamera.R;
+import com.afollestad.materialcamera.util.CameraUtil;
+import com.afollestad.materialcamera.util.Degrees;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.telly.mrvector.MrVector;
@@ -26,12 +28,12 @@ import com.telly.mrvector.MrVector;
 import java.io.File;
 
 import static android.app.Activity.RESULT_CANCELED;
-import static com.afollestad.materialcamera.internal.BaseVideoRecorderActivity.CAMERA_POSITION_BACK;
+import static com.afollestad.materialcamera.internal.BaseCaptureActivity.CAMERA_POSITION_BACK;
 
 /**
  * @author Aidan Follestad (afollestad)
  */
-abstract class BaseCameraVideoFragment extends Fragment implements OutputUriInterface, View.OnClickListener {
+abstract class BaseCameraFragment extends Fragment implements OutputUriInterface, View.OnClickListener {
 
     protected ImageButton mButtonVideo;
     protected ImageButton mButtonFacing;
@@ -46,7 +48,7 @@ abstract class BaseCameraVideoFragment extends Fragment implements OutputUriInte
     protected static final int PREFERRED_PIXEL_HEIGHT = 480;
 
     protected String mOutputUri;
-    protected VideoActivityInterface mInterface;
+    protected BaseCaptureInterface mInterface;
     protected boolean mIsRecording;
     protected Handler mPositionHandler;
     protected MediaRecorder mMediaRecorder;
@@ -155,7 +157,7 @@ abstract class BaseCameraVideoFragment extends Fragment implements OutputUriInte
     @Override
     public final void onAttach(Activity activity) {
         super.onAttach(activity);
-        mInterface = (VideoActivityInterface) activity;
+        mInterface = (BaseCaptureInterface) activity;
     }
 
     @NonNull
@@ -188,14 +190,14 @@ abstract class BaseCameraVideoFragment extends Fragment implements OutputUriInte
         mPositionHandler.post(mPositionUpdater);
     }
 
-    @BaseVideoRecorderActivity.CameraPosition
+    @BaseCaptureActivity.CameraPosition
     public final int getCurrentCameraPosition() {
-        if (mInterface == null) return BaseVideoRecorderActivity.CAMERA_POSITION_UNKNOWN;
+        if (mInterface == null) return BaseCaptureActivity.CAMERA_POSITION_UNKNOWN;
         return mInterface.getCurrentCameraPosition();
     }
 
     public final int getCurrentCameraId() {
-        if (mInterface.getCurrentCameraPosition() == BaseVideoRecorderActivity.CAMERA_POSITION_BACK)
+        if (mInterface.getCurrentCameraPosition() == BaseCaptureActivity.CAMERA_POSITION_BACK)
             return (Integer) mInterface.getBackCamera();
         else return (Integer) mInterface.getFrontCamera();
     }
@@ -253,7 +255,7 @@ abstract class BaseCameraVideoFragment extends Fragment implements OutputUriInte
     public void onClick(View view) {
         if (view.getId() == R.id.facing) {
             mInterface.toggleCameraPosition();
-            mButtonFacing.setImageResource(mInterface.getCurrentCameraPosition() == BaseVideoRecorderActivity.CAMERA_POSITION_BACK ?
+            mButtonFacing.setImageResource(mInterface.getCurrentCameraPosition() == BaseCaptureActivity.CAMERA_POSITION_BACK ?
                     R.drawable.mcam_camera_front : R.drawable.mcam_camera_rear);
             closeCamera();
             openCamera();
