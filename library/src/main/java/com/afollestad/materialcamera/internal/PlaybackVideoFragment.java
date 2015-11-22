@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -120,12 +119,12 @@ public class PlaybackVideoFragment extends Fragment implements
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_videoplayback, container, false);
+        View v = inflater.inflate(R.layout.mcam_fragment_videoplayback, container, false);
         final Resources r = getResources();
         if (mPlayIcon == null)
-            mPlayIcon = MrVector.inflate(r, R.drawable.ic_action_play);
+            mPlayIcon = MrVector.inflate(r, R.drawable.mcam_action_play);
         if (mPauseIcon == null)
-            mPauseIcon = MrVector.inflate(r, R.drawable.ic_action_pause);
+            mPauseIcon = MrVector.inflate(r, R.drawable.mcam_action_pause);
         return v;
     }
 
@@ -236,10 +235,10 @@ public class PlaybackVideoFragment extends Fragment implements
         } else if (v.getId() == R.id.playPause) {
             if (mStreamer != null) {
                 if (mStreamer.isPlaying()) {
-                    ((ImageButton) v).setImageResource(R.drawable.ic_action_play);
+                    ((ImageButton) v).setImageResource(R.drawable.mcam_action_play);
                     mStreamer.pause();
                 } else {
-                    ((ImageButton) v).setImageResource(R.drawable.ic_action_pause);
+                    ((ImageButton) v).setImageResource(R.drawable.mcam_action_pause);
                     mStreamer.start(getActivity());
                     startCounter();
                 }

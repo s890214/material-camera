@@ -87,7 +87,7 @@ abstract class BaseVideoRecorderActivity extends AppCompatActivity implements Vi
                     }).show();
             return;
         }
-        setContentView(R.layout.activity_videocapture);
+        setContentView(R.layout.mcam_activity_videocapture);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             final int primaryColor = getIntent().getIntExtra("primary_color", 0);

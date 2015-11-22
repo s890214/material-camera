@@ -7,7 +7,7 @@
     android:foreground="?selectableItemBackground">
 
     <include
-        layout="@layout/include_camera_preview"
+        layout="@layout/mcam_include_camera_preview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/controlsFrame" />
@@ -30,7 +30,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_gravity="center_vertical|start"
-            android:background="@drawable/circle_selector"
+            android:background="@drawable/mcam_circle_selector"
             android:padding="@dimen/mcam_content_inset_less"
             android:scaleType="fitXY"
             tools:background="#80000000"
@@ -41,7 +41,7 @@
             android:layout_width="56dp"
             android:layout_height="56dp"
             android:layout_gravity="center"
-            android:background="@drawable/circle_selector"
+            android:background="@drawable/mcam_circle_selector"
             android:padding="@dimen/mcam_content_inset_less"
             android:scaleType="fitXY"
             tools:background="#80000000"

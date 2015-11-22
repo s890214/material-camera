@@ -149,10 +149,10 @@ public class CameraVideoFragment extends BaseCameraVideoFragment implements View
                 if (getArguments().getBoolean("default_to_front_facing", false)) {
                     // Check front facing first
                     if (mInterface.getFrontCamera() != null && (Integer) mInterface.getFrontCamera() != -1) {
-                        mButtonFacing.setImageResource(R.drawable.ic_camera_rear);
+                        mButtonFacing.setImageResource(R.drawable.mcam_camera_rear);
                         mInterface.setCameraPosition(CAMERA_POSITION_FRONT);
                     } else {
-                        mButtonFacing.setImageResource(R.drawable.ic_camera_front);
+                        mButtonFacing.setImageResource(R.drawable.mcam_camera_front);
                         if (mInterface.getBackCamera() != null && (Integer) mInterface.getBackCamera() != -1)
                             mInterface.setCameraPosition(CAMERA_POSITION_BACK);
                         else mInterface.setCameraPosition(CAMERA_POSITION_UNKNOWN);
@@ -160,10 +160,10 @@ public class CameraVideoFragment extends BaseCameraVideoFragment implements View
                 } else {
                     // Check back facing first
                     if (mInterface.getBackCamera() != null && (Integer) mInterface.getBackCamera() != -1) {
-                        mButtonFacing.setImageResource(R.drawable.ic_camera_front);
+                        mButtonFacing.setImageResource(R.drawable.mcam_camera_front);
                         mInterface.setCameraPosition(CAMERA_POSITION_BACK);
                     } else {
-                        mButtonFacing.setImageResource(R.drawable.ic_camera_rear);
+                        mButtonFacing.setImageResource(R.drawable.mcam_camera_rear);
                         if (mInterface.getFrontCamera() != null && (Integer) mInterface.getFrontCamera() != -1)
                             mInterface.setCameraPosition(CAMERA_POSITION_FRONT);
                         else mInterface.setCameraPosition(CAMERA_POSITION_UNKNOWN);
@@ -290,7 +290,7 @@ public class CameraVideoFragment extends BaseCameraVideoFragment implements View
         if (prepareMediaRecorder(-1)) {
             try {
                 // UI
-                mButtonVideo.setImageResource(R.drawable.ic_action_stop);
+                mButtonVideo.setImageResource(R.drawable.mcam_action_stop);
                 mButtonFacing.setVisibility(View.GONE);
 
                 // Only start counter if count down wasn't already started
@@ -348,7 +348,7 @@ public class CameraVideoFragment extends BaseCameraVideoFragment implements View
         if (!mInterface.didRecord())
             mOutputUri = null;
 
-        mButtonVideo.setImageResource(R.drawable.ic_action_record);
+        mButtonVideo.setImageResource(R.drawable.mcam_action_record);
         mButtonFacing.setVisibility(View.VISIBLE);
         if (mInterface.getRecordingStart() > -1 && getActivity() != null)
             mInterface.onShowPreview(mOutputUri, reachedZero);

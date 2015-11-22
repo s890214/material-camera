@@ -10,7 +10,6 @@ import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -82,7 +81,7 @@ abstract class BaseCameraVideoFragment extends Fragment implements OutputUriInte
 
     @Override
     public final View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_videocapture, container, false);
+        return inflater.inflate(R.layout.mcam_fragment_videocapture, container, false);
     }
 
     @Override
@@ -100,13 +99,13 @@ abstract class BaseCameraVideoFragment extends Fragment implements OutputUriInte
 
         final Resources r = getResources();
         if (mRecordIcon == null)
-            mRecordIcon = MrVector.inflate(r, R.drawable.ic_action_record);
+            mRecordIcon = MrVector.inflate(r, R.drawable.mcam_action_record);
         if (mStopIcon == null)
-            mStopIcon = MrVector.inflate(r, R.drawable.ic_action_stop);
+            mStopIcon = MrVector.inflate(r, R.drawable.mcam_action_stop);
         if (mCameraFrontIcon == null)
-            mCameraFrontIcon = MrVector.inflate(r, R.drawable.ic_camera_front);
+            mCameraFrontIcon = MrVector.inflate(r, R.drawable.mcam_camera_front);
         if (mCameraBackIcon == null)
-            mCameraBackIcon = MrVector.inflate(r, R.drawable.ic_camera_rear);
+            mCameraBackIcon = MrVector.inflate(r, R.drawable.mcam_camera_rear);
 
         mButtonVideo = (ImageButton) view.findViewById(R.id.video);
         mButtonFacing = (ImageButton) view.findViewById(R.id.facing);
@@ -255,7 +254,7 @@ abstract class BaseCameraVideoFragment extends Fragment implements OutputUriInte
         if (view.getId() == R.id.facing) {
             mInterface.toggleCameraPosition();
             mButtonFacing.setImageResource(mInterface.getCurrentCameraPosition() == BaseVideoRecorderActivity.CAMERA_POSITION_BACK ?
-                    R.drawable.ic_camera_front : R.drawable.ic_camera_rear);
+                    R.drawable.mcam_camera_front : R.drawable.mcam_camera_rear);
             closeCamera();
             openCamera();
         } else if (view.getId() == R.id.video) {

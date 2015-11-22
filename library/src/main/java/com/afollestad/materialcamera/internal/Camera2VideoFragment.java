@@ -246,10 +246,10 @@ public class Camera2VideoFragment extends BaseCameraVideoFragment implements Vie
                 if (getArguments().getBoolean("default_to_front_facing", false)) {
                     // Check front facing first
                     if (mInterface.getFrontCamera() != null) {
-                        mButtonFacing.setImageResource(R.drawable.ic_camera_rear);
+                        mButtonFacing.setImageResource(R.drawable.mcam_camera_rear);
                         mInterface.setCameraPosition(CAMERA_POSITION_FRONT);
                     } else {
-                        mButtonFacing.setImageResource(R.drawable.ic_camera_front);
+                        mButtonFacing.setImageResource(R.drawable.mcam_camera_front);
                         if (mInterface.getBackCamera() != null)
                             mInterface.setCameraPosition(CAMERA_POSITION_BACK);
                         else mInterface.setCameraPosition(CAMERA_POSITION_UNKNOWN);
@@ -257,10 +257,10 @@ public class Camera2VideoFragment extends BaseCameraVideoFragment implements Vie
                 } else {
                     // Check back facing first
                     if (mInterface.getBackCamera() != null) {
-                        mButtonFacing.setImageResource(R.drawable.ic_camera_front);
+                        mButtonFacing.setImageResource(R.drawable.mcam_camera_front);
                         mInterface.setCameraPosition(CAMERA_POSITION_BACK);
                     } else {
-                        mButtonFacing.setImageResource(R.drawable.ic_camera_rear);
+                        mButtonFacing.setImageResource(R.drawable.mcam_camera_rear);
                         if (mInterface.getFrontCamera() != null)
                             mInterface.setCameraPosition(CAMERA_POSITION_FRONT);
                         else mInterface.setCameraPosition(CAMERA_POSITION_UNKNOWN);
@@ -447,7 +447,7 @@ public class Camera2VideoFragment extends BaseCameraVideoFragment implements Vie
         super.startRecordingVideo();
         try {
             // UI
-            mButtonVideo.setImageResource(R.drawable.ic_action_stop);
+            mButtonVideo.setImageResource(R.drawable.mcam_action_stop);
             mButtonFacing.setVisibility(View.GONE);
 
             // Only start counter if count down wasn't already started
@@ -492,7 +492,7 @@ public class Camera2VideoFragment extends BaseCameraVideoFragment implements Vie
             mOutputUri = null;
 
         releaseRecorder();
-        mButtonVideo.setImageResource(R.drawable.ic_action_record);
+        mButtonVideo.setImageResource(R.drawable.mcam_action_record);
         mButtonFacing.setVisibility(View.VISIBLE);
         if (mInterface.getRecordingStart() > -1 && getActivity() != null)
             mInterface.onShowPreview(mOutputUri, reachedZero);
