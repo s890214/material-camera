@@ -93,7 +93,7 @@ public class MaterialCamera {
 
     public Intent getIntent() {
         final Class<?> cls = CameraUtil.hasCamera2(mContext) ?
-                CaptureActivity2.class : CaptureActivity.class;
+                CaptureActivity.class : CaptureActivity.class;
         return new Intent(mContext, cls)
                 .putExtra("length_limit", mLengthLimit)
                 .putExtra("allow_retry", mAllowRetry)

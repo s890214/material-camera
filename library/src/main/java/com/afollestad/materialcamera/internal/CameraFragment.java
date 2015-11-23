@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.graphics.Point;
 import android.hardware.Camera;
+import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
@@ -247,31 +248,30 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
     }
 
     private boolean prepareMediaRecorder() {
+        return prepareMediaRecorder(CamcorderProfile.QUALITY_480P);
+    }
+
+    private boolean prepareMediaRecorder(int forceQuality) {
         try {
             final Activity activity = getActivity();
             if (null == activity) return false;
+
             setCameraDisplayOrientation(mCamera.getParameters());
             mMediaRecorder = new MediaRecorder();
             mCamera.unlock();
-            mMediaRecorder.setOrientationHint(mDisplayOrientation);
-            mMediaRecorder.setPreviewDisplay(mPreviewView.getHolder().getSurface());
             mMediaRecorder.setCamera(mCamera);
 
             mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
             mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
+            mMediaRecorder.setProfile(CamcorderProfile.get(getCurrentCameraId(), forceQuality));
+            mMediaRecorder.setVideoSize(mVideoSize.width, mVideoSize.height);
 
-            mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
             Uri uri = Uri.fromFile(getOutputMediaFile());
             mOutputUri = uri.toString();
             mMediaRecorder.setOutputFile(uri.getPath());
 
-            mMediaRecorder.setVideoSize(mVideoSize.width, mVideoSize.height);
-            mMediaRecorder.setVideoFrameRate(30);
-            mMediaRecorder.setVideoEncodingBitRate(3000000);
-            mMediaRecorder.setAudioEncodingBitRate(8000);
-
-            mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.MPEG_4_SP);
-            mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+            mMediaRecorder.setOrientationHint(mDisplayOrientation);
+            mMediaRecorder.setPreviewDisplay(mPreviewView.getHolder().getSurface());
 
             try {
                 mMediaRecorder.prepare();
@@ -281,6 +281,18 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
                 return false;
             }
         } catch (Throwable t) {
+            try {
+                mCamera.lock();
+            } catch (IllegalStateException e) {
+                throwError(new Exception("Failed to re-lock camera: " + e.getMessage(), e));
+                return false;
+            }
+            if (forceQuality == CamcorderProfile.QUALITY_480P)
+                return prepareMediaRecorder(CamcorderProfile.QUALITY_720P);
+            else if (forceQuality == CamcorderProfile.QUALITY_720P)
+                return prepareMediaRecorder(CamcorderProfile.QUALITY_LOW);
+            else if (forceQuality == CamcorderProfile.QUALITY_LOW)
+                return prepareMediaRecorder(CamcorderProfile.QUALITY_1080P);
             throwError(new Exception("Failed to begin recording: " + t.getMessage(), t));
             return false;
         }
