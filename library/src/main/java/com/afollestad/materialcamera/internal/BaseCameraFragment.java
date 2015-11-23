@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,7 +21,6 @@ import com.afollestad.materialcamera.util.CameraUtil;
 import com.afollestad.materialcamera.util.Degrees;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.telly.mrvector.MrVector;
 
 import java.io.File;
 
@@ -38,11 +35,6 @@ abstract class BaseCameraFragment extends Fragment implements OutputUriInterface
     protected ImageButton mButtonVideo;
     protected ImageButton mButtonFacing;
     protected TextView mRecordDuration;
-
-    protected static Drawable mRecordIcon;
-    protected static Drawable mStopIcon;
-    protected static Drawable mCameraFrontIcon;
-    protected static Drawable mCameraBackIcon;
 
     protected static final float PREFERRED_ASPECT_RATIO = 4f / 3f;
     protected static final int PREFERRED_PIXEL_HEIGHT = 480;
@@ -87,37 +79,18 @@ abstract class BaseCameraFragment extends Fragment implements OutputUriInterface
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mRecordIcon = null;
-        mStopIcon = null;
-        mCameraFrontIcon = null;
-        mCameraBackIcon = null;
-    }
-
-    @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
-        final Resources r = getResources();
-        if (mRecordIcon == null)
-            mRecordIcon = MrVector.inflate(r, R.drawable.mcam_action_record);
-        if (mStopIcon == null)
-            mStopIcon = MrVector.inflate(r, R.drawable.mcam_action_stop);
-        if (mCameraFrontIcon == null)
-            mCameraFrontIcon = MrVector.inflate(r, R.drawable.mcam_camera_front);
-        if (mCameraBackIcon == null)
-            mCameraBackIcon = MrVector.inflate(r, R.drawable.mcam_camera_rear);
 
         mButtonVideo = (ImageButton) view.findViewById(R.id.video);
         mButtonFacing = (ImageButton) view.findViewById(R.id.facing);
         mRecordDuration = (TextView) view.findViewById(R.id.recordDuration);
-        mButtonFacing.setImageDrawable(mInterface.getCurrentCameraPosition() == CAMERA_POSITION_BACK ?
-                mCameraFrontIcon : mCameraBackIcon);
+        mButtonFacing.setImageResource(mInterface.getCurrentCameraPosition() == CAMERA_POSITION_BACK ?
+                R.drawable.mcam_camera_front : R.drawable.mcam_camera_rear);
         if (mMediaRecorder != null && mIsRecording) {
-            mButtonVideo.setImageDrawable(mStopIcon);
+            mButtonVideo.setImageResource(R.drawable.mcam_action_stop);
         } else {
-            mButtonVideo.setImageDrawable(mRecordIcon);
+            mButtonVideo.setImageResource(R.drawable.mcam_action_record);
             mInterface.setDidRecord(false);
         }
 
@@ -134,10 +107,6 @@ abstract class BaseCameraFragment extends Fragment implements OutputUriInterface
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mRecordIcon = null;
-        mStopIcon = null;
-        mCameraFrontIcon = null;
-        mCameraBackIcon = null;
         mButtonVideo = null;
         mButtonFacing = null;
         mRecordDuration = null;

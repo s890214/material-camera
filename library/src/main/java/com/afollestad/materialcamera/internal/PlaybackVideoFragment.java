@@ -3,9 +3,7 @@ package com.afollestad.materialcamera.internal;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.pm.ActivityInfo;
-import android.content.res.Resources;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -22,7 +20,6 @@ import com.afollestad.materialcamera.R;
 import com.afollestad.materialcamera.util.CameraUtil;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.internal.MDTintHelper;
-import com.telly.mrvector.MrVector;
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -43,9 +40,6 @@ public class PlaybackVideoFragment extends Fragment implements
     private String mOutputUri;
     private boolean mWasPlaying;
     private BaseCaptureInterface mInterface;
-
-    private static Drawable mPlayIcon;
-    private static Drawable mPauseIcon;
 
     @SuppressWarnings("deprecation")
     @Override
@@ -120,13 +114,7 @@ public class PlaybackVideoFragment extends Fragment implements
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.mcam_fragment_videoplayback, container, false);
-        final Resources r = getResources();
-        if (mPlayIcon == null)
-            mPlayIcon = MrVector.inflate(r, R.drawable.mcam_action_play);
-        if (mPauseIcon == null)
-            mPauseIcon = MrVector.inflate(r, R.drawable.mcam_action_pause);
-        return v;
+        return inflater.inflate(R.layout.mcam_fragment_videoplayback, container, false);
     }
 
     @Override
@@ -190,16 +178,14 @@ public class PlaybackVideoFragment extends Fragment implements
         mStreamer.setURI(getActivity(), Uri.parse(mOutputUri), this);
 
         if (mStreamer.isPlaying())
-            mPlayPause.setImageDrawable(mPauseIcon);
+            mPlayPause.setImageResource(R.drawable.mcam_action_pause);
         else
-            mPlayPause.setImageDrawable(mPlayIcon);
+            mPlayPause.setImageResource(R.drawable.mcam_action_play);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        mPlayIcon = null;
-        mPauseIcon = null;
         mPosition = null;
         mPositionSeek = null;
         mDuration = null;
@@ -277,7 +263,7 @@ public class PlaybackVideoFragment extends Fragment implements
     public void onCompleted() {
         stopCounter();
         if (mPlayPause != null)
-            mPlayPause.setImageDrawable(mPlayIcon);
+            mPlayPause.setImageResource(R.drawable.mcam_action_play);
         if (mPositionSeek != null) {
             mPositionSeek.setProgress(mStreamer.getDuration());
             mPosition.setText(CameraUtil.getDurationString(mStreamer.getDuration()));

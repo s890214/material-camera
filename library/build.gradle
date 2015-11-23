@@ -27,5 +27,4 @@ dependencies {
     compile('com.github.afollestad.material-dialogs:core:0.8.5.1@aar') {
         transitive = true
     }
-    compile 'com.telly:mrvector:0.2.0'
 }
