@@ -182,8 +182,9 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             int toOpen = getCurrentCameraId();
             mCamera = Camera.open(toOpen == -1 ? 0 : toOpen);
             Camera.Parameters parameters = mCamera.getParameters();
-            List<Camera.Size> videoSizes = parameters.getSupportedPreviewSizes();
-            if (videoSizes == null) videoSizes = parameters.getSupportedPreviewSizes();
+            List<Camera.Size> videoSizes = parameters.getSupportedVideoSizes();
+            if (videoSizes == null || videoSizes.size() == 0)
+                videoSizes = parameters.getSupportedPreviewSizes();
             mVideoSize = chooseVideoSize(videoSizes);
             Camera.Size previewSize = chooseOptimalSize(parameters.getSupportedPreviewSizes(),
                     mWindowSize.x, mWindowSize.y, mVideoSize);
