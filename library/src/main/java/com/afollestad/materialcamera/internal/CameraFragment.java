@@ -2,7 +2,6 @@ package com.afollestad.materialcamera.internal;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.res.Configuration;
 import android.graphics.Point;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
@@ -134,6 +133,11 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             final int mFrontCameraId = mInterface.getFrontCamera() != null ? (Integer) mInterface.getFrontCamera() : -1;
             if (mBackCameraId == -1 || mFrontCameraId == -1) {
                 int numberOfCameras = Camera.getNumberOfCameras();
+                if (numberOfCameras == 0) {
+                    throwError(new Exception("No cameras are available on this device."));
+                    return;
+                }
+
                 for (int i = 0; i < numberOfCameras; i++) {
                     //noinspection ConstantConditions
                     if (mFrontCameraId != -1 && mBackCameraId != -1) break;
@@ -193,13 +197,6 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
         } catch (RuntimeException e2) {
             throwError(new Exception("Cannot access the camera, you may need to restart your device.", e2));
         }
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (mCamera != null)
-            setCameraDisplayOrientation(mCamera.getParameters());
     }
 
     private void setCameraDisplayOrientation(Camera.Parameters parameters) {
@@ -276,17 +273,26 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
                 return false;
             }
         } catch (Throwable t) {
-            t.printStackTrace();
+            try {
+                mCamera.lock();
+            } catch (Throwable t2) {
+                throwError(new Exception("Failed to re-lock the camera: " + t2.getMessage(), t));
+                return false;
+            }
+
             if (forceQuality == CamcorderProfile.QUALITY_720P) {
+                return prepareMediaRecorder(CamcorderProfile.QUALITY_LOW);
+            } else if (forceQuality == CamcorderProfile.QUALITY_LOW) {
                 throwError(new Exception("Failed to begin recording: " + t.getMessage(), t));
                 return false;
             }
+
             return prepareMediaRecorder(CamcorderProfile.QUALITY_720P);
         }
     }
 
     @Override
-    public void startRecordingVideo() {
+    public boolean startRecordingVideo() {
         super.startRecordingVideo();
         if (prepareMediaRecorder(-1)) {
             try {
@@ -302,7 +308,6 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
 
                 // Start recording
                 mMediaRecorder.start();
-                mIsRecording = true;
 
                 mButtonVideo.setEnabled(false);
                 mButtonVideo.postDelayed(new Runnable() {
@@ -311,6 +316,8 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
                         mButtonVideo.setEnabled(true);
                     }
                 }, 1000);
+
+                return true;
             } catch (Throwable t) {
                 t.printStackTrace();
                 mInterface.setRecordingStart(-1);
@@ -318,12 +325,12 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
                 throwError(new Exception("Failed to start recording: " + t.getMessage(), t));
             }
         }
+        return false;
     }
 
     @Override
     public void stopRecordingVideo(final boolean reachedZero) {
         super.stopRecordingVideo(reachedZero);
-        mIsRecording = false;
 
         if (mInterface.hasLengthLimit() && mInterface.shouldAutoSubmit() &&
                 (mInterface.getRecordingStart() < 0 || mMediaRecorder == null)) {

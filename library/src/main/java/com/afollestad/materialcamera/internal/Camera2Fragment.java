@@ -444,7 +444,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
     }
 
     @Override
-    public void startRecordingVideo() {
+    public boolean startRecordingVideo() {
         super.startRecordingVideo();
         try {
             // UI
@@ -459,7 +459,6 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
 
             // Start recording
             mMediaRecorder.start();
-            mIsRecording = true;
 
             mButtonVideo.setEnabled(false);
             mButtonVideo.postDelayed(new Runnable() {
@@ -468,18 +467,20 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
                     mButtonVideo.setEnabled(true);
                 }
             }, 1000);
+
+            return true;
         } catch (Throwable t) {
             t.printStackTrace();
             mInterface.setRecordingStart(-1);
             stopRecordingVideo(false);
             throwError(new Exception("Failed to start recording: " + t.getMessage(), t));
         }
+        return false;
     }
 
     @Override
     public void stopRecordingVideo(boolean reachedZero) {
         super.stopRecordingVideo(reachedZero);
-        mIsRecording = false;
 
         if (mInterface.hasLengthLimit() && mInterface.shouldAutoSubmit() &&
                 (mInterface.getRecordingStart() < 0 || mMediaRecorder == null)) {

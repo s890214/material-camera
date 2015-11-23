@@ -39,9 +39,9 @@ abstract class BaseCameraFragment extends Fragment implements OutputUriInterface
     protected static final float PREFERRED_ASPECT_RATIO = 4f / 3f;
     protected static final int PREFERRED_PIXEL_HEIGHT = 480;
 
+    private boolean mIsRecording;
     protected String mOutputUri;
     protected BaseCaptureInterface mInterface;
-    protected boolean mIsRecording;
     protected Handler mPositionHandler;
     protected MediaRecorder mMediaRecorder;
 
@@ -180,9 +180,15 @@ abstract class BaseCameraFragment extends Fragment implements OutputUriInterface
 
     public final void releaseRecorder() {
         if (mMediaRecorder != null) {
-            try {
-                mMediaRecorder.stop();
-            } catch (IllegalStateException ignored) {
+            if (mIsRecording) {
+                try {
+                    mMediaRecorder.stop();
+                } catch (Throwable t) {
+                    //noinspection ResultOfMethodCallIgnored
+                    new File(mOutputUri).delete();
+                    t.printStackTrace();
+                }
+                mIsRecording = false;
             }
             mMediaRecorder.reset();
             mMediaRecorder.release();
@@ -190,11 +196,12 @@ abstract class BaseCameraFragment extends Fragment implements OutputUriInterface
         }
     }
 
-    public void startRecordingVideo() {
+    public boolean startRecordingVideo() {
         final int orientation = Degrees.getActivityOrientation(getActivity());
         //noinspection ResourceType
         getActivity().setRequestedOrientation(orientation);
         mInterface.setDidRecord(true);
+        return true;
     }
 
     public void stopRecordingVideo(boolean reachedZero) {
@@ -231,6 +238,7 @@ abstract class BaseCameraFragment extends Fragment implements OutputUriInterface
         } else if (view.getId() == R.id.video) {
             if (mIsRecording) {
                 stopRecordingVideo(false);
+                mIsRecording = false;
             } else {
                 if (getArguments().getBoolean("show_portrait_warning", true) &&
                         Degrees.isPortrait(getActivity())) {
@@ -242,12 +250,12 @@ abstract class BaseCameraFragment extends Fragment implements OutputUriInterface
                             .onPositive(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog materialDialog, @NonNull DialogAction dialogAction) {
-                                    startRecordingVideo();
+                                    mIsRecording = startRecordingVideo();
                                 }
                             })
                             .show();
                 } else {
-                    startRecordingVideo();
+                    mIsRecording = startRecordingVideo();
                 }
             }
         }
