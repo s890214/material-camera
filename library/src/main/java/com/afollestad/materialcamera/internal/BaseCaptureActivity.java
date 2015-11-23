@@ -265,7 +265,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
 
     @Override
     public final void onShowPreview(@Nullable String outputUri, boolean countdownIsAtZero) {
-        if ((shouldAutoSubmit() && (countdownIsAtZero || !allowRetry())) || outputUri == null) {
+        if ((shouldAutoSubmit() && (countdownIsAtZero || !allowRetry() || !hasLengthLimit())) || outputUri == null) {
             if (outputUri == null) {
                 setResult(RESULT_CANCELED, new Intent().putExtra(MaterialCamera.ERROR_EXTRA,
                         new TimeLimitReachedException()));
