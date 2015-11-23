@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.annotation.Size;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -18,6 +19,9 @@ import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+
+import com.afollestad.materialcamera.R;
+import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -129,7 +133,7 @@ class VideoStreamView extends SurfaceView implements SurfaceHolder.Callback,
         mAutoPlay = autoPlay;
     }
 
-    public void setURI(Activity context, Uri uri, Callback callback) {
+    public void setURI(@NonNull Activity context, @NonNull Uri uri, @NonNull Callback callback) {
         mContext = context;
         mUri = uri;
         mCallback = callback;
@@ -142,8 +146,14 @@ class VideoStreamView extends SurfaceView implements SurfaceHolder.Callback,
         try {
             mPlayer.setDataSource(context, uri);
             mPlayer.prepareAsync();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        } catch (Throwable e) {
+            Log.d("VideoStreamView", "Failed to setDataSource/prepareAsync: " + e.getMessage());
+            e.printStackTrace();
+            new MaterialDialog.Builder(mContext)
+                    .title(R.string.mcam_error)
+                    .content(e.getMessage())
+                    .positiveText(android.R.string.ok)
+                    .show();
         }
     }
 
