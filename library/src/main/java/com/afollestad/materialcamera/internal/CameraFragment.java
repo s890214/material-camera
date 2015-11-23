@@ -188,6 +188,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             Camera.Size previewSize = chooseOptimalSize(parameters.getSupportedPreviewSizes(),
                     mWindowSize.x, mWindowSize.y, mVideoSize);
             parameters.setPreviewSize(previewSize.width, previewSize.height);
+            parameters.setRecordingHint(true);
             setCameraDisplayOrientation(parameters);
             mCamera.setParameters(parameters);
             createPreview();
@@ -335,8 +336,13 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
         if (mInterface.hasLengthLimit() && mInterface.shouldAutoSubmit() &&
                 (mInterface.getRecordingStart() < 0 || mMediaRecorder == null)) {
             stopCounter();
-            if (mCamera != null)
-                mCamera.lock();
+            if (mCamera != null) {
+                try {
+                    mCamera.lock();
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
+            }
             releaseRecorder();
             closeCamera();
             mButtonFacing.postDelayed(new Runnable() {
