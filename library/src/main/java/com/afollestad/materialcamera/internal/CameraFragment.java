@@ -316,7 +316,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
                     public void run() {
                         mButtonVideo.setEnabled(true);
                     }
-                }, 1000);
+                }, 200);
 
                 return true;
             } catch (Throwable t) {

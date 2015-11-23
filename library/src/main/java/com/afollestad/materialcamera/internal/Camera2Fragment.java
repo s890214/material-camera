@@ -466,7 +466,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
                 public void run() {
                     mButtonVideo.setEnabled(true);
                 }
-            }, 1000);
+            }, 200);
 
             return true;
         } catch (Throwable t) {
