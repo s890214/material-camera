@@ -272,6 +272,11 @@ public class PlaybackVideoFragment extends Fragment implements
 
     @Override
     public void onError(MediaPlayer mp, int what, int extra) {
+        if (what == -38) {
+            // Error code -38 happens on some Samsung devices
+            // Just ignore it
+            return;
+        }
         String errorMsg = "Preparation/playback error: ";
         switch (what) {
             default:
