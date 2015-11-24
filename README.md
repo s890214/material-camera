@@ -8,6 +8,41 @@ and experimentation to get video recording to work universally.
 
 ---
 
+# Notice
+
+This library is in BETA, it's still undergoing testing on many devices. It should be in stable
+enough condition to use in production apps, though.
+
+---
+
+# Gradle Dependency
+
+[![Release](https://img.shields.io/github/release/afollestad/material-camera.svg?label=jitpack)](https://jitpack.io/#afollestad/material-camera)
+
+### Repository
+
+```gradle
+repositories {
+    maven { url "https://jitpack.io" }
+}
+```
+
+### Dependency
+
+```gradle
+dependencies {
+
+    // ... other dependencies here
+
+    compile('com.github.afollestad.material-camera:0.1.0@aar') {
+        transitive = true
+    }
+}
+```
+
+---
+
+
 # Basics
 
 ```java
