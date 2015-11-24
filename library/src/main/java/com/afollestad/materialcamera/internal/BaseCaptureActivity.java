@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,6 +28,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.util.TimerTask;
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -264,7 +266,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     }
 
     @Override
-    public final void onShowPreview(@Nullable String outputUri, boolean countdownIsAtZero) {
+    public final void onShowPreview(@Nullable final String outputUri, boolean countdownIsAtZero) {
         if ((shouldAutoSubmit() && (countdownIsAtZero || !allowRetry() || !hasLengthLimit())) || outputUri == null) {
             if (outputUri == null) {
                 setResult(RESULT_CANCELED, new Intent().putExtra(MaterialCamera.ERROR_EXTRA,
@@ -278,12 +280,25 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
                 // No countdown, reset timer to 0
                 setRecordingStart(-1);
             }
-            Fragment frag = PlaybackVideoFragment.newInstance(outputUri, allowRetry(),
-                    getIntent().getIntExtra("primary_color", 0));
-            getFragmentManager().beginTransaction()
-                    .replace(R.id.container, frag)
-                    .commit();
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+                new Handler().postDelayed(new TimerTask() {
+                    @Override
+                    public void run() {
+                        showPlaybackFragment(outputUri);
+                    }
+                }, 500);
+            } else {
+                showPlaybackFragment(outputUri);
+            }
         }
+    }
+
+    private void showPlaybackFragment(String outputUri) {
+        Fragment frag = PlaybackVideoFragment.newInstance(outputUri, allowRetry(),
+                getIntent().getIntExtra("primary_color", 0));
+        getFragmentManager().beginTransaction()
+                .replace(R.id.container, frag)
+                .commit();
     }
 
     @Override

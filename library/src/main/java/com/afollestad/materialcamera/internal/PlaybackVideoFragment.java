@@ -274,6 +274,9 @@ public class PlaybackVideoFragment extends Fragment implements
     public void onError(MediaPlayer mp, int what, int extra) {
         String errorMsg = "Preparation/playback error: ";
         switch (what) {
+            default:
+                errorMsg += String.format("Unknown error %d", what);
+                break;
             case MediaPlayer.MEDIA_ERROR_IO:
                 errorMsg += "I/O error";
                 break;
