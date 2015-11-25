@@ -34,7 +34,7 @@ dependencies {
 
     // ... other dependencies here
 
-    compile('com.github.afollestad.material-camera:0.1.0@aar') {
+    compile('com.github.afollestad.material-camera:0.1.1@aar') {
         transitive = true
     }
 }
