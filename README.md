@@ -104,7 +104,7 @@ When the time limit reaches 0, recording stops. There are different behaviors th
 3. `autoSubmit(true)`, `allowRetry(false)`
     * The user won't be able to playback the recording, the result will immediately be returned to the starting Activity.
 4. `autoSubmit(true)`, `allowRetry(true)`
-    * If you don't specify a length limit, the behavior will be the same as number 1. If you do specify a length limit, the user is allowed to retry, but the countdown timer will continue until it reaches 0. When the countdown is complete, the result will be returned to the starting Activity automatically.
+    * If you don't specify a length limit, the behavior will be the same as number 3. If you do specify a length limit, the user is allowed to retry, but the countdown timer will continue until it reaches 0. When the countdown is complete, the result will be returned to the starting Activity automatically.
 
 ---
 
