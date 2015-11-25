@@ -10,8 +10,9 @@ and experimentation to get video recording to work universally.
 
 # Notice
 
-This library is in BETA, it's still undergoing testing on many devices. It should be in stable
-enough condition to use in production apps, though.
+Please report any issues you have, and include device information. Camera behavior can be unpredictable
+across different Android manufacturers and versions, especially on pre-Lollipop devices. I've done quite
+a bit of testing, but it's possible I missed something.
 
 ---
 
@@ -44,6 +45,24 @@ dependencies {
 
 
 # Basics
+
+### Android Manifest
+
+First, you have to register two library Activities from your app's `AndroidManifest.xml` file:
+
+```xml
+<activity
+    android:name="com.afollestad.materialcamera.CaptureActivity"
+    android:theme="@style/MaterialCamera.CaptureActivity" />
+<activity
+    android:name="com.afollestad.materialcamera.CaptureActivity2"
+    android:theme="@style/MaterialCamera.CaptureActivity" />
+```
+            
+Feel free to use your own custom theme. The included themes give the activities a good default look. 
+See the sample project for more details.
+
+### Code
 
 ```java
 private final static int CAMERA_RQ = 6969; 
