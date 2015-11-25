@@ -293,8 +293,6 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             else if (forceQuality == CamcorderProfile.QUALITY_720P)
                 return prepareMediaRecorder(CamcorderProfile.QUALITY_LOW);
             else if (forceQuality == CamcorderProfile.QUALITY_LOW) {
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT)
-                    return prepareMediaRecorder(CamcorderProfile.QUALITY_480P);
                 return prepareMediaRecorder(CamcorderProfile.QUALITY_1080P);
             }
             throwError(new Exception("Failed to begin recording: " + t.getMessage(), t));
