@@ -372,7 +372,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
         if (!mInterface.didRecord())
             mOutputUri = null;
 
-        mButtonVideo.setImageResource(R.drawable.mcam_action_record);
+        mButtonVideo.setImageResource(R.drawable.mcam_action_capture);
         mButtonFacing.setVisibility(View.VISIBLE);
         if (mInterface.getRecordingStart() > -1 && getActivity() != null)
             mInterface.onShowPreview(mOutputUri, reachedZero);
