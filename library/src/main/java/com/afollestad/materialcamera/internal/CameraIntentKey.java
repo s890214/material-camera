@@ -1,7 +1,5 @@
 package com.afollestad.materialcamera.internal;
 
-import android.support.annotation.IntRange;
-
 /**
  * @author Aidan Follestad (afollestad)
  */

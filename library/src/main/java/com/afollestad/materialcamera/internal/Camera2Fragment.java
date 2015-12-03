@@ -62,8 +62,6 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
     private Size mPreviewSize;
     private Size mVideoSize;
     @Degrees.DegreeUnits
-    private int mSensorOrientation;
-    @Degrees.DegreeUnits
     private int mDisplayOrientation;
     private CaptureRequest.Builder mPreviewBuilder;
     private HandlerThread mBackgroundThread;
@@ -297,14 +295,15 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
                     width, height, mVideoSize);
 
             //noinspection ConstantConditions,ResourceType
-            mSensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
+            @Degrees.DegreeUnits
+            final int sensorOrientation = characteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
 
             @Degrees.DegreeUnits
             int deviceRotation = Degrees.getDisplayRotation(getActivity());
             mDisplayOrientation = Degrees.getDisplayOrientation(
-                    mSensorOrientation, deviceRotation, getCurrentCameraPosition() == CAMERA_POSITION_FRONT);
+                    sensorOrientation, deviceRotation, getCurrentCameraPosition() == CAMERA_POSITION_FRONT);
             Log.d("Camera2Fragment", String.format("Orientations: Sensor = %d˚, Device = %d˚, Display = %d˚",
-                    mSensorOrientation, deviceRotation, mDisplayOrientation));
+                    sensorOrientation, deviceRotation, mDisplayOrientation));
 
             int orientation = VideoStreamView.getScreenOrientation(activity);
             if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE ||

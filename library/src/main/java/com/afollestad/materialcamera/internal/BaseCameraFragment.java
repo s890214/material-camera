@@ -115,7 +115,7 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
     @Override
     public void onResume() {
         super.onResume();
-        if (mInterface != null && mInterface.hasLengthLimit()) {
+        if (mInterface != null && mInterface.hasLengthLimit() && mInterface.countdownImmediately()) {
             if (mInterface.getRecordingStart() == -1)
                 mInterface.setRecordingStart(System.currentTimeMillis());
             startCounter();
@@ -197,6 +197,13 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
     }
 
     public boolean startRecordingVideo() {
+        if (mInterface != null && mInterface.hasLengthLimit() && !mInterface.countdownImmediately()) {
+            // Countdown wasn't started in onResume, start it now
+            if (mInterface.getRecordingStart() == -1)
+                mInterface.setRecordingStart(System.currentTimeMillis());
+            startCounter();
+        }
+
         final int orientation = Degrees.getActivityOrientation(getActivity());
         //noinspection ResourceType
         getActivity().setRequestedOrientation(orientation);

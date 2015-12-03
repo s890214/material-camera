@@ -197,6 +197,11 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     }
 
     @Override
+    public boolean countdownImmediately() {
+        return getIntent().getBooleanExtra(CameraIntentKey.COUNTDOWN_IMMEDIATELY, false);
+    }
+
+    @Override
     public void setCameraPosition(int position) {
         mCameraPosition = position;
     }

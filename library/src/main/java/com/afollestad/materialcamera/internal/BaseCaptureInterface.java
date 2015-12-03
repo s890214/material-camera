@@ -21,6 +21,8 @@ interface BaseCaptureInterface {
 
     boolean hasLengthLimit();
 
+    boolean countdownImmediately();
+
     long getLengthLimit();
 
     void setCameraPosition(int position);
