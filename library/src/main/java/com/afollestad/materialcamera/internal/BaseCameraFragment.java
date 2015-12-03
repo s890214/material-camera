@@ -30,7 +30,7 @@ import static com.afollestad.materialcamera.internal.BaseCaptureActivity.CAMERA_
 /**
  * @author Aidan Follestad (afollestad)
  */
-abstract class BaseCameraFragment extends Fragment implements OutputUriInterface, View.OnClickListener {
+abstract class BaseCameraFragment extends Fragment implements CameraUriInterface, View.OnClickListener {
 
     protected ImageButton mButtonVideo;
     protected ImageButton mButtonFacing;
@@ -97,7 +97,7 @@ abstract class BaseCameraFragment extends Fragment implements OutputUriInterface
         mButtonVideo.setOnClickListener(this);
         mButtonFacing.setOnClickListener(this);
 
-        final int primaryColor = getArguments().getInt("primary_color");
+        final int primaryColor = getArguments().getInt(CameraIntentKey.PRIMARY_COLOR);
         view.findViewById(R.id.controlsFrame).setBackgroundColor(CameraUtil.darkenColor(primaryColor));
 
         if (savedInstanceState != null)
@@ -131,7 +131,7 @@ abstract class BaseCameraFragment extends Fragment implements OutputUriInterface
 
     @NonNull
     protected final File getOutputMediaFile() {
-        return CameraUtil.makeTempFile(getActivity(), getArguments().getString("save_dir"), ".mp4");
+        return CameraUtil.makeTempFile(getActivity(), getArguments().getString(CameraIntentKey.SAVE_DIR), ".mp4");
     }
 
     public abstract void openCamera();
@@ -240,7 +240,7 @@ abstract class BaseCameraFragment extends Fragment implements OutputUriInterface
                 stopRecordingVideo(false);
                 mIsRecording = false;
             } else {
-                if (getArguments().getBoolean("show_portrait_warning", true) &&
+                if (getArguments().getBoolean(CameraIntentKey.SHOW_PORTRAIT_WARNING, true) &&
                         Degrees.isPortrait(getActivity())) {
                     new MaterialDialog.Builder(getActivity())
                             .title(R.string.mcam_portrait)

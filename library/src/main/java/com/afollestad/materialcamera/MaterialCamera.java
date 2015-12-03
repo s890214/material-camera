@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 
+import com.afollestad.materialcamera.internal.CameraIntentKey;
 import com.afollestad.materialcamera.util.CameraUtil;
 import com.afollestad.materialdialogs.util.DialogUtils;
 
@@ -29,6 +30,7 @@ public class MaterialCamera {
     private int mPrimaryColor;
     private boolean mShowPortraitWarning = true;
     private boolean mDefaultToFrontFacing = false;
+    private boolean mCountdownImmediately = false;
 
     public MaterialCamera(@NonNull Activity context) {
         mContext = context;
@@ -55,6 +57,11 @@ public class MaterialCamera {
 
     public MaterialCamera autoSubmit(boolean autoSubmit) {
         mAutoSubmit = autoSubmit;
+        return this;
+    }
+
+    public MaterialCamera countdownImmediately(boolean immediately) {
+        mCountdownImmediately = immediately;
         return this;
     }
 
@@ -95,13 +102,14 @@ public class MaterialCamera {
         final Class<?> cls = CameraUtil.hasCamera2(mContext) ?
                 CaptureActivity2.class : CaptureActivity.class;
         return new Intent(mContext, cls)
-                .putExtra("length_limit", mLengthLimit)
-                .putExtra("allow_retry", mAllowRetry)
-                .putExtra("auto_submit", mAutoSubmit)
-                .putExtra("save_dir", mSaveDir)
-                .putExtra("primary_color", mPrimaryColor)
-                .putExtra("show_portrait_warning", mShowPortraitWarning)
-                .putExtra("default_to_front_facing", mDefaultToFrontFacing);
+                .putExtra(CameraIntentKey.LENGTH_LIMIT, mLengthLimit)
+                .putExtra(CameraIntentKey.ALLOW_RETRY, mAllowRetry)
+                .putExtra(CameraIntentKey.AUTO_SUBMIT, mAutoSubmit)
+                .putExtra(CameraIntentKey.SAVE_DIR, mSaveDir)
+                .putExtra(CameraIntentKey.PRIMARY_COLOR, mPrimaryColor)
+                .putExtra(CameraIntentKey.SHOW_PORTRAIT_WARNING, mShowPortraitWarning)
+                .putExtra(CameraIntentKey.DEFAULT_TO_FRONT_FACING, mDefaultToFrontFacing)
+                .putExtra(CameraIntentKey.COUNTDOWN_IMMEDIATELY, mCountdownImmediately);
     }
 
     public void start(int requestCode) {

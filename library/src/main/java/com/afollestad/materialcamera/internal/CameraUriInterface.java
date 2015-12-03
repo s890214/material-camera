@@ -3,7 +3,7 @@ package com.afollestad.materialcamera.internal;
 /**
  * @author Aidan Follestad (afollestad)
  */
-interface OutputUriInterface {
+interface CameraUriInterface {
 
     String getOutputUri();
 }

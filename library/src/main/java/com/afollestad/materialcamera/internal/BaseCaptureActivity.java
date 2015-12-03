@@ -60,7 +60,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
         outState.putBoolean("requesting_permission", mRequestingPermission);
         outState.putLong("recording_start", mRecordingStart);
         outState.putLong("recording_end", mRecordingEnd);
-        outState.putLong("length_limit", mLengthLimit);
+        outState.putLong(CameraIntentKey.LENGTH_LIMIT, mLengthLimit);
         if (mFrontCameraId instanceof String) {
             outState.putString("front_camera_id_str", (String) mFrontCameraId);
             outState.putString("back_camera_id_str", (String) mBackCameraId);
@@ -91,7 +91,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
         setContentView(R.layout.mcam_activity_videocapture);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            final int primaryColor = getIntent().getIntExtra("primary_color", 0);
+            final int primaryColor = getIntent().getIntExtra(CameraIntentKey.PRIMARY_COLOR, 0);
             final Window window = getWindow();
             window.setStatusBarColor(CameraUtil.darkenColor(primaryColor));
             window.setNavigationBarColor(primaryColor);
@@ -99,13 +99,13 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
 
         if (null == savedInstanceState) {
             checkPermissions();
-            mLengthLimit = getIntent().getLongExtra("length_limit", -1);
+            mLengthLimit = getIntent().getLongExtra(CameraIntentKey.LENGTH_LIMIT, -1);
         } else {
             mCameraPosition = savedInstanceState.getInt("camera_position", -1);
             mRequestingPermission = savedInstanceState.getBoolean("requesting_permission", false);
             mRecordingStart = savedInstanceState.getLong("recording_start", -1);
             mRecordingEnd = savedInstanceState.getLong("recording_end", -1);
-            mLengthLimit = savedInstanceState.getLong("length_limit", -1);
+            mLengthLimit = savedInstanceState.getLong(CameraIntentKey.LENGTH_LIMIT, -1);
             if (savedInstanceState.containsKey("front_camera_id_str")) {
                 mFrontCameraId = savedInstanceState.getString("front_camera_id_str");
                 mBackCameraId = savedInstanceState.getString("back_camera_id_str");
@@ -148,7 +148,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     public final void onBackPressed() {
         Fragment frag = getFragmentManager().findFragmentById(R.id.container);
         if (frag != null && frag instanceof PlaybackVideoFragment && allowRetry()) {
-            onRetry(((OutputUriInterface) frag).getOutputUri());
+            onRetry(((CameraUriInterface) frag).getOutputUri());
             return;
         }
         finish();
@@ -279,7 +279,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
                 setRecordingStart(-1);
             }
             Fragment frag = PlaybackVideoFragment.newInstance(outputUri, allowRetry(),
-                    getIntent().getIntExtra("primary_color", 0));
+                    getIntent().getIntExtra(CameraIntentKey.PRIMARY_COLOR, 0));
             getFragmentManager().beginTransaction()
                     .replace(R.id.container, frag)
                     .commit();
@@ -288,12 +288,12 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
 
     @Override
     public final boolean allowRetry() {
-        return getIntent().getBooleanExtra("allow_retry", true);
+        return getIntent().getBooleanExtra(CameraIntentKey.ALLOW_RETRY, true);
     }
 
     @Override
     public final boolean shouldAutoSubmit() {
-        return getIntent().getBooleanExtra("auto_submit", false);
+        return getIntent().getBooleanExtra(CameraIntentKey.AUTO_SUBMIT, false);
     }
 
     private void deleteOutputFile(@Nullable String uri) {

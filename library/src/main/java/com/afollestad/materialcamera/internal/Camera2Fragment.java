@@ -262,7 +262,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
                 }
             }
             if (mInterface.getCurrentCameraPosition() == CAMERA_POSITION_UNKNOWN) {
-                if (getArguments().getBoolean("default_to_front_facing", false)) {
+                if (getArguments().getBoolean(CameraIntentKey.DEFAULT_TO_FRONT_FACING, false)) {
                     // Check front facing first
                     if (mInterface.getFrontCamera() != null) {
                         mButtonFacing.setImageResource(R.drawable.mcam_camera_rear);

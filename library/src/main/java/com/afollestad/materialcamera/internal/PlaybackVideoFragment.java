@@ -25,7 +25,7 @@ import com.afollestad.materialdialogs.internal.MDTintHelper;
  * @author Aidan Follestad (afollestad)
  */
 public class PlaybackVideoFragment extends Fragment implements
-        VideoStreamView.Callback, OutputUriInterface, View.OnClickListener {
+        VideoStreamView.Callback, CameraUriInterface, View.OnClickListener {
 
     private TextView mPosition;
     private SeekBar mPositionSeek;
@@ -98,8 +98,8 @@ public class PlaybackVideoFragment extends Fragment implements
         fragment.setRetainInstance(true);
         Bundle args = new Bundle();
         args.putString("output_uri", outputUri);
-        args.putBoolean("allow_retry", allowRetry);
-        args.putInt("primary_color", primaryColor);
+        args.putBoolean(CameraIntentKey.ALLOW_RETRY, allowRetry);
+        args.putInt(CameraIntentKey.PRIMARY_COLOR, primaryColor);
         fragment.setArguments(args);
         return fragment;
     }
@@ -136,11 +136,11 @@ public class PlaybackVideoFragment extends Fragment implements
         mPlayPause.setOnClickListener(this);
         mUseVideo.setOnClickListener(this);
 
-        int primaryColor = CameraUtil.darkenColor(getArguments().getInt("primary_color"));
+        int primaryColor = CameraUtil.darkenColor(getArguments().getInt(CameraIntentKey.PRIMARY_COLOR));
         primaryColor = Color.argb((int) (255 * 0.75f), Color.red(primaryColor), Color.green(primaryColor), Color.blue(primaryColor));
         mControlsFrame.setBackgroundColor(primaryColor);
 
-        mRetry.setVisibility(getArguments().getBoolean("allow_retry", true) ? View.VISIBLE : View.GONE);
+        mRetry.setVisibility(getArguments().getBoolean(CameraIntentKey.ALLOW_RETRY, true) ? View.VISIBLE : View.GONE);
         mPositionSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
