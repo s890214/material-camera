@@ -261,7 +261,6 @@ public class PlaybackVideoFragment extends Fragment implements
 
     @Override
     public void onCompleted() {
-        stopCounter();
         if (mPlayPause != null)
             mPlayPause.setImageResource(R.drawable.mcam_action_play);
         if (mPositionSeek != null) {
