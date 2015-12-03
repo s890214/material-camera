@@ -52,8 +52,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .saveDir(saveDir)
                 .showPortraitWarning(false)
                 .allowRetry(true)
-                .lengthLimitSeconds(30f)
-                .autoSubmit(true)
+                .countdownSeconds(30f)
                 .defaultToFrontFacing(true)
                 .start(CAMERA_RQ);
     }
@@ -66,10 +65,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (requestCode == CAMERA_RQ) {
             if (resultCode == RESULT_OK) {
                 Toast.makeText(this, "Saved to: " + data.getDataString(), Toast.LENGTH_LONG).show();
-            } else if(data != null) {
+            } else if (data != null) {
                 Exception e = (Exception) data.getSerializableExtra(MaterialCamera.ERROR_EXTRA);
-                e.printStackTrace();
-                Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                if (e != null) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
             }
         }
     }

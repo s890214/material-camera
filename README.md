@@ -35,7 +35,7 @@ dependencies {
 
     // ... other dependencies here
 
-    compile('com.github.afollestad:material-camera:0.1.1@aar') {
+    compile('com.github.afollestad:material-camera:0.2.0@aar') {
         transitive = true
     }
 }
@@ -85,16 +85,16 @@ new MaterialCamera(this)                       // Constructor takes an Activity
 
 # Length Limiting
 
-You can specify a time limit for recording. `lengthLimitMillis(long)`, `lengthLimitSeconds(float)`, 
-and `lengthLimitMinutes(float)` are all methods for length limiting.
+You can specify a time limit for recording. `countdownMillis(long)`, `countdownSeconds(float)`, 
+and `countdownMinutes(float)` are all methods for length limiting.
 
 ```java
 new MaterialCamera(this)
-    .lengthLimitMinutes(2.5f)
+    .countdownMinutes(2.5f)
     .start(CAMERA_RQ);
 ```
 
-When the time limit reaches 0, recording stops. There are different behaviors that can occur after this based on
+When the countdown reaches 0, recording stops. There are different behaviors that can occur after this based on
 `autoSubmit` and `autoRetry`:
 
 1. `autoSubmit(false)`, `allowRetry(true)`
@@ -105,6 +105,16 @@ When the time limit reaches 0, recording stops. There are different behaviors th
     * The user won't be able to playback the recording, the result will immediately be returned to the starting Activity.
 4. `autoSubmit(true)`, `allowRetry(true)`
     * If you don't specify a length limit, the behavior will be the same as number 3. If you do specify a length limit, the user is allowed to retry, but the countdown timer will continue until it reaches 0. When the countdown is complete, the result will be returned to the starting Activity automatically.
+
+If you want the countdown to start immediately when the camera is open, as opposed to when the user presses
+'Record', you can set `countdownImmediately(true)`:
+
+```java
+new MaterialCamera(this)
+    .countdownMinutes(2.5f)
+    .countdownImmediately(true)
+    .start(CAMERA_RQ);
+```
 
 ---
 

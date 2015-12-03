@@ -22,6 +22,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class CameraUtil {
 
+    private CameraUtil() {
+    }
+
     public static String getDurationString(long durationMs) {
         return String.format("%02d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes(durationMs),
@@ -47,6 +50,7 @@ public class CameraUtil {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static boolean hasCamera2(Context context) {
+        if(context != null) return false; // TODO temp line
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return false;
         try {
             CameraManager manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
