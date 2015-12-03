@@ -40,6 +40,7 @@ public class PlaybackVideoFragment extends Fragment implements
     private String mOutputUri;
     private boolean mWasPlaying;
     private BaseCaptureInterface mInterface;
+    private boolean mFinishedPlaying;
 
     @SuppressWarnings("deprecation")
     @Override
@@ -52,7 +53,7 @@ public class PlaybackVideoFragment extends Fragment implements
     private final Runnable mPositionUpdater = new Runnable() {
         @Override
         public void run() {
-            if (mStreamer == null || mPositionHandler == null) {
+            if (mStreamer == null || mPositionHandler == null || mFinishedPlaying) {
                 if (mPosition != null) {
                     mPosition.setText(mDuration.getText());
                     mPositionSeek.setProgress(mPositionSeek.getMax());
@@ -225,6 +226,7 @@ public class PlaybackVideoFragment extends Fragment implements
                     ((ImageButton) v).setImageResource(R.drawable.mcam_action_play);
                     mStreamer.pause();
                 } else {
+                    mFinishedPlaying = false;
                     ((ImageButton) v).setImageResource(R.drawable.mcam_action_pause);
                     mStreamer.start(getActivity());
                     startCounter();
@@ -261,6 +263,7 @@ public class PlaybackVideoFragment extends Fragment implements
 
     @Override
     public void onCompleted() {
+        mFinishedPlaying = true;
         if (mPlayPause != null)
             mPlayPause.setImageResource(R.drawable.mcam_action_play);
         if (mPositionSeek != null) {
