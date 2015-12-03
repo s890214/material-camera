@@ -116,7 +116,7 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
     public void onResume() {
         super.onResume();
         if (mInterface != null && mInterface.hasLengthLimit()) {
-            if (mInterface.countdownImmediately()) {
+            if (mInterface.countdownImmediately() || mInterface.getRecordingStart() > -1) {
                 if (mInterface.getRecordingStart() == -1)
                     mInterface.setRecordingStart(System.currentTimeMillis());
                 startCounter();
