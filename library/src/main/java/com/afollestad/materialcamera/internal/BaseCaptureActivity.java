@@ -279,8 +279,8 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
             }
             useVideo(outputUri);
         } else {
-            if (!hasLengthLimit()) {
-                // No countdown, reset timer to 0
+            if (!hasLengthLimit() || !shouldAutoSubmit()) {
+                // No countdown or countdown should not continue through playback, reset timer to 0
                 setRecordingStart(-1);
             }
             Fragment frag = PlaybackVideoFragment.newInstance(outputUri, allowRetry(),

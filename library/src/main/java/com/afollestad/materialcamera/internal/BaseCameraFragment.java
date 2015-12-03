@@ -115,10 +115,14 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
     @Override
     public void onResume() {
         super.onResume();
-        if (mInterface != null && mInterface.hasLengthLimit() && mInterface.countdownImmediately()) {
-            if (mInterface.getRecordingStart() == -1)
-                mInterface.setRecordingStart(System.currentTimeMillis());
-            startCounter();
+        if (mInterface != null && mInterface.hasLengthLimit()) {
+            if (mInterface.countdownImmediately()) {
+                if (mInterface.getRecordingStart() == -1)
+                    mInterface.setRecordingStart(System.currentTimeMillis());
+                startCounter();
+            } else {
+                mRecordDuration.setText(String.format("-%s", CameraUtil.getDurationString(mInterface.getLengthLimit())));
+            }
         }
     }
 

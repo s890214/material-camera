@@ -37,17 +37,42 @@ public class MaterialCamera {
         mPrimaryColor = DialogUtils.resolveColor(context, R.attr.colorPrimary);
     }
 
+    public MaterialCamera countdownMillis(long lengthLimitMs) {
+        mLengthLimit = lengthLimitMs;
+        return this;
+    }
+
+    /**
+     * @deprecated use {@link #countdownMillis(long)} instead.
+     */
+    @Deprecated
     public MaterialCamera lengthLimitMillis(long lengthLimitMs) {
         mLengthLimit = lengthLimitMs;
         return this;
     }
 
-    public MaterialCamera lengthLimitSeconds(float lengthLimitSec) {
-        return lengthLimitMillis((int) (lengthLimitSec * 1000f));
+    public MaterialCamera countdownSeconds(float lengthLimitSec) {
+        return countdownMillis((int) (lengthLimitSec * 1000f));
     }
 
+    /**
+     * @deprecated use {@link #countdownSeconds(float)} instead.
+     */
+    @Deprecated
+    public MaterialCamera lengthLimitSeconds(float lengthLimitSec) {
+        return countdownMillis((int) (lengthLimitSec * 1000f));
+    }
+
+    public MaterialCamera countdownMinutes(float lengthLimitMin) {
+        return countdownMillis((int) (lengthLimitMin * 1000f * 60f));
+    }
+
+    /**
+     * @deprecated use {@link #countdownMinutes(float)} instead.
+     */
+    @Deprecated
     public MaterialCamera lengthLimitMinutes(float lengthLimitMin) {
-        return lengthLimitMillis((int) (lengthLimitMin * 1000f * 60f));
+        return countdownMillis((int) (lengthLimitMin * 1000f * 60f));
     }
 
     public MaterialCamera allowRetry(boolean allowRetry) {
