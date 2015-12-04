@@ -22,9 +22,14 @@ a bit of testing, but it's possible I missed something.
 
 ### Repository
 
+Add this in your root `build.gradle` file (**not** your module `build.gradle` file):
+
 ```gradle
-repositories {
-    maven { url "https://jitpack.io" }
+allprojects {
+	repositories {
+		...
+		maven { url "https://jitpack.io" }
+	}
 }
 ```
 
@@ -32,9 +37,7 @@ repositories {
 
 ```gradle
 dependencies {
-
-    // ... other dependencies here
-
+    ...
     compile('com.github.afollestad:material-camera:0.2.0@aar') {
         transitive = true
     }
