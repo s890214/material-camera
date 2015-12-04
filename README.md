@@ -35,6 +35,8 @@ allprojects {
 
 ### Dependency
 
+Add this in your module's `build.gradle` file:
+
 ```gradle
 dependencies {
     ...
