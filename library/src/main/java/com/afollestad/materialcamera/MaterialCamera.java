@@ -21,6 +21,10 @@ import java.io.File;
 public class MaterialCamera {
 
     public static final String ERROR_EXTRA = "mcam_error";
+    public static final String STATUS_EXTRA = "mcam_status";
+
+    public static final int STATUS_RECORDED = 1;
+    public static final int STATUS_RETRY = 2;
 
     private Activity mContext;
     private long mLengthLimit = -1;
@@ -31,6 +35,7 @@ public class MaterialCamera {
     private boolean mShowPortraitWarning = true;
     private boolean mDefaultToFrontFacing = false;
     private boolean mCountdownImmediately = false;
+    private boolean mRetryExists = false;
 
     public MaterialCamera(@NonNull Activity context) {
         mContext = context;
@@ -123,6 +128,11 @@ public class MaterialCamera {
         return this;
     }
 
+    public MaterialCamera retryExits(boolean exits) {
+        mRetryExists = exits;
+        return this;
+    }
+
     public Intent getIntent() {
         final Class<?> cls = CameraUtil.hasCamera2(mContext) ?
                 CaptureActivity2.class : CaptureActivity.class;
@@ -134,7 +144,8 @@ public class MaterialCamera {
                 .putExtra(CameraIntentKey.PRIMARY_COLOR, mPrimaryColor)
                 .putExtra(CameraIntentKey.SHOW_PORTRAIT_WARNING, mShowPortraitWarning)
                 .putExtra(CameraIntentKey.DEFAULT_TO_FRONT_FACING, mDefaultToFrontFacing)
-                .putExtra(CameraIntentKey.COUNTDOWN_IMMEDIATELY, mCountdownImmediately);
+                .putExtra(CameraIntentKey.COUNTDOWN_IMMEDIATELY, mCountdownImmediately)
+                .putExtra(CameraIntentKey.RETRY_EXITS, mRetryExists);
     }
 
     public void start(int requestCode) {

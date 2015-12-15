@@ -83,8 +83,12 @@ new MaterialCamera(this)                       // Constructor takes an Activity
     .primaryColorAttr(R.attr.colorPrimary)     // The theme color used for the camera, defaults to colorPrimary of Activity in the constructor
     .showPortraitWarning(true)                 // Whether or not a warning is displayed if the user presses record in portrait orientation
     .defaultToFrontFacing(false)               // Whether or not the camera will initially show the front facing camera
+    .retryExits(false)                         // If true, the 'Retry' button in the playback screen will exit the camera instead of going back to the recorder
     .start(CAMERA_RQ);                         // Starts the camera activity, the result will be sent back to the current Activity
 ```
+
+**Note**: For `retryExists(true)`, `onActivityResult()` in the `Activity` that starts the camera will
+receive `MaterialCamera.STATUS_RETRY` as the value of the `MaterialCamera.STATUS_EXTRA` intent extra.
 
 ---
 

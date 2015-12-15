@@ -263,6 +263,12 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
             deleteOutputFile(outputUri);
         if (!shouldAutoSubmit())
             setRecordingStart(-1);
+        if (getIntent().getBooleanExtra(CameraIntentKey.RETRY_EXITS, false)) {
+            setResult(RESULT_OK, new Intent()
+                    .putExtra(MaterialCamera.STATUS_EXTRA, MaterialCamera.STATUS_RETRY));
+            finish();
+            return;
+        }
         getFragmentManager().beginTransaction()
                 .replace(R.id.container, createFragment())
                 .commit();
@@ -337,6 +343,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     public final void useVideo(String uri) {
         if (uri != null) {
             setResult(Activity.RESULT_OK, getIntent()
+                    .putExtra(MaterialCamera.STATUS_EXTRA, MaterialCamera.STATUS_RECORDED)
                     .setDataAndType(Uri.parse(uri), "video/mp4"));
         }
         finish();
