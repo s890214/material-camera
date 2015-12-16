@@ -18,7 +18,8 @@ a bit of testing, but it's possible I missed something.
 
 # Gradle Dependency
 
-[![Release](https://img.shields.io/github/release/afollestad/material-camera.svg?label=jitpack)](https://jitpack.io/#afollestad/material-camera)
+[![JitPack](https://img.shields.io/github/release/afollestad/material-camera.svg?label=jitpack)](https://jitpack.io/#afollestad/material-camera)
+[![Build Status](https://travis-ci.org/afollestad/material-camera.svg)](https://travis-ci.org/afollestad/material-camera)
 
 ### Repository
 
