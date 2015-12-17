@@ -51,4 +51,6 @@ interface BaseCaptureInterface {
     void setDidRecord(boolean didRecord);
 
     boolean didRecord();
+
+    boolean restartTimerOnRetry();
 }

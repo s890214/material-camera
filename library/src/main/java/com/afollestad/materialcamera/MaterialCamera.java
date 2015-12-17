@@ -36,6 +36,7 @@ public class MaterialCamera {
     private boolean mDefaultToFrontFacing = false;
     private boolean mCountdownImmediately = false;
     private boolean mRetryExists = false;
+    private boolean mRestartTiemrOnRetry = false;
 
     public MaterialCamera(@NonNull Activity context) {
         mContext = context;
@@ -133,6 +134,11 @@ public class MaterialCamera {
         return this;
     }
 
+    public MaterialCamera restartTimerOnRetry(boolean restart) {
+        mRestartTiemrOnRetry = restart;
+        return this;
+    }
+
     public Intent getIntent() {
         final Class<?> cls = CameraUtil.hasCamera2(mContext) ?
                 CaptureActivity2.class : CaptureActivity.class;
@@ -145,7 +151,8 @@ public class MaterialCamera {
                 .putExtra(CameraIntentKey.SHOW_PORTRAIT_WARNING, mShowPortraitWarning)
                 .putExtra(CameraIntentKey.DEFAULT_TO_FRONT_FACING, mDefaultToFrontFacing)
                 .putExtra(CameraIntentKey.COUNTDOWN_IMMEDIATELY, mCountdownImmediately)
-                .putExtra(CameraIntentKey.RETRY_EXITS, mRetryExists);
+                .putExtra(CameraIntentKey.RETRY_EXITS, mRetryExists)
+                .putExtra(CameraIntentKey.RESTART_TIMER_ON_RETRY, mRestartTiemrOnRetry);
     }
 
     public void start(int requestCode) {

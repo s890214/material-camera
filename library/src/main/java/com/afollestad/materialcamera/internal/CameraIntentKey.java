@@ -17,4 +17,5 @@ public class CameraIntentKey {
     public static final String DEFAULT_TO_FRONT_FACING = "default_to_front_facing";
     public static final String COUNTDOWN_IMMEDIATELY = "countdown_immediately";
     public static final String RETRY_EXITS = "retry_exits";
+    public static final String RESTART_TIMER_ON_RETRY = "restart_timer_on_retry";
 }

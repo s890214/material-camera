@@ -261,7 +261,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     public final void onRetry(@Nullable String outputUri) {
         if (outputUri != null)
             deleteOutputFile(outputUri);
-        if (!shouldAutoSubmit())
+        if (!shouldAutoSubmit() || restartTimerOnRetry())
             setRecordingStart(-1);
         if (getIntent().getBooleanExtra(CameraIntentKey.RETRY_EXITS, false)) {
             setResult(RESULT_OK, new Intent()
@@ -357,5 +357,10 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     @Override
     public boolean didRecord() {
         return mDidRecord;
+    }
+
+    @Override
+    public boolean restartTimerOnRetry() {
+        return getIntent().getBooleanExtra(CameraIntentKey.RESTART_TIMER_ON_RETRY, false);
     }
 }
