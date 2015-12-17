@@ -18,4 +18,5 @@ public class CameraIntentKey {
     public static final String COUNTDOWN_IMMEDIATELY = "countdown_immediately";
     public static final String RETRY_EXITS = "retry_exits";
     public static final String RESTART_TIMER_ON_RETRY = "restart_timer_on_retry";
+    public static final String CONTINUE_TIMER_IN_PLAYBACK = "continue_timer_in_playback";
 }

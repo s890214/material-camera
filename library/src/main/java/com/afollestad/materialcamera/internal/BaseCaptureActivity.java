@@ -363,4 +363,9 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     public boolean restartTimerOnRetry() {
         return getIntent().getBooleanExtra(CameraIntentKey.RESTART_TIMER_ON_RETRY, false);
     }
+
+    @Override
+    public boolean continueTimerInPlayback() {
+        return getIntent().getBooleanExtra(CameraIntentKey.CONTINUE_TIMER_IN_PLAYBACK, false);
+    }
 }

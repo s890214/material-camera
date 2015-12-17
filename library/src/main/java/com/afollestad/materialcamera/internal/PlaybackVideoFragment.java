@@ -167,7 +167,8 @@ public class PlaybackVideoFragment extends Fragment implements
         MDTintHelper.setTint(mPositionSeek, Color.WHITE);
         mOutputUri = getArguments().getString("output_uri");
 
-        if (mInterface.hasLengthLimit() && mInterface.shouldAutoSubmit()) {
+        if (mInterface.hasLengthLimit() && mInterface.shouldAutoSubmit() &&
+                !mInterface.continueTimerInPlayback()) {
             mPlaybackContinueCountdownLabel.setVisibility(View.VISIBLE);
             final long diff = mInterface.getRecordingEnd() - System.currentTimeMillis();
             mPlaybackContinueCountdownLabel.setText(String.format("-%s", CameraUtil.getDurationString(diff)));

@@ -53,4 +53,6 @@ interface BaseCaptureInterface {
     boolean didRecord();
 
     boolean restartTimerOnRetry();
+
+    boolean continueTimerInPlayback();
 }

@@ -36,7 +36,8 @@ public class MaterialCamera {
     private boolean mDefaultToFrontFacing = false;
     private boolean mCountdownImmediately = false;
     private boolean mRetryExists = false;
-    private boolean mRestartTiemrOnRetry = false;
+    private boolean mRestartTimerOnRetry = false;
+    private boolean mContinueTimerInPlayback = true;
 
     public MaterialCamera(@NonNull Activity context) {
         mContext = context;
@@ -135,7 +136,12 @@ public class MaterialCamera {
     }
 
     public MaterialCamera restartTimerOnRetry(boolean restart) {
-        mRestartTiemrOnRetry = restart;
+        mRestartTimerOnRetry = restart;
+        return this;
+    }
+
+    public MaterialCamera continueTimerInPlayback(boolean continueTimer) {
+        mContinueTimerInPlayback = continueTimer;
         return this;
     }
 
@@ -152,7 +158,8 @@ public class MaterialCamera {
                 .putExtra(CameraIntentKey.DEFAULT_TO_FRONT_FACING, mDefaultToFrontFacing)
                 .putExtra(CameraIntentKey.COUNTDOWN_IMMEDIATELY, mCountdownImmediately)
                 .putExtra(CameraIntentKey.RETRY_EXITS, mRetryExists)
-                .putExtra(CameraIntentKey.RESTART_TIMER_ON_RETRY, mRestartTiemrOnRetry);
+                .putExtra(CameraIntentKey.RESTART_TIMER_ON_RETRY, mRestartTimerOnRetry)
+                .putExtra(CameraIntentKey.CONTINUE_TIMER_IN_PLAYBACK, mContinueTimerInPlayback);
     }
 
     public void start(int requestCode) {
