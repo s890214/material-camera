@@ -20,6 +20,7 @@ a bit of testing, but it's possible I missed something.
 
 [![JitPack](https://img.shields.io/github/release/afollestad/material-camera.svg?label=jitpack)](https://jitpack.io/#afollestad/material-camera)
 [![Build Status](https://travis-ci.org/afollestad/material-camera.svg)](https://travis-ci.org/afollestad/material-camera)
+[![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 ### Repository
 
