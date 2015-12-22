@@ -168,7 +168,7 @@ public class PlaybackVideoFragment extends Fragment implements
         mOutputUri = getArguments().getString("output_uri");
 
         if (mInterface.hasLengthLimit() && mInterface.shouldAutoSubmit() &&
-                !mInterface.continueTimerInPlayback()) {
+                mInterface.continueTimerInPlayback()) {
             mPlaybackContinueCountdownLabel.setVisibility(View.VISIBLE);
             final long diff = mInterface.getRecordingEnd() - System.currentTimeMillis();
             mPlaybackContinueCountdownLabel.setText(String.format("-%s", CameraUtil.getDurationString(diff)));
