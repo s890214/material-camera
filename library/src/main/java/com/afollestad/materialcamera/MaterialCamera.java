@@ -38,6 +38,7 @@ public class MaterialCamera {
     private boolean mRetryExists = false;
     private boolean mRestartTimerOnRetry = false;
     private boolean mContinueTimerInPlayback = true;
+    private boolean mForceCamera1 = false;
 
     public MaterialCamera(@NonNull Activity context) {
         mContext = context;
@@ -145,8 +146,13 @@ public class MaterialCamera {
         return this;
     }
 
+    public MaterialCamera forceCamera1() {
+        mForceCamera1 = true;
+        return this;
+    }
+
     public Intent getIntent() {
-        final Class<?> cls = CameraUtil.hasCamera2(mContext) ?
+        final Class<?> cls = !mForceCamera1 && CameraUtil.hasCamera2(mContext) ?
                 CaptureActivity2.class : CaptureActivity.class;
         return new Intent(mContext, cls)
                 .putExtra(CameraIntentKey.LENGTH_LIMIT, mLengthLimit)
