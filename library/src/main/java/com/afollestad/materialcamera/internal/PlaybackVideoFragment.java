@@ -20,12 +20,16 @@ import com.afollestad.materialcamera.R;
 import com.afollestad.materialcamera.util.CameraUtil;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.internal.MDTintHelper;
+import com.devbrackets.android.exomedia.EMVideoView;
+import com.devbrackets.android.exomedia.event.EMMediaProgressEvent;
+import com.devbrackets.android.exomedia.util.EMEventBus;
 
 /**
  * @author Aidan Follestad (afollestad)
  */
 public class PlaybackVideoFragment extends Fragment implements
-        VideoStreamView.Callback, CameraUriInterface, View.OnClickListener {
+        CameraUriInterface, View.OnClickListener, EMEventBus,
+        MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
 
     private TextView mPosition;
     private SeekBar mPositionSeek;
@@ -34,7 +38,7 @@ public class PlaybackVideoFragment extends Fragment implements
     private View mRetry;
     private View mUseVideo;
     private View mControlsFrame;
-    private VideoStreamView mStreamer;
+    private EMVideoView mStreamer;
     private TextView mPlaybackContinueCountdownLabel;
 
     private String mOutputUri;
@@ -42,39 +46,10 @@ public class PlaybackVideoFragment extends Fragment implements
     private BaseCaptureInterface mInterface;
     private boolean mFinishedPlaying;
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        mInterface = (BaseCaptureInterface) activity;
-    }
-
-    private Handler mPositionHandler;
-    private final Runnable mPositionUpdater = new Runnable() {
+    private Handler mCountdownHandler;
+    private final Runnable mCountdownRunnable = new Runnable() {
         @Override
         public void run() {
-            if (mStreamer == null || mPositionHandler == null || mFinishedPlaying) {
-                if (mPosition != null) {
-                    mPosition.setText(mDuration.getText());
-                    mPositionSeek.setProgress(mPositionSeek.getMax());
-                }
-            } else {
-                try {
-                    final int currentPosition = mStreamer.getCurrentPosition();
-                    mPosition.setText(CameraUtil.getDurationString(currentPosition));
-                    mPositionSeek.setProgress(currentPosition);
-                    mDuration.setText(String.format("-%s", CameraUtil.getDurationString(
-                            mStreamer.getDuration() - mStreamer.getCurrentPosition())));
-                    if (mPositionHandler == null) {
-                        mPosition.setText(CameraUtil.getDurationString(mPositionSeek.getMax()));
-                        mPositionSeek.setProgress(mPositionSeek.getMax());
-                    }
-                } catch (Throwable t) {
-                    mPosition.setText(CameraUtil.getDurationString(0));
-                    mPositionSeek.setProgress(mPositionSeek.getMax());
-                }
-            }
-
             if (mPlaybackContinueCountdownLabel != null && mPlaybackContinueCountdownLabel.getVisibility() == View.VISIBLE) {
                 long diff = mInterface.getRecordingEnd() - System.currentTimeMillis();
                 if (diff < 3 && mPlayPause != null) {
@@ -87,12 +62,18 @@ public class PlaybackVideoFragment extends Fragment implements
                     return;
                 }
                 mPlaybackContinueCountdownLabel.setText(String.format("-%s", CameraUtil.getDurationString(diff)));
+                if (mCountdownHandler != null)
+                    mCountdownHandler.postDelayed(mCountdownRunnable, 200);
             }
-
-            if (mPositionHandler != null)
-                mPositionHandler.postDelayed(this, 200);
         }
     };
+
+    @SuppressWarnings("deprecation")
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mInterface = (BaseCaptureInterface) activity;
+    }
 
     public static PlaybackVideoFragment newInstance(String outputUri, boolean allowRetry, int primaryColor) {
         PlaybackVideoFragment fragment = new PlaybackVideoFragment();
@@ -129,7 +110,7 @@ public class PlaybackVideoFragment extends Fragment implements
         mRetry = view.findViewById(R.id.retry);
         mUseVideo = view.findViewById(R.id.useVideo);
         mControlsFrame = view.findViewById(R.id.controlsFrame);
-        mStreamer = (VideoStreamView) view.findViewById(R.id.playbackView);
+        mStreamer = (EMVideoView) view.findViewById(R.id.playbackView);
         mPlaybackContinueCountdownLabel = (TextView) view.findViewById(R.id.playbackContinueCountdownLabel);
 
         view.findViewById(R.id.playbackFrame).setOnClickListener(this);
@@ -146,8 +127,6 @@ public class PlaybackVideoFragment extends Fragment implements
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
-                    if (mPositionHandler == null)
-                        startCounter();
                     mStreamer.seekTo(progress);
                 }
             }
@@ -156,12 +135,15 @@ public class PlaybackVideoFragment extends Fragment implements
             public void onStartTrackingTouch(SeekBar seekBar) {
                 mWasPlaying = mStreamer.isPlaying();
                 mStreamer.pause();
+                mStreamer.stopProgressPoll();
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                if (mWasPlaying)
-                    mStreamer.start(getActivity());
+                if (mWasPlaying) {
+                    mStreamer.start();
+                    mStreamer.startProgressPoll(PlaybackVideoFragment.this);
+                }
             }
         });
         MDTintHelper.setTint(mPositionSeek, Color.WHITE);
@@ -172,12 +154,17 @@ public class PlaybackVideoFragment extends Fragment implements
             mPlaybackContinueCountdownLabel.setVisibility(View.VISIBLE);
             final long diff = mInterface.getRecordingEnd() - System.currentTimeMillis();
             mPlaybackContinueCountdownLabel.setText(String.format("-%s", CameraUtil.getDurationString(diff)));
-            startCounter();
+            startCountdownTimer();
         } else {
             mPlaybackContinueCountdownLabel.setVisibility(View.GONE);
         }
 
-        mStreamer.setURI(getActivity(), Uri.parse(mOutputUri), this);
+        mStreamer.setDefaultControlsEnabled(false);
+        mStreamer.setBus(this);
+        mStreamer.setOnPreparedListener(this);
+        mStreamer.setOnErrorListener(this);
+        mStreamer.setOnCompletionListener(this);
+        mStreamer.setVideoURI(Uri.parse(mOutputUri));
 
         if (mStreamer.isPlaying())
             mPlayPause.setImageResource(R.drawable.mcam_action_pause);
@@ -185,9 +172,47 @@ public class PlaybackVideoFragment extends Fragment implements
             mPlayPause.setImageResource(R.drawable.mcam_action_play);
     }
 
+    private void startCountdownTimer() {
+        if (mCountdownHandler == null)
+            mCountdownHandler = new Handler();
+        else mCountdownHandler.removeCallbacks(mCountdownRunnable);
+        mCountdownHandler.post(mCountdownRunnable);
+    }
+
+    @Override
+    public void post(Object event) {
+        if (event instanceof EMMediaProgressEvent) {
+            final EMMediaProgressEvent progress = (EMMediaProgressEvent) event;
+            if (progress.getBufferPercent() < 100) {
+                if (mPositionSeek != null)
+                    mPositionSeek.setSecondaryProgress(progress.getBufferPercent());
+                return;
+            }
+            if (mPositionSeek != null)
+                mPositionSeek.setSecondaryProgress(0);
+
+            try {
+                final int duration = (int) progress.getDuration();
+                int currentPosition = (int) progress.getPosition();
+                if (currentPosition > duration)
+                    currentPosition = duration;
+                mPosition.setText(CameraUtil.getDurationString(currentPosition));
+                mPositionSeek.setProgress(currentPosition);
+                mDuration.setText(String.format("-%s", CameraUtil.getDurationString(duration - currentPosition)));
+            } catch (Throwable t) {
+                mPosition.setText(CameraUtil.getDurationString(0));
+                mPositionSeek.setProgress(mPositionSeek.getMax());
+            }
+        }
+    }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        if (mCountdownHandler != null) {
+            mCountdownHandler.removeCallbacks(mCountdownRunnable);
+            mCountdownHandler = null;
+        }
         mPosition = null;
         mPositionSeek = null;
         mDuration = null;
@@ -197,20 +222,6 @@ public class PlaybackVideoFragment extends Fragment implements
         mControlsFrame = null;
         mStreamer = null;
         mPlaybackContinueCountdownLabel = null;
-    }
-
-    private void startCounter() {
-        if (mPositionHandler == null)
-            mPositionHandler = new Handler();
-        else mPositionHandler.removeCallbacks(mPositionUpdater);
-        mPositionHandler.post(mPositionUpdater);
-    }
-
-    private void stopCounter() {
-        if (mPositionHandler != null) {
-            mPositionHandler.removeCallbacks(mPositionUpdater);
-            mPositionHandler = null;
-        }
     }
 
     @Override
@@ -226,11 +237,14 @@ public class PlaybackVideoFragment extends Fragment implements
                 if (mStreamer.isPlaying()) {
                     ((ImageButton) v).setImageResource(R.drawable.mcam_action_play);
                     mStreamer.pause();
+                    mStreamer.stopProgressPoll();
                 } else {
+                    if (mFinishedPlaying)
+                        mStreamer.seekTo(0);
                     mFinishedPlaying = false;
                     ((ImageButton) v).setImageResource(R.drawable.mcam_action_pause);
-                    mStreamer.start(getActivity());
-                    startCounter();
+                    mStreamer.start();
+                    mStreamer.startProgressPoll(PlaybackVideoFragment.this);
                 }
             }
         } else if (v.getId() == R.id.retry) {
@@ -242,43 +256,31 @@ public class PlaybackVideoFragment extends Fragment implements
 
     private void useVideo() {
         if (mStreamer != null) {
-            mStreamer.stop();
+            mStreamer.stopProgressPoll();
+            mStreamer.stopPlayback();
             mStreamer.release();
             mStreamer = null;
         }
-        stopCounter();
         if (mInterface != null)
             mInterface.useVideo(mOutputUri);
     }
 
     @Override
     public void onPrepared(MediaPlayer mp) {
-        if (!mInterface.hasLengthLimit() && mPositionHandler != null)
-            mPositionHandler.removeCallbacks(mPositionUpdater);
-        mPositionSeek.setMax(mp.getDuration());
-        mDuration.setText(String.format("-%s", CameraUtil.getDurationString(mp.getDuration())));
+        final int durationMs = (int) mStreamer.getDuration();
+        mPositionSeek.setMax(durationMs);
+        mDuration.setText(String.format("-%s", CameraUtil.getDurationString(durationMs)));
         mPlayPause.setEnabled(true);
         mRetry.setEnabled(true);
         mUseVideo.setEnabled(true);
     }
 
     @Override
-    public void onCompleted() {
-        mFinishedPlaying = true;
-        if (mPlayPause != null)
-            mPlayPause.setImageResource(R.drawable.mcam_action_play);
-        if (mPositionSeek != null) {
-            mPositionSeek.setProgress(mStreamer.getDuration());
-            mPosition.setText(CameraUtil.getDurationString(mStreamer.getDuration()));
-        }
-    }
-
-    @Override
-    public void onError(MediaPlayer mp, int what, int extra) {
+    public boolean onError(MediaPlayer mp, int what, int extra) {
         if (what == -38) {
             // Error code -38 happens on some Samsung devices
             // Just ignore it
-            return;
+            return false;
         }
         String errorMsg = "Preparation/playback error: ";
         switch (what) {
@@ -309,16 +311,22 @@ public class PlaybackVideoFragment extends Fragment implements
                 .content(errorMsg)
                 .positiveText(android.R.string.ok)
                 .show();
-    }
-
-    @Override
-    public void onBuffer(int percent) {
-        if (mPositionSeek != null)
-            mPositionSeek.setSecondaryProgress(percent);
+        return false;
     }
 
     @Override
     public String getOutputUri() {
         return getArguments().getString("output_uri");
+    }
+
+    @Override
+    public void onCompletion(MediaPlayer mp) {
+        mFinishedPlaying = true;
+        if (mPlayPause != null)
+            mPlayPause.setImageResource(R.drawable.mcam_action_play);
+        if (mPositionSeek != null) {
+            mPositionSeek.setProgress((int) mStreamer.getDuration());
+            mPosition.setText(CameraUtil.getDurationString(mStreamer.getDuration()));
+        }
     }
 }
