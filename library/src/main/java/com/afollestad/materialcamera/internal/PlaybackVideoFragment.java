@@ -127,6 +127,10 @@ public class PlaybackVideoFragment extends Fragment implements
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
+                    if (progress < seekBar.getMax())
+                        mFinishedPlaying = false;
+                    else if (progress >= seekBar.getMax())
+                        mFinishedPlaying = true;
                     mStreamer.seekTo(progress);
                 }
             }
