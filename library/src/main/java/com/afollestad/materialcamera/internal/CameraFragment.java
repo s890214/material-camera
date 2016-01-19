@@ -259,6 +259,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
 
             setCameraDisplayOrientation(mCamera.getParameters());
             mMediaRecorder = new MediaRecorder();
+            mCamera.stopPreview();
             mCamera.unlock();
             mMediaRecorder.setCamera(mCamera);
 
