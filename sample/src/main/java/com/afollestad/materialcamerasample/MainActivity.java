@@ -15,8 +15,6 @@ import android.widget.Toast;
 import com.afollestad.materialcamera.MaterialCamera;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.text.DecimalFormat;
 
 /**
@@ -68,28 +66,29 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private String fileSize(File file) {
-        final int bufferSize = 1024;
-        final byte[] buffer = new byte[bufferSize];
-        int read;
-        int totalRead = 0;
-        InputStream is = null;
-        try {
-            is = new FileInputStream(file);
-            while ((read = is.read(buffer)) != -1)
-                totalRead += read;
-            return readableFileSize(totalRead);
-        } catch (Throwable t) {
-            t.printStackTrace();
-            Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
-            return "Unknown";
-        } finally {
-            if (is != null) {
-                try {
-                    is.close();
-                } catch (Throwable ignored) {
-                }
-            }
-        }
+        return readableFileSize(file.length());
+//        final int bufferSize = 1024;
+//        final byte[] buffer = new byte[bufferSize];
+//        int read;
+//        int totalRead = 0;
+//        InputStream is = null;
+//        try {
+//            is = new FileInputStream(file);
+//            while ((read = is.read(buffer)) != -1)
+//                totalRead += read;
+//            return readableFileSize(totalRead);
+//        } catch (Throwable t) {
+//            t.printStackTrace();
+//            Toast.makeText(getApplicationContext(), t.getMessage(), Toast.LENGTH_LONG).show();
+//            return "Unknown";
+//        } finally {
+//            if (is != null) {
+//                try {
+//                    is.close();
+//                } catch (Throwable ignored) {
+//                }
+//            }
+//        }
     }
 
     @Override
@@ -99,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Received recording or error from MaterialCamera
         if (requestCode == CAMERA_RQ) {
             if (resultCode == RESULT_OK) {
-                final File file = new File(data.getDataString());
+                final File file = new File(data.getData().getPath());
                 Toast.makeText(this, String.format("Saved to: %s, size: %s",
                         file.getAbsolutePath(), fileSize(file)), Toast.LENGTH_LONG).show();
             } else if (data != null) {
