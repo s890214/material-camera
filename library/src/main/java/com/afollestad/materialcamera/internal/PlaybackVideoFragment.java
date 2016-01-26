@@ -204,8 +204,10 @@ public class PlaybackVideoFragment extends Fragment implements
                 mPositionSeek.setProgress(currentPosition);
                 mDuration.setText(String.format("-%s", CameraUtil.getDurationString(duration - currentPosition)));
             } catch (Throwable t) {
-                mPosition.setText(CameraUtil.getDurationString(0));
-                mPositionSeek.setProgress(mPositionSeek.getMax());
+                if (mPosition != null) {
+                    mPosition.setText(CameraUtil.getDurationString(0));
+                    mPositionSeek.setProgress(mPositionSeek.getMax());
+                }
             }
         }
     }
