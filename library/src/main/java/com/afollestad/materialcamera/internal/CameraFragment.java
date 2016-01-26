@@ -47,11 +47,11 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
         return fragment;
     }
 
-    private static Camera.Size chooseVideoSize(List<Camera.Size> choices) {
+    private static Camera.Size chooseVideoSize(BaseCaptureInterface ci, List<Camera.Size> choices) {
         Camera.Size backupSize = null;
         for (Camera.Size size : choices) {
-            if (size.height <= PREFERRED_PIXEL_HEIGHT) {
-                if (size.width == size.height * PREFERRED_ASPECT_RATIO)
+            if (size.height <= ci.videoPreferredHeight()) {
+                if (size.width == size.height * ci.videoPreferredAspect())
                     return size;
                 backupSize = size;
             }
@@ -185,7 +185,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             List<Camera.Size> videoSizes = parameters.getSupportedVideoSizes();
             if (videoSizes == null || videoSizes.size() == 0)
                 videoSizes = parameters.getSupportedPreviewSizes();
-            mVideoSize = chooseVideoSize(videoSizes);
+            mVideoSize = chooseVideoSize((BaseCaptureActivity) activity, videoSizes);
             Camera.Size previewSize = chooseOptimalSize(parameters.getSupportedPreviewSizes(),
                     mWindowSize.x, mWindowSize.y, mVideoSize);
             parameters.setPreviewSize(previewSize.width, previewSize.height);
@@ -202,6 +202,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
         }
     }
 
+    @SuppressWarnings("WrongConstant")
     private void setCameraDisplayOrientation(Camera.Parameters parameters) {
         Camera.CameraInfo info =
                 new Camera.CameraInfo();
@@ -256,6 +257,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
         try {
             final Activity activity = getActivity();
             if (null == activity) return false;
+            final BaseCaptureInterface captureInterface = (BaseCaptureInterface) activity;
 
             setCameraDisplayOrientation(mCamera.getParameters());
             mMediaRecorder = new MediaRecorder();
@@ -267,6 +269,10 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
             mMediaRecorder.setProfile(CamcorderProfile.get(getCurrentCameraId(), forceQuality));
             mMediaRecorder.setVideoSize(mVideoSize.width, mVideoSize.height);
+            if (captureInterface.videoFrameRate() > 0)
+                mMediaRecorder.setVideoFrameRate(captureInterface.videoFrameRate());
+            if (captureInterface.videoBitRate() > 0)
+                mMediaRecorder.setVideoEncodingBitRate(captureInterface.videoBitRate());
 
             Uri uri = Uri.fromFile(getOutputMediaFile());
             mOutputUri = uri.toString();

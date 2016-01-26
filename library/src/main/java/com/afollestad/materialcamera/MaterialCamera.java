@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.support.annotation.AttrRes;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
+import android.support.annotation.FloatRange;
+import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -39,6 +41,10 @@ public class MaterialCamera {
     private boolean mRestartTimerOnRetry = false;
     private boolean mContinueTimerInPlayback = true;
     private boolean mForceCamera1 = false;
+    private int mVideoBitRate = 1500;
+    private int mVideoFrameRate = 24;
+    private int mVideoPreferedHeight = 480;
+    private float mVideoPreferedAspect = 4f / 3f;
 
     public MaterialCamera(@NonNull Activity context) {
         mContext = context;
@@ -151,6 +157,26 @@ public class MaterialCamera {
         return this;
     }
 
+    public MaterialCamera videoBitRate(@IntRange(from = 1, to = Integer.MAX_VALUE) int rate) {
+        mVideoBitRate = rate;
+        return this;
+    }
+
+    public MaterialCamera videoFrameRate(@IntRange(from = 1, to = Integer.MAX_VALUE) int rate) {
+        mVideoFrameRate = rate;
+        return this;
+    }
+
+    public MaterialCamera videoPreferredHeight(@IntRange(from = 1, to = Integer.MAX_VALUE) int height) {
+        mVideoPreferedHeight = height;
+        return this;
+    }
+
+    public MaterialCamera videoPreferredAspect(@FloatRange(from = 0.1, to = Float.MAX_VALUE) float ratio) {
+        mVideoPreferedAspect = ratio;
+        return this;
+    }
+
     public Intent getIntent() {
         final Class<?> cls = !mForceCamera1 && CameraUtil.hasCamera2(mContext) ?
                 CaptureActivity2.class : CaptureActivity.class;
@@ -165,7 +191,11 @@ public class MaterialCamera {
                 .putExtra(CameraIntentKey.COUNTDOWN_IMMEDIATELY, mCountdownImmediately)
                 .putExtra(CameraIntentKey.RETRY_EXITS, mRetryExists)
                 .putExtra(CameraIntentKey.RESTART_TIMER_ON_RETRY, mRestartTimerOnRetry)
-                .putExtra(CameraIntentKey.CONTINUE_TIMER_IN_PLAYBACK, mContinueTimerInPlayback);
+                .putExtra(CameraIntentKey.CONTINUE_TIMER_IN_PLAYBACK, mContinueTimerInPlayback)
+                .putExtra(CameraIntentKey.VIDEO_BIT_RATE, mVideoBitRate)
+                .putExtra(CameraIntentKey.VIDEO_FRAME_RATE, mVideoFrameRate)
+                .putExtra(CameraIntentKey.VIDEO_PREFERRED_HEIGHT, mVideoPreferedHeight)
+                .putExtra(CameraIntentKey.VIDEO_PREFERRED_ASPECT, mVideoPreferedAspect);
     }
 
     public void start(int requestCode) {

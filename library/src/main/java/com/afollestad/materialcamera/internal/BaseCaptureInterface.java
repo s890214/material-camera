@@ -55,4 +55,12 @@ interface BaseCaptureInterface {
     boolean restartTimerOnRetry();
 
     boolean continueTimerInPlayback();
+
+    int videoBitRate();
+
+    int videoFrameRate();
+
+    int videoPreferredHeight();
+
+    float videoPreferredAspect();
 }

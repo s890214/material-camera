@@ -36,9 +36,6 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
     protected ImageButton mButtonFacing;
     protected TextView mRecordDuration;
 
-    protected static final float PREFERRED_ASPECT_RATIO = 4f / 3f;
-    protected static final int PREFERRED_PIXEL_HEIGHT = 480;
-
     private boolean mIsRecording;
     protected String mOutputUri;
     protected BaseCaptureInterface mInterface;

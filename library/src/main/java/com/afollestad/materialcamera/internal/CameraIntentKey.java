@@ -19,4 +19,8 @@ public class CameraIntentKey {
     public static final String RETRY_EXITS = "retry_exits";
     public static final String RESTART_TIMER_ON_RETRY = "restart_timer_on_retry";
     public static final String CONTINUE_TIMER_IN_PLAYBACK = "continue_timer_in_playback";
+    public static final String VIDEO_BIT_RATE = "video_bit_rate";
+    public static final String VIDEO_FRAME_RATE = "video_frame_rate";
+    public static final String VIDEO_PREFERRED_HEIGHT = "video_preferred_height";
+    public static final String VIDEO_PREFERRED_ASPECT = "video_preferred_aspect";
 }

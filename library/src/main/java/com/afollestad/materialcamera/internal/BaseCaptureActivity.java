@@ -368,4 +368,24 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     public boolean continueTimerInPlayback() {
         return getIntent().getBooleanExtra(CameraIntentKey.CONTINUE_TIMER_IN_PLAYBACK, false);
     }
+
+    @Override
+    public int videoBitRate() {
+        return getIntent().getIntExtra(CameraIntentKey.VIDEO_BIT_RATE, 1500);
+    }
+
+    @Override
+    public int videoFrameRate() {
+        return getIntent().getIntExtra(CameraIntentKey.VIDEO_FRAME_RATE, 24);
+    }
+
+    @Override
+    public float videoPreferredAspect() {
+        return getIntent().getFloatExtra(CameraIntentKey.VIDEO_PREFERRED_ASPECT, 4f / 3f);
+    }
+
+    @Override
+    public int videoPreferredHeight() {
+        return getIntent().getIntExtra(CameraIntentKey.VIDEO_PREFERRED_HEIGHT, 480);
+    }
 }

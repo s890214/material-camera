@@ -148,11 +148,11 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
      * @param choices The list of available sizes
      * @return The video size
      */
-    private static Size chooseVideoSize(Size[] choices) {
+    private static Size chooseVideoSize(BaseCaptureInterface ci, Size[] choices) {
         Size backupSize = null;
         for (Size size : choices) {
-            if (size.getHeight() <= PREFERRED_PIXEL_HEIGHT) {
-                if (size.getWidth() == size.getHeight() * PREFERRED_ASPECT_RATIO)
+            if (size.getHeight() <= ci.videoPreferredHeight()) {
+                if (size.getWidth() == size.getHeight() * ci.videoPreferredAspect())
                     return size;
                 backupSize = size;
             }
@@ -290,7 +290,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
             StreamConfigurationMap map = characteristics
                     .get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             assert map != null;
-            mVideoSize = chooseVideoSize(map.getOutputSizes(MediaRecorder.class));
+            mVideoSize = chooseVideoSize((BaseCaptureInterface) activity, map.getOutputSizes(MediaRecorder.class));
             mPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
                     width, height, mVideoSize);
 
@@ -428,6 +428,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
     private boolean setUpMediaRecorder() {
         final Activity activity = getActivity();
         if (null == activity) return false;
+        final BaseCaptureInterface captureInterface = (BaseCaptureInterface) activity;
         if (mMediaRecorder == null)
             mMediaRecorder = new MediaRecorder();
         boolean canUseAudio = true;
@@ -440,8 +441,10 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
         }
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mMediaRecorder.setVideoEncodingBitRate(10000000);
-        mMediaRecorder.setVideoFrameRate(15);
+        if (captureInterface.videoBitRate() > 0)
+            mMediaRecorder.setVideoEncodingBitRate(captureInterface.videoBitRate());
+        if (captureInterface.videoFrameRate() > 0)
+            mMediaRecorder.setVideoFrameRate(captureInterface.videoFrameRate());
         mMediaRecorder.setVideoSize(mVideoSize.getWidth(), mVideoSize.getHeight());
         mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
         if (canUseAudio)
