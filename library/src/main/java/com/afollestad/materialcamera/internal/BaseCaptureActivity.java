@@ -371,7 +371,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
 
     @Override
     public int videoBitRate() {
-        return getIntent().getIntExtra(CameraIntentKey.VIDEO_BIT_RATE, 2000000);
+        return getIntent().getIntExtra(CameraIntentKey.VIDEO_BIT_RATE, 1024000);
     }
 
     @Override

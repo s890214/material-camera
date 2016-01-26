@@ -41,10 +41,11 @@ public class MaterialCamera {
     private boolean mRestartTimerOnRetry = false;
     private boolean mContinueTimerInPlayback = true;
     private boolean mForceCamera1 = false;
-    private int mVideoBitRate = 1500;
-    private int mVideoFrameRate = 24;
-    private int mVideoPreferredHeight = 480;
-    private float mVideoPreferredAspect = 4f / 3f;
+
+    private int mVideoBitRate = -1;
+    private int mVideoFrameRate = -1;
+    private int mVideoPreferredHeight = -1;
+    private float mVideoPreferredAspect = -1f;
 
     public MaterialCamera(@NonNull Activity context) {
         mContext = context;
@@ -180,7 +181,7 @@ public class MaterialCamera {
     public Intent getIntent() {
         final Class<?> cls = !mForceCamera1 && CameraUtil.hasCamera2(mContext) ?
                 CaptureActivity2.class : CaptureActivity.class;
-        return new Intent(mContext, cls)
+        Intent intent = new Intent(mContext, cls)
                 .putExtra(CameraIntentKey.LENGTH_LIMIT, mLengthLimit)
                 .putExtra(CameraIntentKey.ALLOW_RETRY, mAllowRetry)
                 .putExtra(CameraIntentKey.AUTO_SUBMIT, mAutoSubmit)
@@ -191,11 +192,17 @@ public class MaterialCamera {
                 .putExtra(CameraIntentKey.COUNTDOWN_IMMEDIATELY, mCountdownImmediately)
                 .putExtra(CameraIntentKey.RETRY_EXITS, mRetryExists)
                 .putExtra(CameraIntentKey.RESTART_TIMER_ON_RETRY, mRestartTimerOnRetry)
-                .putExtra(CameraIntentKey.CONTINUE_TIMER_IN_PLAYBACK, mContinueTimerInPlayback)
-                .putExtra(CameraIntentKey.VIDEO_BIT_RATE, mVideoBitRate)
-                .putExtra(CameraIntentKey.VIDEO_FRAME_RATE, mVideoFrameRate)
-                .putExtra(CameraIntentKey.VIDEO_PREFERRED_HEIGHT, mVideoPreferredHeight)
-                .putExtra(CameraIntentKey.VIDEO_PREFERRED_ASPECT, mVideoPreferredAspect);
+                .putExtra(CameraIntentKey.CONTINUE_TIMER_IN_PLAYBACK, mContinueTimerInPlayback);
+
+        if (mVideoBitRate > 0)
+            intent.putExtra(CameraIntentKey.VIDEO_BIT_RATE, mVideoBitRate);
+        if (mVideoFrameRate > 0)
+            intent.putExtra(CameraIntentKey.VIDEO_FRAME_RATE, mVideoFrameRate);
+        if (mVideoPreferredHeight > 0)
+            intent.putExtra(CameraIntentKey.VIDEO_PREFERRED_HEIGHT, mVideoPreferredHeight);
+        if (mVideoPreferredAspect > 0f)
+            intent.putExtra(CameraIntentKey.VIDEO_PREFERRED_ASPECT, mVideoPreferredAspect);
+        return intent;
     }
 
     public void start(int requestCode) {
