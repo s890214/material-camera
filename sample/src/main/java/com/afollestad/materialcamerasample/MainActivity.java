@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.afollestad.materialcamera.MaterialCamera;
 
 import java.io.File;
+import java.text.DecimalFormat;
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -57,6 +58,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .start(CAMERA_RQ);
     }
 
+    private static String readableFileSize(long size) {
+        if (size <= 0) return size + " B";
+        final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
+        int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
+        return new DecimalFormat("#,##0.##").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -64,7 +72,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // Received recording or error from MaterialCamera
         if (requestCode == CAMERA_RQ) {
             if (resultCode == RESULT_OK) {
-                Toast.makeText(this, "Saved to: " + data.getDataString(), Toast.LENGTH_LONG).show();
+                final File file = new File(data.getDataString());
+                Toast.makeText(this, String.format("Saved to: %s, size: %s",
+                        file.getAbsolutePath(), readableFileSize(file.length())), Toast.LENGTH_LONG).show();
             } else if (data != null) {
                 Exception e = (Exception) data.getSerializableExtra(MaterialCamera.ERROR_EXTRA);
                 if (e != null) {

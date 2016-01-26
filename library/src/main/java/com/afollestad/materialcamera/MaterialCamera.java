@@ -43,8 +43,8 @@ public class MaterialCamera {
     private boolean mForceCamera1 = false;
     private int mVideoBitRate = 1500;
     private int mVideoFrameRate = 24;
-    private int mVideoPreferedHeight = 480;
-    private float mVideoPreferedAspect = 4f / 3f;
+    private int mVideoPreferredHeight = 480;
+    private float mVideoPreferredAspect = 4f / 3f;
 
     public MaterialCamera(@NonNull Activity context) {
         mContext = context;
@@ -168,12 +168,12 @@ public class MaterialCamera {
     }
 
     public MaterialCamera videoPreferredHeight(@IntRange(from = 1, to = Integer.MAX_VALUE) int height) {
-        mVideoPreferedHeight = height;
+        mVideoPreferredHeight = height;
         return this;
     }
 
     public MaterialCamera videoPreferredAspect(@FloatRange(from = 0.1, to = Float.MAX_VALUE) float ratio) {
-        mVideoPreferedAspect = ratio;
+        mVideoPreferredAspect = ratio;
         return this;
     }
 
@@ -194,8 +194,8 @@ public class MaterialCamera {
                 .putExtra(CameraIntentKey.CONTINUE_TIMER_IN_PLAYBACK, mContinueTimerInPlayback)
                 .putExtra(CameraIntentKey.VIDEO_BIT_RATE, mVideoBitRate)
                 .putExtra(CameraIntentKey.VIDEO_FRAME_RATE, mVideoFrameRate)
-                .putExtra(CameraIntentKey.VIDEO_PREFERRED_HEIGHT, mVideoPreferedHeight)
-                .putExtra(CameraIntentKey.VIDEO_PREFERRED_ASPECT, mVideoPreferedAspect);
+                .putExtra(CameraIntentKey.VIDEO_PREFERRED_HEIGHT, mVideoPreferredHeight)
+                .putExtra(CameraIntentKey.VIDEO_PREFERRED_ASPECT, mVideoPreferredAspect);
     }
 
     public void start(int requestCode) {
