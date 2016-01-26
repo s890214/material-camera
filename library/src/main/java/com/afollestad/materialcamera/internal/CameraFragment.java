@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import static com.afollestad.materialcamera.internal.BaseCaptureActivity.CAMERA_POSITION_BACK;
 import static com.afollestad.materialcamera.internal.BaseCaptureActivity.CAMERA_POSITION_FRONT;
@@ -264,6 +265,11 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             mCamera.stopPreview();
             mCamera.unlock();
             mMediaRecorder.setCamera(mCamera);
+
+            Log.d("Camera1Fragment", String.format(
+                    "Bit rate: %d, Frame rate: %d, Resolution: %s",
+                    captureInterface.videoBitRate(), captureInterface.videoFrameRate(),
+                    String.format(Locale.getDefault(), "%dx%d", mVideoSize.width, mVideoSize.height)));
 
             mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
             mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);

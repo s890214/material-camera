@@ -42,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -439,6 +440,12 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
         } else {
             Toast.makeText(getActivity(), R.string.mcam_no_audio_access, Toast.LENGTH_LONG).show();
         }
+
+        Log.d("Camera2Fragment", String.format(
+                "Bit rate: %d, Frame rate: %d, Resolution: %s",
+                captureInterface.videoBitRate(), captureInterface.videoFrameRate(),
+                String.format(Locale.getDefault(), "%dx%d", mVideoSize.getWidth(), mVideoSize.getHeight())));
+
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
         mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
         if (captureInterface.videoBitRate() > 0)
