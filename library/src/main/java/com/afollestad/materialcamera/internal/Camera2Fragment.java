@@ -155,7 +155,8 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
             if (size.getHeight() <= ci.videoPreferredHeight()) {
                 if (size.getWidth() == size.getHeight() * ci.videoPreferredAspect())
                     return size;
-                backupSize = size;
+                if (ci.videoPreferredHeight() == size.getHeight())
+                    backupSize = size;
             }
         }
         if (backupSize != null) return backupSize;
