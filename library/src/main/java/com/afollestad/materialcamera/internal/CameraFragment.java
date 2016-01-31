@@ -54,7 +54,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             if (size.height <= ci.videoPreferredHeight()) {
                 if (size.width == size.height * ci.videoPreferredAspect())
                     return size;
-                if (ci.videoPreferredHeight() == size.height)
+                if (ci.videoPreferredHeight() >= size.height)
                     backupSize = size;
             }
         }
