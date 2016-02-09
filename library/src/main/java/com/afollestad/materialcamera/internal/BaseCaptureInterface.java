@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 /**
  * @author Aidan Follestad (afollestad)
  */
-interface BaseCaptureInterface {
+public interface BaseCaptureInterface {
 
     void onRetry(@Nullable String outputUri);
 
