@@ -25,6 +25,11 @@ public class CameraUtil {
     private CameraUtil() {
     }
 
+    public static boolean isArcWelder() {
+        return Build.BRAND.equalsIgnoreCase("chromium") &&
+                Build.MANUFACTURER.equalsIgnoreCase("chromium");
+    }
+
     public static String getDurationString(long durationMs) {
         return String.format("%02d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes(durationMs),

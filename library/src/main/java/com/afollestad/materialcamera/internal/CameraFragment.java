@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.afollestad.materialcamera.R;
+import com.afollestad.materialcamera.util.CameraUtil;
 import com.afollestad.materialcamera.util.Degrees;
 
 import java.util.ArrayList;
@@ -215,9 +216,14 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
         Log.d("CameraFragment", String.format("Orientations: Sensor = %d˚, Device = %d˚, Display = %d˚",
                 info.orientation, deviceOrientation, mDisplayOrientation));
 
-        int previewOrientation = mDisplayOrientation;
-        if (Degrees.isPortrait(deviceOrientation) && getCurrentCameraPosition() == CAMERA_POSITION_FRONT)
-            previewOrientation = Degrees.mirror(mDisplayOrientation);
+        int previewOrientation;
+        if (CameraUtil.isArcWelder()) {
+            previewOrientation = 0;
+        } else {
+            previewOrientation = mDisplayOrientation;
+            if (Degrees.isPortrait(deviceOrientation) && getCurrentCameraPosition() == CAMERA_POSITION_FRONT)
+                previewOrientation = Degrees.mirror(mDisplayOrientation);
+        }
         parameters.setRotation(previewOrientation);
         mCamera.setDisplayOrientation(previewOrientation);
     }
