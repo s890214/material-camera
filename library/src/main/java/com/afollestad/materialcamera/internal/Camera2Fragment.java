@@ -34,6 +34,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.afollestad.materialcamera.R;
+import com.afollestad.materialcamera.util.CameraUtil;
 import com.afollestad.materialcamera.util.Degrees;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -477,7 +478,8 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
         try {
             // UI
             mButtonVideo.setImageResource(R.drawable.mcam_action_stop);
-            mButtonFacing.setVisibility(View.GONE);
+            if (!CameraUtil.isArcWelder())
+                mButtonFacing.setVisibility(View.GONE);
 
             // Only start counter if count down wasn't already started
             if (!mInterface.hasLengthLimit()) {
@@ -523,7 +525,8 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
 
         releaseRecorder();
         mButtonVideo.setImageResource(R.drawable.mcam_action_capture);
-        mButtonFacing.setVisibility(View.VISIBLE);
+        if (!CameraUtil.isArcWelder())
+            mButtonFacing.setVisibility(View.VISIBLE);
         if (mInterface.getRecordingStart() > -1 && getActivity() != null)
             mInterface.onShowPreview(mOutputUri, reachedZero);
 

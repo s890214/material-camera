@@ -81,6 +81,8 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
 
         mButtonVideo = (ImageButton) view.findViewById(R.id.video);
         mButtonFacing = (ImageButton) view.findViewById(R.id.facing);
+        if (CameraUtil.isArcWelder())
+            mButtonFacing.setVisibility(View.GONE);
         mRecordDuration = (TextView) view.findViewById(R.id.recordDuration);
         mButtonFacing.setImageResource(mInterface.getCurrentCameraPosition() == CAMERA_POSITION_BACK ?
                 R.drawable.mcam_camera_front : R.drawable.mcam_camera_rear);

@@ -327,7 +327,8 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             try {
                 // UI
                 mButtonVideo.setImageResource(R.drawable.mcam_action_stop);
-                mButtonFacing.setVisibility(View.GONE);
+                if (!CameraUtil.isArcWelder())
+                    mButtonFacing.setVisibility(View.GONE);
 
                 // Only start counter if count down wasn't already started
                 if (!mInterface.hasLengthLimit()) {
@@ -391,7 +392,8 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             mOutputUri = null;
 
         mButtonVideo.setImageResource(R.drawable.mcam_action_capture);
-        mButtonFacing.setVisibility(View.VISIBLE);
+        if (!CameraUtil.isArcWelder())
+            mButtonFacing.setVisibility(View.VISIBLE);
         if (mInterface.getRecordingStart() > -1 && getActivity() != null)
             mInterface.onShowPreview(mOutputUri, reachedZero);
 
