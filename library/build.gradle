@@ -12,6 +12,10 @@ android {
         targetSdkVersion 23
         versionCode 4
         versionName "0.2.0"
+        generatedDensities = []
+    }
+    aaptOptions {
+        additionalParameters "--no-version-vectors"
     }
     lintOptions {
         abortOnError false

@@ -35,8 +35,8 @@
             android:background="@drawable/mcam_circle_selector"
             android:padding="@dimen/mcam_content_inset_less"
             android:scaleType="fitXY"
-            android:src="@drawable/mcam_camera_front"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription"
+            tools:src="@drawable/mcam_camera_front" />
 
         <ImageButton
             android:id="@+id/video"
@@ -46,8 +46,8 @@
             android:background="@drawable/mcam_circle_selector"
             android:padding="@dimen/mcam_content_inset_less"
             android:scaleType="fitXY"
-            android:src="@drawable/mcam_action_capture"
-            tools:ignore="ContentDescription" />
+            tools:ignore="ContentDescription"
+            tools:src="@drawable/mcam_action_capture" />
 
         <TextView
             android:id="@+id/recordDuration"

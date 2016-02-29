@@ -115,7 +115,7 @@
                 android:enabled="false"
                 android:padding="@dimen/mcam_content_inset_less"
                 android:scaleType="fitXY"
-                android:src="@drawable/mcam_action_play"
+                tools:src="@drawable/mcam_action_play"
                 tools:ignore="ContentDescription" />
 
             <Button

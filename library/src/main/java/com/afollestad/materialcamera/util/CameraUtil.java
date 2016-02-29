@@ -31,7 +31,7 @@ public class CameraUtil {
     }
 
     public static String getDurationString(long durationMs) {
-        return String.format("%02d:%02d",
+        return String.format(Locale.getDefault(), "%02d:%02d",
                 TimeUnit.MILLISECONDS.toMinutes(durationMs),
                 TimeUnit.MILLISECONDS.toSeconds(durationMs) -
                         TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(durationMs))
@@ -55,7 +55,7 @@ public class CameraUtil {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public static boolean hasCamera2(Context context) {
-        if(context != null) return false; // TODO temp line
+        if (context != null) return false; // TODO temp line
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return false;
         try {
             CameraManager manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);

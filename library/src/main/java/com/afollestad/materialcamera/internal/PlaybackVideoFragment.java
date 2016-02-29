@@ -171,9 +171,9 @@ public class PlaybackVideoFragment extends Fragment implements
         mStreamer.setVideoURI(Uri.parse(mOutputUri));
 
         if (mStreamer.isPlaying())
-            mPlayPause.setImageResource(R.drawable.mcam_action_pause);
+            mPlayPause.setImageDrawable(VC.get(this, R.drawable.mcam_action_pause));
         else
-            mPlayPause.setImageResource(R.drawable.mcam_action_play);
+            mPlayPause.setImageDrawable(VC.get(this, R.drawable.mcam_action_play));
     }
 
     private void startCountdownTimer() {
@@ -244,14 +244,14 @@ public class PlaybackVideoFragment extends Fragment implements
         } else if (v.getId() == R.id.playPause) {
             if (mStreamer != null) {
                 if (mStreamer.isPlaying()) {
-                    ((ImageButton) v).setImageResource(R.drawable.mcam_action_play);
+                    ((ImageButton) v).setImageDrawable(VC.get(this, R.drawable.mcam_action_play));
                     mStreamer.pause();
                     mStreamer.stopProgressPoll();
                 } else {
                     if (mFinishedPlaying)
                         mStreamer.seekTo(0);
                     mFinishedPlaying = false;
-                    ((ImageButton) v).setImageResource(R.drawable.mcam_action_pause);
+                    ((ImageButton) v).setImageDrawable(VC.get(this, R.drawable.mcam_action_pause));
                     mStreamer.start();
                     mStreamer.startProgressPoll(PlaybackVideoFragment.this);
                 }
@@ -329,7 +329,7 @@ public class PlaybackVideoFragment extends Fragment implements
     public void onCompletion(MediaPlayer mp) {
         mFinishedPlaying = true;
         if (mPlayPause != null)
-            mPlayPause.setImageResource(R.drawable.mcam_action_play);
+            mPlayPause.setImageDrawable(VC.get(this, R.drawable.mcam_action_play));
         if (mPositionSeek != null) {
             mPositionSeek.setProgress((int) mStreamer.getDuration());
             mPosition.setText(CameraUtil.getDurationString(mStreamer.getDuration()));

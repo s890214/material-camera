@@ -157,10 +157,10 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
                 if (getArguments().getBoolean(CameraIntentKey.DEFAULT_TO_FRONT_FACING, false)) {
                     // Check front facing first
                     if (mInterface.getFrontCamera() != null && (Integer) mInterface.getFrontCamera() != -1) {
-                        mButtonFacing.setImageResource(R.drawable.mcam_camera_rear);
+                        mButtonFacing.setImageDrawable(VC.get(this, R.drawable.mcam_camera_rear));
                         mInterface.setCameraPosition(CAMERA_POSITION_FRONT);
                     } else {
-                        mButtonFacing.setImageResource(R.drawable.mcam_camera_front);
+                        mButtonFacing.setImageDrawable(VC.get(this, R.drawable.mcam_camera_front));
                         if (mInterface.getBackCamera() != null && (Integer) mInterface.getBackCamera() != -1)
                             mInterface.setCameraPosition(CAMERA_POSITION_BACK);
                         else mInterface.setCameraPosition(CAMERA_POSITION_UNKNOWN);
@@ -168,10 +168,10 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
                 } else {
                     // Check back facing first
                     if (mInterface.getBackCamera() != null && (Integer) mInterface.getBackCamera() != -1) {
-                        mButtonFacing.setImageResource(R.drawable.mcam_camera_front);
+                        mButtonFacing.setImageDrawable(VC.get(this, R.drawable.mcam_camera_front));
                         mInterface.setCameraPosition(CAMERA_POSITION_BACK);
                     } else {
-                        mButtonFacing.setImageResource(R.drawable.mcam_camera_rear);
+                        mButtonFacing.setImageDrawable(VC.get(this, R.drawable.mcam_camera_rear));
                         if (mInterface.getFrontCamera() != null && (Integer) mInterface.getFrontCamera() != -1)
                             mInterface.setCameraPosition(CAMERA_POSITION_FRONT);
                         else mInterface.setCameraPosition(CAMERA_POSITION_UNKNOWN);
@@ -326,7 +326,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
         if (prepareMediaRecorder()) {
             try {
                 // UI
-                mButtonVideo.setImageResource(R.drawable.mcam_action_stop);
+                mButtonVideo.setImageDrawable(VC.get(this, R.drawable.mcam_action_stop));
                 if (!CameraUtil.isArcWelder())
                     mButtonFacing.setVisibility(View.GONE);
 
@@ -391,7 +391,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
         if (!mInterface.didRecord())
             mOutputUri = null;
 
-        mButtonVideo.setImageResource(R.drawable.mcam_action_capture);
+        mButtonVideo.setImageDrawable(VC.get(this, R.drawable.mcam_action_capture));
         if (!CameraUtil.isArcWelder())
             mButtonFacing.setVisibility(View.VISIBLE);
         if (mInterface.getRecordingStart() > -1 && getActivity() != null)
