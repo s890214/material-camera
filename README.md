@@ -46,7 +46,7 @@ Add this in your module's `build.gradle` file:
 ```gradle
 dependencies {
     ...
-    compile('com.github.afollestad:material-camera:d2229233c4@aar') {
+    compile('com.github.afollestad:material-camera:bda3fd2ce1@aar') {
         transitive = true
     }
 }
