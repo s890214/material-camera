@@ -156,6 +156,9 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
                 return;
             } else if (frag instanceof BaseCameraFragment) {
                 ((BaseCameraFragment) frag).cleanup();
+            } else if (frag instanceof BaseGalleryFragment && allowRetry()) {
+                onRetry(((CameraUriInterface) frag).getOutputUri());
+                return;
             }
         }
         finish();
@@ -302,6 +305,15 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
                     .replace(R.id.container, frag)
                     .commit();
         }
+    }
+
+    @Override
+    public void onShowStillshot(String outputUri) {
+        Fragment frag = StillshotPreviewFragment.newInstance(outputUri, allowRetry(),
+                getIntent().getIntExtra(CameraIntentKey.PRIMARY_COLOR, 0));
+        getFragmentManager().beginTransaction()
+                .replace(R.id.container, frag)
+                .commit();
     }
 
     @Override
@@ -463,5 +475,16 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     @Override
     public int labelUseVideo() {
         return getIntent().getIntExtra(CameraIntentKey.LABEL_USE_VIDEO, R.string.mcam_use_video);
+    }
+
+    @DrawableRes
+    @Override
+    public int iconStillshot() {
+        return getIntent().getIntExtra(CameraIntentKey.ICON_STILL_SHOT, R.drawable.mcam_action_stillshot);
+    }
+
+    @Override
+    public boolean useStillshot() {
+        return getIntent().getBooleanExtra(CameraIntentKey.STILL_SHOT, false);
     }
 }

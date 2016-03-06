@@ -13,6 +13,8 @@ public interface BaseCaptureInterface {
 
     void onShowPreview(@Nullable String outputUri, boolean countdownIsAtZero);
 
+    void onShowStillshot(String outputUri);
+
     void setRecordingStart(long start);
 
     void setRecordingEnd(long end);
@@ -98,4 +100,13 @@ public interface BaseCaptureInterface {
 
     @StringRes
     int labelUseVideo();
+
+    @DrawableRes
+    int iconStillshot();
+
+    /**
+     *
+     * @return true if we only want to take photographs instead of video capture
+     */
+    boolean useStillshot();
 }

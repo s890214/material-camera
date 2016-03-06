@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         setContentView(R.layout.activity_main);
         findViewById(R.id.launchCamera).setOnClickListener(this);
+        findViewById(R.id.launchCameraStillshot).setOnClickListener(this);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             // Request permission to save videos in external storage
@@ -49,12 +50,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             saveDir.mkdirs();
         }
 
-        new MaterialCamera(this)
+        MaterialCamera materialCamera = new MaterialCamera(this)
                 .saveDir(saveDir)
                 .showPortraitWarning(true)
                 .allowRetry(true)
                 .defaultToFrontFacing(true)
-                .start(CAMERA_RQ);
+        ;
+
+        if (view.getId() == R.id.launchCameraStillshot)
+            materialCamera.stillShot(); // launches the Camera in stillshot mode
+
+        materialCamera.start(CAMERA_RQ);
     }
 
     private String readableFileSize(long size) {
