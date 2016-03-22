@@ -37,6 +37,7 @@ import java.lang.annotation.RetentionPolicy;
 public abstract class BaseCaptureActivity extends AppCompatActivity implements BaseCaptureInterface {
 
     private int mCameraPosition = CAMERA_POSITION_UNKNOWN;
+    private int mFlashMode = FLASH_MODE_AUTO;
     private boolean mRequestingPermission;
     private long mRecordingStart = -1;
     private long mRecordingEnd = -1;
@@ -56,6 +57,15 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     public static final int CAMERA_POSITION_FRONT = 1;
     public static final int CAMERA_POSITION_BACK = 2;
 
+    @IntDef({FLASH_MODE_OFF, FLASH_MODE_ALWAYS_ON, FLASH_MODE_AUTO})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface FlashMode {
+    }
+
+    public static final int FLASH_MODE_OFF = 0;
+    public static final int FLASH_MODE_ALWAYS_ON = 1;
+    public static final int FLASH_MODE_AUTO = 2;
+
     @Override
     protected final void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -73,6 +83,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
             if (mBackCameraId != null)
                 outState.putInt("back_camera_id_int", (Integer) mBackCameraId);
         }
+        outState.putInt("flash_mode", mFlashMode);
     }
 
     @Override
@@ -116,6 +127,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
                 mFrontCameraId = savedInstanceState.getInt("front_camera_id_int");
                 mBackCameraId = savedInstanceState.getInt("back_camera_id_int");
             }
+            mFlashMode = savedInstanceState.getInt("flash_mode");
         }
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
@@ -379,6 +391,26 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     }
 
     @Override
+    public int getFlashMode() {
+        return mFlashMode;
+    }
+
+    @Override
+    public void toggleFlashMode() {
+        switch (mFlashMode) {
+            case FLASH_MODE_AUTO:
+                mFlashMode = FLASH_MODE_ALWAYS_ON;
+                break;
+            case FLASH_MODE_ALWAYS_ON:
+                mFlashMode = FLASH_MODE_OFF;
+                break;
+            case FLASH_MODE_OFF:
+            default:
+                mFlashMode = FLASH_MODE_AUTO;
+        }
+    }
+
+    @Override
     public boolean restartTimerOnRetry() {
         return getIntent().getBooleanExtra(CameraIntentKey.RESTART_TIMER_ON_RETRY, false);
     }
@@ -487,4 +519,23 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     public boolean useStillshot() {
         return getIntent().getBooleanExtra(CameraIntentKey.STILL_SHOT, false);
     }
+
+    @DrawableRes
+    @Override
+    public int iconFlashAuto() {
+        return getIntent().getIntExtra(CameraIntentKey.ICON_FLASH_AUTO, R.drawable.mcam_action_flash_auto);
+    }
+
+    @DrawableRes
+    @Override
+    public int iconFlashOn() {
+        return getIntent().getIntExtra(CameraIntentKey.ICON_FLASH_ON, R.drawable.mcam_action_flash);
+    }
+
+    @DrawableRes
+    @Override
+    public int iconFlashOff() {
+        return getIntent().getIntExtra(CameraIntentKey.ICON_FLASH_OFF, R.drawable.mcam_action_flash_off);
+    }
+
 }
