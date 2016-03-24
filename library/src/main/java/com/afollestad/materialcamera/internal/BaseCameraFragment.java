@@ -177,6 +177,10 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
         stopCounter();
     }
 
+    public abstract void takeStillshot();
+
+    public abstract void onPreferencesUpdated();
+
     @Override
     public void onPause() {
         super.onPause();
@@ -252,11 +256,6 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
 
-    public void takeStillshot() {
-
-    }
-
-
     @Override
     public final void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
@@ -313,6 +312,7 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
         } else if (id == R.id.flash) {
             mInterface.toggleFlashMode();
             setupFlashMode();
+            onPreferencesUpdated();
         }
     }
 
