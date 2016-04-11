@@ -141,12 +141,16 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
 
     public abstract void closeCamera();
 
-    @Override
-    public void onPause() {
-        super.onPause();
+    public void cleanup() {
         closeCamera();
         releaseRecorder();
         stopCounter();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        cleanup();
     }
 
     @Override

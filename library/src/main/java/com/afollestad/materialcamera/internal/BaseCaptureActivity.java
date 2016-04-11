@@ -147,9 +147,13 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     @Override
     public final void onBackPressed() {
         Fragment frag = getFragmentManager().findFragmentById(R.id.container);
-        if (frag != null && frag instanceof PlaybackVideoFragment && allowRetry()) {
-            onRetry(((CameraUriInterface) frag).getOutputUri());
-            return;
+        if (frag != null) {
+            if (frag instanceof PlaybackVideoFragment && allowRetry()) {
+                onRetry(((CameraUriInterface) frag).getOutputUri());
+                return;
+            } else if (frag instanceof BaseCameraFragment) {
+                ((BaseCameraFragment) frag).cleanup();
+            }
         }
         finish();
     }
