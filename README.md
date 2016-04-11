@@ -46,7 +46,7 @@ Add this in your module's `build.gradle` file:
 ```gradle
 dependencies {
     ...
-    compile('com.github.afollestad:material-camera:0.2.1@aar') {
+    compile('com.github.afollestad:material-camera:0.2.2@aar') {
         transitive = true
     }
 }
@@ -90,6 +90,12 @@ new MaterialCamera(this)                       // Constructor takes an Activity
     .showPortraitWarning(true)                 // Whether or not a warning is displayed if the user presses record in portrait orientation
     .defaultToFrontFacing(false)               // Whether or not the camera will initially show the front facing camera
     .retryExits(false)                         // If true, the 'Retry' button in the playback screen will exit the camera instead of going back to the recorder
+    .restartTimerOnRetry(false)                // If true, the countdown timer is reset to 0 when the user taps 'Retry' in playback
+    .continueTimerInPlayback(false)            // If true, the countdown timer will continue to go down during playback, rather than pausing.
+    .videoBitRate(1024000)                     // Sets a custom bit rate for video recording.
+    .videoFrameRate(30)                        // Sets a custom frame rate (FPS) for video recording.
+    .videoPreferredHeight(720)                 // Sets a preferred height for the recorded video output.
+    .videoPreferredAspect(4f / 3f)             // Sets a preferred aspect ratio for the recorded video output.
     .start(CAMERA_RQ);                         // Starts the camera activity, the result will be sent back to the current Activity
 ```
 
