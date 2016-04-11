@@ -42,6 +42,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
     private Camera mCamera;
     private Point mWindowSize;
     private int mDisplayOrientation;
+    private boolean mIsAutoFocusing;
 
     public static CameraFragment newInstance() {
         CameraFragment fragment = new CameraFragment();
@@ -113,15 +114,21 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.rootFrame) {
-            if (mCamera == null) return;
-            mCamera.cancelAutoFocus();
-            mCamera.autoFocus(new Camera.AutoFocusCallback() {
-                @Override
-                public void onAutoFocus(boolean success, Camera camera) {
-                    if (!success)
-                        Toast.makeText(getActivity(), "Unable to auto-focus!", Toast.LENGTH_SHORT).show();
-                }
-            });
+            if (mCamera == null || mIsAutoFocusing) return;
+            try {
+                mIsAutoFocusing = true;
+                mCamera.cancelAutoFocus();
+                mCamera.autoFocus(new Camera.AutoFocusCallback() {
+                    @Override
+                    public void onAutoFocus(boolean success, Camera camera) {
+                        mIsAutoFocusing = false;
+                        if (!success)
+                            Toast.makeText(getActivity(), "Unable to auto-focus!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
         } else {
             super.onClick(view);
         }
