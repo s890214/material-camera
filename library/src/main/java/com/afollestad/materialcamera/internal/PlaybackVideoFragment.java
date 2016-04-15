@@ -232,7 +232,7 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
                     mProgressHandler.stop();
                 } else {
                     if (mFinishedPlaying)
-                        mStreamer.seekTo(0);
+                        mStreamer.restart();
                     mFinishedPlaying = false;
                     ((ImageButton) v).setImageDrawable(VC.get(this, R.drawable.mcam_action_pause));
                     mStreamer.start();
