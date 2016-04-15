@@ -4,10 +4,10 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.IntRange;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,16 +20,18 @@ import com.afollestad.materialcamera.R;
 import com.afollestad.materialcamera.util.CameraUtil;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.internal.MDTintHelper;
-import com.devbrackets.android.exomedia.EMVideoView;
-import com.devbrackets.android.exomedia.event.EMMediaProgressEvent;
-import com.devbrackets.android.exomedia.util.EMEventBus;
+import com.devbrackets.android.exomedia.listener.OnBufferUpdateListener;
+import com.devbrackets.android.exomedia.listener.OnCompletionListener;
+import com.devbrackets.android.exomedia.listener.OnErrorListener;
+import com.devbrackets.android.exomedia.listener.OnPreparedListener;
+import com.devbrackets.android.exomedia.ui.widget.EMVideoView;
 
 /**
  * @author Aidan Follestad (afollestad)
  */
-public class PlaybackVideoFragment extends Fragment implements
-        CameraUriInterface, View.OnClickListener, EMEventBus,
-        MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
+public class PlaybackVideoFragment extends Fragment implements CameraUriInterface,
+        ProgressHandler.ProgressCallback, View.OnClickListener, OnPreparedListener, OnErrorListener,
+        OnCompletionListener, OnBufferUpdateListener {
 
     private TextView mPosition;
     private SeekBar mPositionSeek;
@@ -45,6 +47,8 @@ public class PlaybackVideoFragment extends Fragment implements
     private boolean mWasPlaying;
     private BaseCaptureInterface mInterface;
     private boolean mFinishedPlaying;
+
+    private ProgressHandler mProgressHandler;
 
     private Handler mCountdownHandler;
     private final Runnable mCountdownRunnable = new Runnable() {
@@ -93,6 +97,16 @@ public class PlaybackVideoFragment extends Fragment implements
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        mProgressHandler.dispose();
+        mStreamer.stopPlayback();
+        mStreamer.release();
+        mStreamer.reset();
+        mStreamer = null;
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -139,14 +153,14 @@ public class PlaybackVideoFragment extends Fragment implements
             public void onStartTrackingTouch(SeekBar seekBar) {
                 mWasPlaying = mStreamer.isPlaying();
                 mStreamer.pause();
-                mStreamer.stopProgressPoll();
+                mProgressHandler.stop();
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 if (mWasPlaying) {
                     mStreamer.start();
-                    mStreamer.startProgressPoll(PlaybackVideoFragment.this);
+                    mProgressHandler.start();
                 }
             }
         });
@@ -163,12 +177,13 @@ public class PlaybackVideoFragment extends Fragment implements
             mPlaybackContinueCountdownLabel.setVisibility(View.GONE);
         }
 
-        mStreamer.setDefaultControlsEnabled(false);
-        mStreamer.setBus(this);
+        mProgressHandler = new ProgressHandler(mStreamer, this);
+
         mStreamer.setOnPreparedListener(this);
         mStreamer.setOnErrorListener(this);
         mStreamer.setOnCompletionListener(this);
         mStreamer.setVideoURI(Uri.parse(mOutputUri));
+        mStreamer.setOnBufferUpdateListener(this);
 
         if (mStreamer.isPlaying())
             mPlayPause.setImageDrawable(VC.get(this, R.drawable.mcam_action_pause));
@@ -181,38 +196,6 @@ public class PlaybackVideoFragment extends Fragment implements
             mCountdownHandler = new Handler();
         else mCountdownHandler.removeCallbacks(mCountdownRunnable);
         mCountdownHandler.post(mCountdownRunnable);
-    }
-
-    @Override
-    public void post(Object event) {
-        if (event instanceof EMMediaProgressEvent) {
-            final EMMediaProgressEvent progress = (EMMediaProgressEvent) event;
-            if (progress.getBufferPercent() < 100) {
-                if (mPositionSeek != null)
-                    mPositionSeek.setSecondaryProgress(progress.getBufferPercent());
-                return;
-            }
-            if (mPositionSeek != null)
-                mPositionSeek.setSecondaryProgress(0);
-
-            try {
-                final int duration = (int) progress.getDuration();
-                int currentPosition = (int) progress.getPosition();
-                if (currentPosition > duration)
-                    currentPosition = duration;
-                if (mPosition != null)
-                    mPosition.setText(CameraUtil.getDurationString(currentPosition));
-                if (mPositionSeek != null)
-                    mPositionSeek.setProgress(currentPosition);
-                if (mDuration != null)
-                    mDuration.setText(String.format("-%s", CameraUtil.getDurationString(duration - currentPosition)));
-            } catch (Throwable t) {
-                if (mPosition != null)
-                    mPosition.setText(CameraUtil.getDurationString(0));
-                if (mPositionSeek != null)
-                    mPositionSeek.setProgress(mPositionSeek.getMax());
-            }
-        }
     }
 
     @Override
@@ -246,14 +229,14 @@ public class PlaybackVideoFragment extends Fragment implements
                 if (mStreamer.isPlaying()) {
                     ((ImageButton) v).setImageDrawable(VC.get(this, R.drawable.mcam_action_play));
                     mStreamer.pause();
-                    mStreamer.stopProgressPoll();
+                    mProgressHandler.stop();
                 } else {
                     if (mFinishedPlaying)
                         mStreamer.seekTo(0);
                     mFinishedPlaying = false;
                     ((ImageButton) v).setImageDrawable(VC.get(this, R.drawable.mcam_action_pause));
                     mStreamer.start();
-                    mStreamer.startProgressPoll(PlaybackVideoFragment.this);
+                    mProgressHandler.start();
                 }
             }
         } else if (v.getId() == R.id.retry) {
@@ -265,59 +248,13 @@ public class PlaybackVideoFragment extends Fragment implements
 
     private void useVideo() {
         if (mStreamer != null) {
-            mStreamer.stopProgressPoll();
             mStreamer.stopPlayback();
             mStreamer.release();
+            mStreamer.reset();
             mStreamer = null;
         }
         if (mInterface != null)
             mInterface.useVideo(mOutputUri);
-    }
-
-    @Override
-    public void onPrepared(MediaPlayer mp) {
-        final int durationMs = (int) mStreamer.getDuration();
-        mPositionSeek.setMax(durationMs);
-        mDuration.setText(String.format("-%s", CameraUtil.getDurationString(durationMs)));
-        mPlayPause.setEnabled(true);
-        mRetry.setEnabled(true);
-        mUseVideo.setEnabled(true);
-    }
-
-    @Override
-    public boolean onError(MediaPlayer mp, int what, int extra) {
-        if (what == -38) {
-            // Error code -38 happens on some Samsung devices
-            // Just ignore it
-            return false;
-        }
-        String errorMsg = "Preparation/playback error: ";
-        switch (what) {
-            case MediaPlayer.MEDIA_ERROR_IO:
-                errorMsg += "I/O error";
-                break;
-            case MediaPlayer.MEDIA_ERROR_MALFORMED:
-                errorMsg += "Malformed";
-                break;
-            case MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
-                errorMsg += "Not valid for progressive playback";
-                break;
-            case MediaPlayer.MEDIA_ERROR_SERVER_DIED:
-                errorMsg += "Server died";
-                break;
-            case MediaPlayer.MEDIA_ERROR_TIMED_OUT:
-                errorMsg += "Timed out";
-                break;
-            case MediaPlayer.MEDIA_ERROR_UNSUPPORTED:
-                errorMsg += "Unsupported";
-                break;
-        }
-        new MaterialDialog.Builder(getActivity())
-                .title("Playback Error")
-                .content(errorMsg)
-                .positiveText(android.R.string.ok)
-                .show();
-        return false;
     }
 
     @Override
@@ -326,13 +263,88 @@ public class PlaybackVideoFragment extends Fragment implements
     }
 
     @Override
-    public void onCompletion(MediaPlayer mp) {
+    public void onPrepared() {
+        final int durationMs = mStreamer.getDuration();
+        mPositionSeek.setMax(durationMs);
+        mDuration.setText(String.format("-%s", CameraUtil.getDurationString(durationMs)));
+        mPlayPause.setEnabled(true);
+        mRetry.setEnabled(true);
+        mUseVideo.setEnabled(true);
+    }
+
+    @Override
+    public boolean onError() {
+//        if (what == -38) {
+//            // Error code -38 happens on some Samsung devices
+//            // Just ignore it
+//            return false;
+//        }
+//        String errorMsg = "Preparation/playback error: ";
+//        switch (what) {
+//            case MediaPlayer.MEDIA_ERROR_IO:
+//                errorMsg += "I/O error";
+//                break;
+//            case MediaPlayer.MEDIA_ERROR_MALFORMED:
+//                errorMsg += "Malformed";
+//                break;
+//            case MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
+//                errorMsg += "Not valid for progressive playback";
+//                break;
+//            case MediaPlayer.MEDIA_ERROR_SERVER_DIED:
+//                errorMsg += "Server died";
+//                break;
+//            case MediaPlayer.MEDIA_ERROR_TIMED_OUT:
+//                errorMsg += "Timed out";
+//                break;
+//            case MediaPlayer.MEDIA_ERROR_UNSUPPORTED:
+//                errorMsg += "Unsupported";
+//                break;
+//        }
+        new MaterialDialog.Builder(getActivity())
+                .title("Playback Error")
+                .content("A playback error has occurred.")
+                .positiveText(android.R.string.ok)
+                .show();
+        return false;
+    }
+
+    @Override
+    public void onCompletion() {
         mFinishedPlaying = true;
         if (mPlayPause != null)
             mPlayPause.setImageDrawable(VC.get(this, R.drawable.mcam_action_play));
         if (mPositionSeek != null) {
-            mPositionSeek.setProgress((int) mStreamer.getDuration());
+            mPositionSeek.setProgress(mStreamer.getDuration());
             mPosition.setText(CameraUtil.getDurationString(mStreamer.getDuration()));
+        }
+    }
+
+    @Override
+    public void onProgressUpdate(int position, int duration) {
+        if (position == duration)
+            mFinishedPlaying = true;
+        try {
+            if (mPosition != null)
+                mPosition.setText(CameraUtil.getDurationString(position));
+            if (mPositionSeek != null)
+                mPositionSeek.setProgress(position);
+            if (mDuration != null)
+                mDuration.setText(String.format("-%s", CameraUtil.getDurationString(duration - position)));
+        } catch (Throwable t) {
+            if (mPosition != null)
+                mPosition.setText(CameraUtil.getDurationString(0));
+            if (mPositionSeek != null)
+                mPositionSeek.setProgress(mPositionSeek.getMax());
+        }
+    }
+
+    @Override
+    public void onBufferingUpdate(@IntRange(from = 0L, to = 100L) int percent) {
+        if (percent < 100) {
+            if (mPositionSeek != null)
+                mPositionSeek.setSecondaryProgress(percent);
+        } else {
+            mPositionSeek.setSecondaryProgress(0);
         }
     }
 }
