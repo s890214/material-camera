@@ -11,5 +11,6 @@
     <string name="mcam_error">Error</string>
     <string name="mcam_video_capture_unsupported">Your device does not support video capture.</string>
     <string name="mcam_no_audio_access">You haven\'t given access to your microphone; no audio will be recorded.</string>
+    <string name="mcam_file_size_limit_reached">You\'ve reached the maximum file size!</string>
 
 </resources>

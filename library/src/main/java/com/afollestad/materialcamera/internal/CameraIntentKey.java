@@ -23,4 +23,5 @@ public class CameraIntentKey {
     public static final String VIDEO_FRAME_RATE = "video_frame_rate";
     public static final String VIDEO_PREFERRED_HEIGHT = "video_preferred_height";
     public static final String VIDEO_PREFERRED_ASPECT = "video_preferred_aspect";
+    public static final String MAX_ALLOWED_FILE_SIZE = "max_allowed_file_size";
 }

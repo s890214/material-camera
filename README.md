@@ -96,6 +96,7 @@ new MaterialCamera(this)                       // Constructor takes an Activity
     .videoFrameRate(30)                        // Sets a custom frame rate (FPS) for video recording.
     .videoPreferredHeight(720)                 // Sets a preferred height for the recorded video output.
     .videoPreferredAspect(4f / 3f)             // Sets a preferred aspect ratio for the recorded video output.
+    .maxAllowedFileSize(1024 * 1024 * 5)       // Sets a max file size of 5MB, recording will stop if file reaches this limit. Keep in mind, the FAT file system has a file size limit of 4GB.
     .start(CAMERA_RQ);                         // Starts the camera activity, the result will be sent back to the current Activity
 ```
 

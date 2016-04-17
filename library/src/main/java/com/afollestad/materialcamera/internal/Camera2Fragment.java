@@ -463,6 +463,19 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
         mMediaRecorder.setOutputFile(uri.getPath());
         mMediaRecorder.setOrientationHint(mDisplayOrientation);
 
+        if (captureInterface.maxAllowedFileSize() > 0) {
+            mMediaRecorder.setMaxFileSize(captureInterface.maxAllowedFileSize());
+            mMediaRecorder.setOnInfoListener(new MediaRecorder.OnInfoListener() {
+                @Override
+                public void onInfo(MediaRecorder mediaRecorder, int what, int extra) {
+                    if (what == MediaRecorder.MEDIA_RECORDER_INFO_MAX_FILESIZE_REACHED) {
+                        Toast.makeText(getActivity(), R.string.mcam_file_size_limit_reached, Toast.LENGTH_SHORT).show();
+                        stopRecordingVideo(false);
+                    }
+                }
+            });
+        }
+
         try {
             mMediaRecorder.prepare();
             return true;

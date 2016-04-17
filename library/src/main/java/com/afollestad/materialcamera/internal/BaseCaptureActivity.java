@@ -392,4 +392,9 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     public int videoPreferredHeight() {
         return getIntent().getIntExtra(CameraIntentKey.VIDEO_PREFERRED_HEIGHT, 720);
     }
+
+    @Override
+    public long maxAllowedFileSize() {
+        return getIntent().getLongExtra(CameraIntentKey.MAX_ALLOWED_FILE_SIZE, -1);
+    }
 }

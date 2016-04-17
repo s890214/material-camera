@@ -46,6 +46,7 @@ public class MaterialCamera {
     private int mVideoFrameRate = -1;
     private int mVideoPreferredHeight = -1;
     private float mVideoPreferredAspect = -1f;
+    private long mMaxFileSize = -1l;
 
     public MaterialCamera(@NonNull Activity context) {
         mContext = context;
@@ -178,6 +179,11 @@ public class MaterialCamera {
         return this;
     }
 
+    public MaterialCamera maxAllowedFileSize(long size) {
+        mMaxFileSize = size;
+        return this;
+    }
+
     public Intent getIntent() {
         final Class<?> cls = !mForceCamera1 && CameraUtil.hasCamera2(mContext) ?
                 CaptureActivity2.class : CaptureActivity.class;
@@ -202,6 +208,9 @@ public class MaterialCamera {
             intent.putExtra(CameraIntentKey.VIDEO_PREFERRED_HEIGHT, mVideoPreferredHeight);
         if (mVideoPreferredAspect > 0f)
             intent.putExtra(CameraIntentKey.VIDEO_PREFERRED_ASPECT, mVideoPreferredAspect);
+        if (mMaxFileSize > -1)
+            intent.putExtra(CameraIntentKey.MAX_ALLOWED_FILE_SIZE, mMaxFileSize);
+
         return intent;
     }
 
