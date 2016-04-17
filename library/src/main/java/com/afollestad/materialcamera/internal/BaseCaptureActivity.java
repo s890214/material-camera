@@ -380,7 +380,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
 
     @Override
     public int videoFrameRate() {
-        return getIntent().getIntExtra(CameraIntentKey.VIDEO_FRAME_RATE, 30);
+        return getIntent().getIntExtra(CameraIntentKey.VIDEO_FRAME_RATE, 24);
     }
 
     @Override
