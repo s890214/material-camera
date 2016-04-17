@@ -100,11 +100,14 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
     @Override
     public void onPause() {
         super.onPause();
-        mProgressHandler.dispose();
-        mStreamer.stopPlayback();
-        mStreamer.release();
-        mStreamer.reset();
-        mStreamer = null;
+        if (mProgressHandler != null)
+            mProgressHandler.dispose();
+        if (mStreamer != null) {
+            mStreamer.stopPlayback();
+            mStreamer.release();
+            mStreamer.reset();
+            mStreamer = null;
+        }
     }
 
     @Nullable
