@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.os.Build;
 import android.support.annotation.ColorInt;
@@ -65,13 +64,6 @@ public class CameraUtil {
             } else {
                 for (final String str : idList) {
                     if (str == null || str.trim().isEmpty()) {
-                        notNull = false;
-                        break;
-                    }
-                    final CameraCharacteristics characteristics = manager.getCameraCharacteristics(str);
-                    //noinspection ConstantConditions
-                    final int supportLevel = characteristics.get(CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL);
-                    if (supportLevel == CameraCharacteristics.INFO_SUPPORTED_HARDWARE_LEVEL_LEGACY) {
                         notNull = false;
                         break;
                     }
