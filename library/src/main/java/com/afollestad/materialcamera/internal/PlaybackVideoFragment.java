@@ -144,6 +144,11 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
+                    if (mFinishedPlaying) {
+                        mFinishedPlaying = false;
+                        mStreamer.restart();
+                        mProgressHandler.start();
+                    }
                     if (progress < seekBar.getMax())
                         mFinishedPlaying = false;
                     else if (progress >= seekBar.getMax())
@@ -319,6 +324,11 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
         if (mPositionSeek != null) {
             mPositionSeek.setProgress(mStreamer.getDuration());
             mPosition.setText(CameraUtil.getDurationString(mStreamer.getDuration()));
+        }
+
+        if (mControlsFrame.getAlpha() < 1f) {
+            mControlsFrame.animate().cancel();
+            mControlsFrame.animate().alpha(1f).start();
         }
     }
 

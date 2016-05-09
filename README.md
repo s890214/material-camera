@@ -92,7 +92,8 @@ new MaterialCamera(this)                       // Constructor takes an Activity
     .retryExits(false)                         // If true, the 'Retry' button in the playback screen will exit the camera instead of going back to the recorder
     .restartTimerOnRetry(false)                // If true, the countdown timer is reset to 0 when the user taps 'Retry' in playback
     .continueTimerInPlayback(false)            // If true, the countdown timer will continue to go down during playback, rather than pausing.
-    .videoBitRate(1024000)                     // Sets a custom bit rate for video recording.
+    .videoEncodingBitRate(1024000)             // Sets a custom bit rate for video recording.
+    .audioEncodingBitRate(50000)               // Sets a custom bit rate for audio recording.
     .videoFrameRate(30)                        // Sets a custom frame rate (FPS) for video recording.
     .videoPreferredHeight(720)                 // Sets a preferred height for the recorded video output.
     .videoPreferredAspect(4f / 3f)             // Sets a preferred aspect ratio for the recorded video output.
