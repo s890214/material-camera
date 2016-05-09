@@ -1,5 +1,3 @@
-#### This document will soon be re-written for the upcoming release.
-
 # Material Camera
 
 Android's video recording APIs are very difficult to figure out, especially since a lot of manufacturers
