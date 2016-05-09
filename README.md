@@ -6,7 +6,7 @@ Android's video recording APIs are very difficult to figure out, especially sinc
 like to mount their camera sensors upside down or sideways. This library is a result of lots of research
 and experimentation to get video recording to work universally.
 
-![Art](https://raw.githubusercontent.com/afollestad/material-camera/master/art/deviceart.png)
+![Art](https://raw.githubusercontent.com/afollestad/material-camera/master/art/showcase.png)
 
 ---
 
@@ -16,7 +16,7 @@ Please report any issues you have, and include device information. Camera behavi
 across different Android manufacturers and versions, especially on pre-Lollipop devices. I've done quite
 a bit of testing, but it's possible I missed something.
 
-**Some of this documentation needs to be updated.**
+**Some of this documentation may be outdated, exploration of the library is encouraged.**
 
 ---
 
@@ -46,7 +46,7 @@ Add this in your module's `build.gradle` file:
 ```gradle
 dependencies {
     ...
-    compile('com.github.afollestad:material-camera:0.2.5@aar') {
+    compile('com.github.afollestad:material-camera:0.2.6@aar') {
         transitive = true
     }
 }
