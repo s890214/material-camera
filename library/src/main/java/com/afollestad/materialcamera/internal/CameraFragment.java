@@ -83,7 +83,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             return Collections.min(bigEnough, new CompareSizesByArea());
         } else {
             LOG(CameraFragment.class, "Couldn't find any suitable preview size");
-            return choices.get(0);
+            return aspectRatio;
         }
     }
 

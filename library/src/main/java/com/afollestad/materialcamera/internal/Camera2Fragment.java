@@ -176,7 +176,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
             return Collections.min(bigEnough, new CompareSizesByArea());
         } else {
             LOG(Camera2Fragment.class, "Couldn't find any suitable preview size");
-            return choices[0];
+            return aspectRatio;
         }
     }
 
