@@ -19,6 +19,7 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.CamcorderProfile;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
@@ -39,11 +40,11 @@ import com.afollestad.materialcamera.util.Degrees;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
@@ -143,13 +144,6 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
         return fragment;
     }
 
-    /**
-     * In this sample, we choose a video size with 3x4 aspect ratio. Also, we don't use sizes larger
-     * than 1080p, since MediaRecorder cannot handle such a high-resolution video.
-     *
-     * @param choices The list of available sizes
-     * @return The video size
-     */
     private static Size chooseVideoSize(BaseCaptureInterface ci, Size[] choices) {
         Size backupSize = null;
         for (Size size : choices) {
@@ -333,6 +327,11 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
     @Override
     public void closeCamera() {
         try {
+            if (mOutputUri != null) {
+                final File outputFile = new File(Uri.parse(mOutputUri).getPath());
+                if (outputFile.length() == 0)
+                    outputFile.delete();
+            }
             mCameraOpenCloseLock.acquire();
             if (null != mCameraDevice) {
                 mCameraDevice.close();
@@ -434,34 +433,35 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
         final BaseCaptureInterface captureInterface = (BaseCaptureInterface) activity;
         if (mMediaRecorder == null)
             mMediaRecorder = new MediaRecorder();
+
         boolean canUseAudio = true;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
             canUseAudio = activity.checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+
         if (canUseAudio) {
-            mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
         } else {
             Toast.makeText(getActivity(), R.string.mcam_no_audio_access, Toast.LENGTH_LONG).show();
         }
-
-        Log.d("Camera2Fragment", String.format(
-                "Bit rate: %d, Frame rate: %d, Resolution: %s",
-                captureInterface.videoBitRate(), captureInterface.videoFrameRate(),
-                String.format(Locale.getDefault(), "%dx%d", mVideoSize.getWidth(), mVideoSize.getHeight())));
-
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
-        mMediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        if (captureInterface.videoBitRate() > 0)
-            mMediaRecorder.setVideoEncodingBitRate(captureInterface.videoBitRate());
-        if (captureInterface.videoFrameRate() > 0)
-            mMediaRecorder.setVideoFrameRate(captureInterface.videoFrameRate());
+
+        final CamcorderProfile profile = CamcorderProfile.get(0, CamcorderProfile.QUALITY_HIGH);
+        mMediaRecorder.setOutputFormat(profile.fileFormat);
+        mMediaRecorder.setVideoFrameRate(mInterface.videoFrameRate(profile.videoFrameRate));
         mMediaRecorder.setVideoSize(mVideoSize.getWidth(), mVideoSize.getHeight());
-        mMediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-        if (canUseAudio)
-            mMediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+        mMediaRecorder.setVideoEncodingBitRate(mInterface.videoEncodingBitRate(profile.videoBitRate));
+        mMediaRecorder.setVideoEncoder(profile.videoCodec);
+
+        if (canUseAudio) {
+            mMediaRecorder.setAudioEncodingBitRate(mInterface.audioEncodingBitRate(profile.audioBitRate));
+            mMediaRecorder.setAudioChannels(profile.audioChannels);
+            mMediaRecorder.setAudioSamplingRate(profile.audioSampleRate);
+            mMediaRecorder.setAudioEncoder(profile.audioCodec);
+        }
+
         Uri uri = Uri.fromFile(getOutputMediaFile());
         mOutputUri = uri.toString();
         mMediaRecorder.setOutputFile(uri.getPath());
-        mMediaRecorder.setOrientationHint(mDisplayOrientation);
 
         if (captureInterface.maxAllowedFileSize() > 0) {
             mMediaRecorder.setMaxFileSize(captureInterface.maxAllowedFileSize());
@@ -475,6 +475,8 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
                 }
             });
         }
+
+        mMediaRecorder.setOrientationHint(mDisplayOrientation);
 
         try {
             mMediaRecorder.prepare();

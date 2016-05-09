@@ -56,9 +56,11 @@ public interface BaseCaptureInterface {
 
     boolean continueTimerInPlayback();
 
-    int videoBitRate();
+    int videoEncodingBitRate(int defaultVal);
 
-    int videoFrameRate();
+    int audioEncodingBitRate(int defaultVal);
+
+    int videoFrameRate(int defaultVal);
 
     int videoPreferredHeight();
 

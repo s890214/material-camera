@@ -42,11 +42,12 @@ public class MaterialCamera {
     private boolean mContinueTimerInPlayback = true;
     private boolean mForceCamera1 = false;
 
-    private int mVideoBitRate = -1;
+    private int mVideoEncodingBitRate = -1;
+    private int mAudioEncodingBitRate = -1;
     private int mVideoFrameRate = -1;
     private int mVideoPreferredHeight = -1;
     private float mVideoPreferredAspect = -1f;
-    private long mMaxFileSize = -1l;
+    private long mMaxFileSize = -1;
 
     public MaterialCamera(@NonNull Activity context) {
         mContext = context;
@@ -159,8 +160,23 @@ public class MaterialCamera {
         return this;
     }
 
+    /**
+     * @param rate
+     * @return
+     * @deprecated Renamed to videoEncodingBitRate(int).
+     */
+    @Deprecated
     public MaterialCamera videoBitRate(@IntRange(from = 1, to = Integer.MAX_VALUE) int rate) {
-        mVideoBitRate = rate;
+        return videoEncodingBitRate(rate);
+    }
+
+    public MaterialCamera videoEncodingBitRate(@IntRange(from = 1, to = Integer.MAX_VALUE) int rate) {
+        mVideoEncodingBitRate = rate;
+        return this;
+    }
+
+    public MaterialCamera audioEncodingBitRate(@IntRange(from = 1, to = Integer.MAX_VALUE) int rate) {
+        mAudioEncodingBitRate = rate;
         return this;
     }
 
@@ -200,8 +216,10 @@ public class MaterialCamera {
                 .putExtra(CameraIntentKey.RESTART_TIMER_ON_RETRY, mRestartTimerOnRetry)
                 .putExtra(CameraIntentKey.CONTINUE_TIMER_IN_PLAYBACK, mContinueTimerInPlayback);
 
-        if (mVideoBitRate > 0)
-            intent.putExtra(CameraIntentKey.VIDEO_BIT_RATE, mVideoBitRate);
+        if (mVideoEncodingBitRate > 0)
+            intent.putExtra(CameraIntentKey.VIDEO_BIT_RATE, mVideoEncodingBitRate);
+        if (mAudioEncodingBitRate > 0)
+            intent.putExtra(CameraIntentKey.AUDIO_ENCODING_BIT_RATE, mAudioEncodingBitRate);
         if (mVideoFrameRate > 0)
             intent.putExtra(CameraIntentKey.VIDEO_FRAME_RATE, mVideoFrameRate);
         if (mVideoPreferredHeight > 0)

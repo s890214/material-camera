@@ -1,7 +1,9 @@
 package com.afollestad.materialcamera.internal;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
@@ -22,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 
 import static com.afollestad.materialcamera.internal.BaseCaptureActivity.CAMERA_POSITION_BACK;
 import static com.afollestad.materialcamera.internal.BaseCaptureActivity.CAMERA_POSITION_FRONT;
@@ -265,10 +266,6 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
     }
 
     private boolean prepareMediaRecorder() {
-        return prepareMediaRecorder(CamcorderProfile.QUALITY_480P);
-    }
-
-    private boolean prepareMediaRecorder(int forceQuality) {
         try {
             final Activity activity = getActivity();
             if (null == activity) return false;
@@ -280,19 +277,34 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             mCamera.unlock();
             mMediaRecorder.setCamera(mCamera);
 
-            Log.d("Camera1Fragment", String.format(
-                    "Bit rate: %d, Frame rate: %d, Resolution: %s",
-                    captureInterface.videoBitRate(), captureInterface.videoFrameRate(),
-                    String.format(Locale.getDefault(), "%dx%d", mVideoSize.width, mVideoSize.height)));
+            boolean canUseAudio = true;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                canUseAudio = activity.checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
 
-            mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
+            if (canUseAudio) {
+                mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
+            } else {
+                Toast.makeText(getActivity(), R.string.mcam_no_audio_access, Toast.LENGTH_LONG).show();
+            }
             mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
-            mMediaRecorder.setProfile(CamcorderProfile.get(getCurrentCameraId(), forceQuality));
+
+            final CamcorderProfile profile = CamcorderProfile.get(getCurrentCameraId(), CamcorderProfile.QUALITY_HIGH);
+            mMediaRecorder.setOutputFormat(profile.fileFormat);
+            mMediaRecorder.setVideoFrameRate(mInterface.videoFrameRate(profile.videoFrameRate));
             mMediaRecorder.setVideoSize(mVideoSize.width, mVideoSize.height);
-            if (captureInterface.videoFrameRate() > 0)
-                mMediaRecorder.setVideoFrameRate(captureInterface.videoFrameRate());
-            if (captureInterface.videoBitRate() > 0)
-                mMediaRecorder.setVideoEncodingBitRate(captureInterface.videoBitRate());
+            mMediaRecorder.setVideoEncodingBitRate(mInterface.videoEncodingBitRate(profile.videoBitRate));
+            mMediaRecorder.setVideoEncoder(profile.videoCodec);
+
+            if (canUseAudio) {
+                mMediaRecorder.setAudioEncodingBitRate(mInterface.audioEncodingBitRate(profile.audioBitRate));
+                mMediaRecorder.setAudioChannels(profile.audioChannels);
+                mMediaRecorder.setAudioSamplingRate(profile.audioSampleRate);
+                mMediaRecorder.setAudioEncoder(profile.audioCodec);
+            }
+
+            Uri uri = Uri.fromFile(getOutputMediaFile());
+            mOutputUri = uri.toString();
+            mMediaRecorder.setOutputFile(uri.getPath());
 
             if (captureInterface.maxAllowedFileSize() > 0) {
                 mMediaRecorder.setMaxFileSize(captureInterface.maxAllowedFileSize());
@@ -306,10 +318,6 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
                     }
                 });
             }
-
-            Uri uri = Uri.fromFile(getOutputMediaFile());
-            mOutputUri = uri.toString();
-            mMediaRecorder.setOutputFile(uri.getPath());
 
             mMediaRecorder.setOrientationHint(mDisplayOrientation);
             mMediaRecorder.setPreviewDisplay(mPreviewView.getHolder().getSurface());
@@ -328,13 +336,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
                 throwError(new Exception("Failed to re-lock camera: " + e.getMessage(), e));
                 return false;
             }
-            if (forceQuality == CamcorderProfile.QUALITY_480P)
-                return prepareMediaRecorder(CamcorderProfile.QUALITY_720P);
-            else if (forceQuality == CamcorderProfile.QUALITY_720P)
-                return prepareMediaRecorder(CamcorderProfile.QUALITY_LOW);
-            else if (forceQuality == CamcorderProfile.QUALITY_LOW) {
-                return prepareMediaRecorder(CamcorderProfile.QUALITY_1080P);
-            }
+            t.printStackTrace();
             throwError(new Exception("Failed to begin recording: " + t.getMessage(), t));
             return false;
         }
