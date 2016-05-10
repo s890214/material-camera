@@ -20,22 +20,12 @@ a bit of testing, but it's possible I missed something.
 
 # Gradle Dependency
 
-[![Release](https://jitpack.io/v/afollestad/material-camera.svg)](https://jitpack.io/#afollestad/material-camera)
+[ ![jCenter](https://api.bintray.com/packages/drummer-aidan/maven/material-camera/images/download.svg) ](https://bintray.com/drummer-aidan/maven/material-camera/_latestVersion)
 [![Build Status](https://travis-ci.org/afollestad/material-camera.svg)](https://travis-ci.org/afollestad/material-camera)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg?style=flat-square)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
-### Repository
-
-Add this in your root `build.gradle` file (**not** your module `build.gradle` file):
-
-```gradle
-allprojects {
-	repositories {
-		...
-		maven { url "https://jitpack.io" }
-	}
-}
-```
+The Gradle dependency is available via [jCenter](https://bintray.com/drummer-aidan/maven/material-camera/view).
+jCenter is the default Maven repository used by Android Studio.
 
 ### Dependency
 
@@ -43,8 +33,9 @@ Add this in your module's `build.gradle` file:
 
 ```gradle
 dependencies {
-    ...
-    compile('com.github.afollestad:material-camera:0.2.6@aar') {
+    // ... other dependencies
+
+    compile('com.afollestad:material-camera:0.2.6@aar') {
         transitive = true
     }
 }
