@@ -3,7 +3,7 @@ package com.afollestad.materialcamera.internal;
 import android.os.Handler;
 
 import com.devbrackets.android.exomedia.EMAudioPlayer;
-import com.devbrackets.android.exomedia.ui.widget.EMVideoView;
+import com.devbrackets.android.exomedia.EMVideoView;
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -11,7 +11,7 @@ import com.devbrackets.android.exomedia.ui.widget.EMVideoView;
 public final class ProgressHandler {
 
     public interface ProgressCallback {
-        void onProgressUpdate(int position, int duration);
+        void onProgressUpdate(long position, long duration);
     }
 
     private final static int UPDATE_INTERVAL = 100;
@@ -20,8 +20,8 @@ public final class ProgressHandler {
     private Runnable mUpdateRunnable = new Runnable() {
         @Override
         public void run() {
-            int position = 0;
-            int duration = 0;
+            long position = 0;
+            long duration = 0;
 
             if (mVideoView != null) {
                 position = mVideoView.getCurrentPosition();

@@ -4,10 +4,10 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.IntRange;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,18 +20,14 @@ import com.afollestad.materialcamera.R;
 import com.afollestad.materialcamera.util.CameraUtil;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.internal.MDTintHelper;
-import com.devbrackets.android.exomedia.listener.OnBufferUpdateListener;
-import com.devbrackets.android.exomedia.listener.OnCompletionListener;
-import com.devbrackets.android.exomedia.listener.OnErrorListener;
-import com.devbrackets.android.exomedia.listener.OnPreparedListener;
-import com.devbrackets.android.exomedia.ui.widget.EMVideoView;
+import com.devbrackets.android.exomedia.EMVideoView;
 
 /**
  * @author Aidan Follestad (afollestad)
  */
 public class PlaybackVideoFragment extends Fragment implements CameraUriInterface,
-        ProgressHandler.ProgressCallback, View.OnClickListener, OnPreparedListener, OnErrorListener,
-        OnCompletionListener, OnBufferUpdateListener {
+        ProgressHandler.ProgressCallback, View.OnClickListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
+        MediaPlayer.OnCompletionListener {
 
     private TextView mPosition;
     private SeekBar mPositionSeek;
@@ -47,6 +43,7 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
     private boolean mWasPlaying;
     private BaseCaptureInterface mInterface;
     private boolean mFinishedPlaying;
+    private long mResumePosition;
 
     private ProgressHandler mProgressHandler;
 
@@ -146,8 +143,12 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
                 if (fromUser) {
                     if (mFinishedPlaying) {
                         mFinishedPlaying = false;
-                        mStreamer.restart();
-                        mProgressHandler.start();
+                        mStreamer.stopPlayback();
+                        mStreamer.reset();
+                        mStreamer.setOnPreparedListener(PlaybackVideoFragment.this);
+                        mStreamer.setVideoURI(Uri.parse(mOutputUri));
+                        mResumePosition = progress;
+                        return;
                     }
                     if (progress < seekBar.getMax())
                         mFinishedPlaying = false;
@@ -191,7 +192,6 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
         mStreamer.setOnErrorListener(this);
         mStreamer.setOnCompletionListener(this);
         mStreamer.setVideoURI(Uri.parse(mOutputUri));
-        mStreamer.setOnBufferUpdateListener(this);
 
         if (mStreamer.isPlaying())
             mPlayPause.setImageDrawable(VC.get(this, R.drawable.mcam_action_pause));
@@ -239,8 +239,16 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
                     mStreamer.pause();
                     mProgressHandler.stop();
                 } else {
-                    if (mFinishedPlaying)
-                        mStreamer.restart();
+                    if (mFinishedPlaying) {
+                        mFinishedPlaying = false;
+                        mStreamer.stopPlayback();
+                        mStreamer.reset();
+                        mStreamer.setOnPreparedListener(PlaybackVideoFragment.this);
+                        mStreamer.setVideoURI(Uri.parse(mOutputUri));
+                        mResumePosition = 0;
+                        return;
+                    }
+                    mResumePosition = 0;
                     mFinishedPlaying = false;
                     ((ImageButton) v).setImageDrawable(VC.get(this, R.drawable.mcam_action_pause));
                     mStreamer.start();
@@ -271,58 +279,65 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
     }
 
     @Override
-    public void onPrepared() {
-        final int durationMs = mStreamer.getDuration();
-        mPositionSeek.setMax(durationMs);
-        mDuration.setText(String.format("-%s", CameraUtil.getDurationString(durationMs)));
+    public void onPrepared(MediaPlayer mediaPlayer) {
+        final long durationMs = mStreamer.getDuration();
+        mPositionSeek.setProgress((int) mResumePosition);
+        mPositionSeek.setMax((int) durationMs);
+        mDuration.setText(String.format("-%s", CameraUtil.getDurationString(durationMs - mResumePosition)));
         mPlayPause.setEnabled(true);
         mRetry.setEnabled(true);
         mUseVideo.setEnabled(true);
+        if (mResumePosition > 0)
+            mStreamer.seekTo((int) mResumePosition);
+        mResumePosition = 0;
+        mStreamer.start();
+        mPlayPause.setImageDrawable(VC.get(this, R.drawable.mcam_action_pause));
+        mProgressHandler.start();
     }
 
     @Override
-    public boolean onError() {
-//        if (what == -38) {
-//            // Error code -38 happens on some Samsung devices
-//            // Just ignore it
-//            return false;
-//        }
-//        String errorMsg = "Preparation/playback error: ";
-//        switch (what) {
-//            case MediaPlayer.MEDIA_ERROR_IO:
-//                errorMsg += "I/O error";
-//                break;
-//            case MediaPlayer.MEDIA_ERROR_MALFORMED:
-//                errorMsg += "Malformed";
-//                break;
-//            case MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
-//                errorMsg += "Not valid for progressive playback";
-//                break;
-//            case MediaPlayer.MEDIA_ERROR_SERVER_DIED:
-//                errorMsg += "Server died";
-//                break;
-//            case MediaPlayer.MEDIA_ERROR_TIMED_OUT:
-//                errorMsg += "Timed out";
-//                break;
-//            case MediaPlayer.MEDIA_ERROR_UNSUPPORTED:
-//                errorMsg += "Unsupported";
-//                break;
-//        }
+    public boolean onError(MediaPlayer mediaPlayer, int what, int extra) {
+        if (what == -38) {
+            // Error code -38 happens on some Samsung devices
+            // Just ignore it
+            return false;
+        }
+        String errorMsg = "Preparation/playback error: ";
+        switch (what) {
+            case MediaPlayer.MEDIA_ERROR_IO:
+                errorMsg += "I/O error";
+                break;
+            case MediaPlayer.MEDIA_ERROR_MALFORMED:
+                errorMsg += "Malformed";
+                break;
+            case MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
+                errorMsg += "Not valid for progressive playback";
+                break;
+            case MediaPlayer.MEDIA_ERROR_SERVER_DIED:
+                errorMsg += "Server died";
+                break;
+            case MediaPlayer.MEDIA_ERROR_TIMED_OUT:
+                errorMsg += "Timed out";
+                break;
+            case MediaPlayer.MEDIA_ERROR_UNSUPPORTED:
+                errorMsg += "Unsupported";
+                break;
+        }
         new MaterialDialog.Builder(getActivity())
                 .title("Playback Error")
-                .content("A playback error has occurred.")
+                .content("A playback error has occurred: " + errorMsg)
                 .positiveText(android.R.string.ok)
                 .show();
         return false;
     }
 
     @Override
-    public void onCompletion() {
+    public void onCompletion(MediaPlayer mediaPlayer) {
         mFinishedPlaying = true;
         if (mPlayPause != null)
             mPlayPause.setImageDrawable(VC.get(this, R.drawable.mcam_action_play));
         if (mPositionSeek != null) {
-            mPositionSeek.setProgress(mStreamer.getDuration());
+            mPositionSeek.setProgress((int) mStreamer.getDuration());
             mPosition.setText(CameraUtil.getDurationString(mStreamer.getDuration()));
         }
 
@@ -333,14 +348,14 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
     }
 
     @Override
-    public void onProgressUpdate(int position, int duration) {
+    public void onProgressUpdate(long position, long duration) {
         if (position == duration)
             mFinishedPlaying = true;
         try {
             if (mPosition != null)
                 mPosition.setText(CameraUtil.getDurationString(position));
             if (mPositionSeek != null)
-                mPositionSeek.setProgress(position);
+                mPositionSeek.setProgress((int) position);
             if (mDuration != null)
                 mDuration.setText(String.format("-%s", CameraUtil.getDurationString(duration - position)));
         } catch (Throwable t) {
@@ -348,16 +363,6 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
                 mPosition.setText(CameraUtil.getDurationString(0));
             if (mPositionSeek != null)
                 mPositionSeek.setProgress(mPositionSeek.getMax());
-        }
-    }
-
-    @Override
-    public void onBufferingUpdate(@IntRange(from = 0L, to = 100L) int percent) {
-        if (percent < 100) {
-            if (mPositionSeek != null)
-                mPositionSeek.setSecondaryProgress(percent);
-        } else {
-            mPositionSeek.setSecondaryProgress(0);
         }
     }
 }

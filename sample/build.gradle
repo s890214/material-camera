@@ -11,8 +11,8 @@ android {
         applicationId "com.afollestad.materialcamerasample"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 10
-        versionName "0.2.6"
+        versionCode 11
+        versionName "0.2.7"
     }
     buildTypes {
         release {
@@ -27,6 +27,6 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.support:appcompat-v7:23.3.0'
+    compile 'com.android.support:appcompat-v7:23.4.0'
     compile project(':library')
 }

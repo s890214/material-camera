@@ -35,9 +35,7 @@ Add this in your module's `build.gradle` file:
 dependencies {
     // ... other dependencies
 
-    compile('com.afollestad:material-camera:0.2.6@aar') {
-        transitive = true
-    }
+    compile 'com.afollestad:material-camera:0.2.7'
 }
 ```
 
