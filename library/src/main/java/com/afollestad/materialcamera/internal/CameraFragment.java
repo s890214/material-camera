@@ -288,7 +288,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             }
             mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.DEFAULT);
 
-            final CamcorderProfile profile = CamcorderProfile.get(getCurrentCameraId(), CamcorderProfile.QUALITY_HIGH);
+            final CamcorderProfile profile = CamcorderProfile.get(getCurrentCameraId(), mInterface.qualityProfile());
             mMediaRecorder.setOutputFormat(profile.fileFormat);
             mMediaRecorder.setVideoFrameRate(mInterface.videoFrameRate(profile.videoFrameRate));
             mMediaRecorder.setVideoSize(mVideoSize.width, mVideoSize.height);

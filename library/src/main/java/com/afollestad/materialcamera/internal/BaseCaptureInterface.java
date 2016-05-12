@@ -70,6 +70,8 @@ public interface BaseCaptureInterface {
 
     long maxAllowedFileSize();
 
+    int qualityProfile();
+
     @DrawableRes
     int iconRecord();
 

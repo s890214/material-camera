@@ -2,11 +2,13 @@ package com.afollestad.materialcamera;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.media.CamcorderProfile;
 import android.support.annotation.AttrRes;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.FloatRange;
+import android.support.annotation.IntDef;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,11 +20,24 @@ import com.afollestad.materialcamera.util.CameraUtil;
 import com.afollestad.materialdialogs.util.DialogUtils;
 
 import java.io.File;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 
 /**
  * @author Aidan Follestad (afollestad)
  */
 public class MaterialCamera {
+
+    @IntDef({QUALITY_HIGH, QUALITY_LOW, QUALITY_480P, QUALITY_720P, QUALITY_108PP})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface QualityProfile {
+    }
+
+    public static final int QUALITY_HIGH = CamcorderProfile.QUALITY_HIGH;
+    public static final int QUALITY_LOW = CamcorderProfile.QUALITY_LOW;
+    public static final int QUALITY_480P = CamcorderProfile.QUALITY_480P;
+    public static final int QUALITY_720P = CamcorderProfile.QUALITY_720P;
+    public static final int QUALITY_108PP = CamcorderProfile.QUALITY_1080P;
 
     public static final String ERROR_EXTRA = "mcam_error";
     public static final String STATUS_EXTRA = "mcam_status";
@@ -50,6 +65,7 @@ public class MaterialCamera {
     private int mVideoPreferredHeight = -1;
     private float mVideoPreferredAspect = -1f;
     private long mMaxFileSize = -1;
+    private int mQualityProfile = -1;
 
     private int mIconRecord;
     private int mIconStop;
@@ -187,6 +203,11 @@ public class MaterialCamera {
         return this;
     }
 
+    public MaterialCamera qualityProfile(@QualityProfile int profile) {
+        mQualityProfile = profile;
+        return this;
+    }
+
     public MaterialCamera iconRecord(@DrawableRes int iconRes) {
         mIconRecord = iconRes;
         return this;
@@ -255,6 +276,8 @@ public class MaterialCamera {
             intent.putExtra(CameraIntentKey.VIDEO_PREFERRED_ASPECT, mVideoPreferredAspect);
         if (mMaxFileSize > -1)
             intent.putExtra(CameraIntentKey.MAX_ALLOWED_FILE_SIZE, mMaxFileSize);
+        if (mQualityProfile > -1)
+            intent.putExtra(CameraIntentKey.QUALITY_PROFILE, mQualityProfile);
 
         if (mIconRecord != 0)
             intent.putExtra(CameraIntentKey.ICON_RECORD, mIconRecord);

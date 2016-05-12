@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.media.CamcorderProfile;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -403,6 +404,11 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     @Override
     public long maxAllowedFileSize() {
         return getIntent().getLongExtra(CameraIntentKey.MAX_ALLOWED_FILE_SIZE, -1);
+    }
+
+    @Override
+    public int qualityProfile() {
+        return getIntent().getIntExtra(CameraIntentKey.QUALITY_PROFILE, CamcorderProfile.QUALITY_HIGH);
     }
 
     @DrawableRes

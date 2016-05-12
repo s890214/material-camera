@@ -101,7 +101,6 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
         if (mProgressHandler != null)
             mProgressHandler.dispose();
         if (mStreamer != null) {
-            mStreamer.stopPlayback();
             mStreamer.release();
             mStreamer.reset();
             mStreamer = null;
@@ -270,7 +269,6 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
         if (mStreamer != null) {
             mStreamer.stopPlayback();
             mStreamer.release();
-            mStreamer.reset();
             mStreamer = null;
         }
         if (mInterface != null)
