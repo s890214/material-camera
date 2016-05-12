@@ -9,9 +9,11 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -401,5 +403,53 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     @Override
     public long maxAllowedFileSize() {
         return getIntent().getLongExtra(CameraIntentKey.MAX_ALLOWED_FILE_SIZE, -1);
+    }
+
+    @DrawableRes
+    @Override
+    public int iconPause() {
+        return getIntent().getIntExtra(CameraIntentKey.ICON_PAUSE, R.drawable.mcam_action_pause);
+    }
+
+    @DrawableRes
+    @Override
+    public int iconPlay() {
+        return getIntent().getIntExtra(CameraIntentKey.ICON_PLAY, R.drawable.mcam_action_play);
+    }
+
+    @DrawableRes
+    @Override
+    public int iconRearCamera() {
+        return getIntent().getIntExtra(CameraIntentKey.ICON_REAR_CAMERA, R.drawable.mcam_camera_rear);
+    }
+
+    @DrawableRes
+    @Override
+    public int iconFrontCamera() {
+        return getIntent().getIntExtra(CameraIntentKey.ICON_FRONT_CAMERA, R.drawable.mcam_camera_front);
+    }
+
+    @DrawableRes
+    @Override
+    public int iconStop() {
+        return getIntent().getIntExtra(CameraIntentKey.ICON_STOP, R.drawable.mcam_action_stop);
+    }
+
+    @DrawableRes
+    @Override
+    public int iconRecord() {
+        return getIntent().getIntExtra(CameraIntentKey.ICON_RECORD, R.drawable.mcam_action_capture);
+    }
+
+    @StringRes
+    @Override
+    public int labelRetry() {
+        return getIntent().getIntExtra(CameraIntentKey.LABEL_RETRY, R.string.mcam_retry);
+    }
+
+    @StringRes
+    @Override
+    public int labelUseVideo() {
+        return getIntent().getIntExtra(CameraIntentKey.LABEL_USE_VIDEO, R.string.mcam_use_video);
     }
 }

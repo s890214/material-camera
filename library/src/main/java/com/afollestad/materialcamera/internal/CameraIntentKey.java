@@ -25,4 +25,14 @@ public class CameraIntentKey {
     public static final String VIDEO_PREFERRED_HEIGHT = "video_preferred_height";
     public static final String VIDEO_PREFERRED_ASPECT = "video_preferred_aspect";
     public static final String MAX_ALLOWED_FILE_SIZE = "max_allowed_file_size";
+
+    public static final String ICON_RECORD = "icon_record";
+    public static final String ICON_STOP = "icon_stop";
+    public static final String ICON_FRONT_CAMERA = "icon_front_camera";
+    public static final String ICON_REAR_CAMERA = "icon_rear_camera";
+    public static final String ICON_PLAY = "icon_play";
+    public static final String ICON_PAUSE = "icon_pause";
+
+    public static final String LABEL_RETRY = "label_retry";
+    public static final String LABEL_USE_VIDEO = "label_use_video";
 }

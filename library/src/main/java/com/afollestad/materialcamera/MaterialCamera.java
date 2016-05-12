@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.support.annotation.AttrRes;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.FloatRange;
 import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.content.ContextCompat;
 
 import com.afollestad.materialcamera.internal.CameraIntentKey;
@@ -49,6 +51,16 @@ public class MaterialCamera {
     private float mVideoPreferredAspect = -1f;
     private long mMaxFileSize = -1;
 
+    private int mIconRecord;
+    private int mIconStop;
+    private int mIconFrontCamera;
+    private int mIconRearCamera;
+    private int mIconPlay;
+    private int mIconPause;
+
+    private int mLabelRetry;
+    private int mLabelUseVideo;
+
     public MaterialCamera(@NonNull Activity context) {
         mContext = context;
         mPrimaryColor = DialogUtils.resolveColor(context, R.attr.colorPrimary);
@@ -59,36 +71,11 @@ public class MaterialCamera {
         return this;
     }
 
-    /**
-     * @deprecated use {@link #countdownMillis(long)} instead.
-     */
-    @Deprecated
-    public MaterialCamera lengthLimitMillis(long lengthLimitMs) {
-        mLengthLimit = lengthLimitMs;
-        return this;
-    }
-
     public MaterialCamera countdownSeconds(float lengthLimitSec) {
         return countdownMillis((int) (lengthLimitSec * 1000f));
     }
 
-    /**
-     * @deprecated use {@link #countdownSeconds(float)} instead.
-     */
-    @Deprecated
-    public MaterialCamera lengthLimitSeconds(float lengthLimitSec) {
-        return countdownMillis((int) (lengthLimitSec * 1000f));
-    }
-
     public MaterialCamera countdownMinutes(float lengthLimitMin) {
-        return countdownMillis((int) (lengthLimitMin * 1000f * 60f));
-    }
-
-    /**
-     * @deprecated use {@link #countdownMinutes(float)} instead.
-     */
-    @Deprecated
-    public MaterialCamera lengthLimitMinutes(float lengthLimitMin) {
         return countdownMillis((int) (lengthLimitMin * 1000f * 60f));
     }
 
@@ -200,6 +187,46 @@ public class MaterialCamera {
         return this;
     }
 
+    public MaterialCamera iconRecord(@DrawableRes int iconRes) {
+        mIconRecord = iconRes;
+        return this;
+    }
+
+    public MaterialCamera iconStop(@DrawableRes int iconRes) {
+        mIconStop = iconRes;
+        return this;
+    }
+
+    public MaterialCamera iconFrontCamera(@DrawableRes int iconRes) {
+        mIconFrontCamera = iconRes;
+        return this;
+    }
+
+    public MaterialCamera iconRearCamera(@DrawableRes int iconRes) {
+        mIconRearCamera = iconRes;
+        return this;
+    }
+
+    public MaterialCamera iconPlay(@DrawableRes int iconRes) {
+        mIconPlay = iconRes;
+        return this;
+    }
+
+    public MaterialCamera iconPause(@DrawableRes int iconRes) {
+        mIconPause = iconRes;
+        return this;
+    }
+
+    public MaterialCamera labelRetry(@StringRes int stringRes) {
+        mLabelRetry = stringRes;
+        return this;
+    }
+
+    public MaterialCamera labelUseVideo(@StringRes int stringRes) {
+        mLabelUseVideo = stringRes;
+        return this;
+    }
+
     public Intent getIntent() {
         final Class<?> cls = !mForceCamera1 && CameraUtil.hasCamera2(mContext) ?
                 CaptureActivity2.class : CaptureActivity.class;
@@ -228,6 +255,23 @@ public class MaterialCamera {
             intent.putExtra(CameraIntentKey.VIDEO_PREFERRED_ASPECT, mVideoPreferredAspect);
         if (mMaxFileSize > -1)
             intent.putExtra(CameraIntentKey.MAX_ALLOWED_FILE_SIZE, mMaxFileSize);
+
+        if (mIconRecord != 0)
+            intent.putExtra(CameraIntentKey.ICON_RECORD, mIconRecord);
+        if (mIconStop != 0)
+            intent.putExtra(CameraIntentKey.ICON_STOP, mIconStop);
+        if (mIconFrontCamera != 0)
+            intent.putExtra(CameraIntentKey.ICON_FRONT_CAMERA, mIconFrontCamera);
+        if (mIconRearCamera != 0)
+            intent.putExtra(CameraIntentKey.ICON_REAR_CAMERA, mIconRearCamera);
+        if (mIconPlay != 0)
+            intent.putExtra(CameraIntentKey.ICON_PLAY, mIconPlay);
+        if (mIconPause != 0)
+            intent.putExtra(CameraIntentKey.ICON_PAUSE, mIconPause);
+        if (mLabelRetry != 0)
+            intent.putExtra(CameraIntentKey.LABEL_RETRY, mLabelRetry);
+        if (mLabelUseVideo != 0)
+            intent.putExtra(CameraIntentKey.LABEL_USE_VIDEO, mLabelUseVideo);
 
         return intent;
     }

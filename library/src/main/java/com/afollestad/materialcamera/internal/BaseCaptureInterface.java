@@ -1,6 +1,8 @@
 package com.afollestad.materialcamera.internal;
 
+import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -67,4 +69,28 @@ public interface BaseCaptureInterface {
     float videoPreferredAspect();
 
     long maxAllowedFileSize();
+
+    @DrawableRes
+    int iconRecord();
+
+    @DrawableRes
+    int iconStop();
+
+    @DrawableRes
+    int iconFrontCamera();
+
+    @DrawableRes
+    int iconRearCamera();
+
+    @DrawableRes
+    int iconPlay();
+
+    @DrawableRes
+    int iconPause();
+
+    @StringRes
+    int labelRetry();
+
+    @StringRes
+    int labelUseVideo();
 }

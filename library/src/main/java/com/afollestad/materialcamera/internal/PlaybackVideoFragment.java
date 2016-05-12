@@ -12,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -33,8 +34,8 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
     private SeekBar mPositionSeek;
     private TextView mDuration;
     private ImageButton mPlayPause;
-    private View mRetry;
-    private View mUseVideo;
+    private Button mRetry;
+    private Button mUseVideo;
     private View mControlsFrame;
     private EMVideoView mStreamer;
     private TextView mPlaybackContinueCountdownLabel;
@@ -121,11 +122,14 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
         mPositionSeek = (SeekBar) view.findViewById(R.id.positionSeek);
         mDuration = (TextView) view.findViewById(R.id.duration);
         mPlayPause = (ImageButton) view.findViewById(R.id.playPause);
-        mRetry = view.findViewById(R.id.retry);
-        mUseVideo = view.findViewById(R.id.useVideo);
+        mRetry = (Button) view.findViewById(R.id.retry);
+        mUseVideo = (Button) view.findViewById(R.id.useVideo);
         mControlsFrame = view.findViewById(R.id.controlsFrame);
         mStreamer = (EMVideoView) view.findViewById(R.id.playbackView);
         mPlaybackContinueCountdownLabel = (TextView) view.findViewById(R.id.playbackContinueCountdownLabel);
+
+        mUseVideo.setText(mInterface.labelUseVideo());
+        mRetry.setText(mInterface.labelRetry());
 
         view.findViewById(R.id.playbackFrame).setOnClickListener(this);
         mRetry.setOnClickListener(this);
@@ -194,9 +198,9 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
         mStreamer.setVideoURI(Uri.parse(mOutputUri));
 
         if (mStreamer.isPlaying())
-            mPlayPause.setImageDrawable(VC.get(this, R.drawable.mcam_action_pause));
+            mPlayPause.setImageDrawable(VC.get(this, mInterface.iconPause()));
         else
-            mPlayPause.setImageDrawable(VC.get(this, R.drawable.mcam_action_play));
+            mPlayPause.setImageDrawable(VC.get(this, mInterface.iconPlay()));
     }
 
     private void startCountdownTimer() {
@@ -235,7 +239,7 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
         } else if (v.getId() == R.id.playPause) {
             if (mStreamer != null) {
                 if (mStreamer.isPlaying()) {
-                    ((ImageButton) v).setImageDrawable(VC.get(this, R.drawable.mcam_action_play));
+                    ((ImageButton) v).setImageDrawable(VC.get(this, mInterface.iconPlay()));
                     mStreamer.pause();
                     mProgressHandler.stop();
                 } else {
@@ -250,7 +254,7 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
                     }
                     mResumePosition = 0;
                     mFinishedPlaying = false;
-                    ((ImageButton) v).setImageDrawable(VC.get(this, R.drawable.mcam_action_pause));
+                    ((ImageButton) v).setImageDrawable(VC.get(this, mInterface.iconPause()));
                     mStreamer.start();
                     mProgressHandler.start();
                 }
@@ -290,9 +294,9 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
         if (mResumePosition > 0)
             mStreamer.seekTo((int) mResumePosition);
         mResumePosition = 0;
-        mStreamer.start();
-        mPlayPause.setImageDrawable(VC.get(this, R.drawable.mcam_action_pause));
-        mProgressHandler.start();
+//        mStreamer.start();
+//        mPlayPause.setImageDrawable(VC.get(this, mInterface.iconPause()));
+//        mProgressHandler.start();
     }
 
     @Override
@@ -335,7 +339,7 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
     public void onCompletion(MediaPlayer mediaPlayer) {
         mFinishedPlaying = true;
         if (mPlayPause != null)
-            mPlayPause.setImageDrawable(VC.get(this, R.drawable.mcam_action_play));
+            mPlayPause.setImageDrawable(VC.get(this, mInterface.iconPlay()));
         if (mPositionSeek != null) {
             mPositionSeek.setProgress((int) mStreamer.getDuration());
             mPosition.setText(CameraUtil.getDurationString(mStreamer.getDuration()));
