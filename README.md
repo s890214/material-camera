@@ -82,7 +82,7 @@ new MaterialCamera(this)                               // Constructor takes an A
     .videoEncodingBitRate(1024000)                     // Sets a custom bit rate for video recording.
     .audioEncodingBitRate(50000)                       // Sets a custom bit rate for audio recording.
     .videoFrameRate(24)                                // Sets a custom frame rate (FPS) for video recording.
-    .qualityProfile(MaterialCamera.QUALITY_HIGH)       // Sets a quality profile, will override bit rate and frame rate settings
+    .qualityProfile(MaterialCamera.QUALITY_HIGH)       // Sets a quality profile, manually setting bit rates or frame rates with other settings will overwrite individual quality profile settings
     .videoPreferredHeight(720)                         // Sets a preferred height for the recorded video output.
     .videoPreferredAspect(4f / 3f)                     // Sets a preferred aspect ratio for the recorded video output.
     .maxAllowedFileSize(1024 * 1024 * 5)               // Sets a max file size of 5MB, recording will stop if file reaches this limit. Keep in mind, the FAT file system has a file size limit of 4GB.
