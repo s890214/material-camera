@@ -189,6 +189,10 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        try {
+            mTextureView.getSurfaceTexture().release();
+        } catch (Throwable ignored) {
+        }
         mTextureView = null;
     }
 

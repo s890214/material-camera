@@ -97,6 +97,10 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        try {
+            mPreviewView.getHolder().getSurface().release();
+        } catch (Throwable ignored) {
+        }
         mPreviewFrame = null;
     }
 
