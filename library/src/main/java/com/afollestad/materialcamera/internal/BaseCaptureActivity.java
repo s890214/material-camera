@@ -414,13 +414,19 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     @DrawableRes
     @Override
     public int iconPause() {
-        return getIntent().getIntExtra(CameraIntentKey.ICON_PAUSE, R.drawable.mcam_action_pause);
+        return getIntent().getIntExtra(CameraIntentKey.ICON_PAUSE, R.drawable.evp_action_pause);
     }
 
     @DrawableRes
     @Override
     public int iconPlay() {
-        return getIntent().getIntExtra(CameraIntentKey.ICON_PLAY, R.drawable.mcam_action_play);
+        return getIntent().getIntExtra(CameraIntentKey.ICON_PLAY, R.drawable.evp_action_play);
+    }
+
+    @DrawableRes
+    @Override
+    public int iconRestart() {
+        return getIntent().getIntExtra(CameraIntentKey.ICON_RESTART, R.drawable.evp_action_restart);
     }
 
     @DrawableRes

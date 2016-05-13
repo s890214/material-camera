@@ -90,8 +90,9 @@ new MaterialCamera(this)                               // Constructor takes an A
     .iconStop(R.drawable.mcam_action_stop)             // Sets a custom icon for the button used to stop recording
     .iconFrontCamera(R.drawable.mcam_camera_front)     // Sets a custom icon for the button used to switch to the front camera
     .iconRearCamera(R.drawable.mcam_camera_rear)       // Sets a custom icon for the button used to switch to the rear camera
-    .iconPlay(R.drawable.mcam_action_play)             // Sets a custom icon used to start playback
-    .iconPause(R.drawable.mcam_action_pause)           // Sets a custom icon used to pause playback
+    .iconPlay(R.drawable.evp_action_play)              // Sets a custom icon used to start playback
+    .iconPause(R.drawable.evp_action_pause)            // Sets a custom icon used to pause playback
+    .iconRestart(R.drawable.evp_action_restart)        // Sets a custom icon used to restart playback
     .labelRetry(R.string.mcam_retry)                   // Sets a custom button label for the button used to retry recording, when available
     .labelUseVideo(R.string.mcam_use_video)            // Sets a custom button label for the button used to confirm a recording
     .start(CAMERA_RQ);                                 // Starts the camera activity, the result will be sent back to the current Activity

@@ -3,8 +3,6 @@ package com.afollestad.materialcamera.internal;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.pm.ActivityInfo;
-import android.graphics.Color;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,58 +10,33 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.SeekBar;
-import android.widget.TextView;
 
+import com.afollestad.easyvideoplayer.EasyVideoCallback;
+import com.afollestad.easyvideoplayer.EasyVideoPlayer;
 import com.afollestad.materialcamera.R;
 import com.afollestad.materialcamera.util.CameraUtil;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.afollestad.materialdialogs.internal.MDTintHelper;
-import com.devbrackets.android.exomedia.EMVideoView;
 
 /**
  * @author Aidan Follestad (afollestad)
  */
-public class PlaybackVideoFragment extends Fragment implements CameraUriInterface,
-        ProgressHandler.ProgressCallback, View.OnClickListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener,
-        MediaPlayer.OnCompletionListener {
+public class PlaybackVideoFragment extends Fragment implements CameraUriInterface, EasyVideoCallback {
 
-    private TextView mPosition;
-    private SeekBar mPositionSeek;
-    private TextView mDuration;
-    private ImageButton mPlayPause;
-    private Button mRetry;
-    private Button mUseVideo;
-    private View mControlsFrame;
-    private EMVideoView mStreamer;
-    private TextView mPlaybackContinueCountdownLabel;
-
+    private EasyVideoPlayer mStreamer;
     private String mOutputUri;
-    private boolean mWasPlaying;
     private BaseCaptureInterface mInterface;
-    private boolean mFinishedPlaying;
-    private long mResumePosition;
-
-    private ProgressHandler mProgressHandler;
 
     private Handler mCountdownHandler;
     private final Runnable mCountdownRunnable = new Runnable() {
         @Override
         public void run() {
-            if (mPlaybackContinueCountdownLabel != null && mPlaybackContinueCountdownLabel.getVisibility() == View.VISIBLE) {
+            if (mStreamer != null) {
                 long diff = mInterface.getRecordingEnd() - System.currentTimeMillis();
-                if (diff < 3 && mPlayPause != null) {
-                    mRetry.setEnabled(false);
-                    mPlayPause.setEnabled(false);
-                    mUseVideo.setEnabled(false);
-                }
                 if (diff <= 0) {
                     useVideo();
                     return;
                 }
-                mPlaybackContinueCountdownLabel.setText(String.format("-%s", CameraUtil.getDurationString(diff)));
+                mStreamer.setCustomLabelText(String.format("-%s", CameraUtil.getDurationString(diff)));
                 if (mCountdownHandler != null)
                     mCountdownHandler.postDelayed(mCountdownRunnable, 200);
             }
@@ -98,8 +71,6 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
     @Override
     public void onPause() {
         super.onPause();
-        if (mProgressHandler != null)
-            mProgressHandler.dispose();
         if (mStreamer != null) {
             mStreamer.release();
             mStreamer.reset();
@@ -117,89 +88,29 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mPosition = (TextView) view.findViewById(R.id.position);
-        mPositionSeek = (SeekBar) view.findViewById(R.id.positionSeek);
-        mDuration = (TextView) view.findViewById(R.id.duration);
-        mPlayPause = (ImageButton) view.findViewById(R.id.playPause);
-        mRetry = (Button) view.findViewById(R.id.retry);
-        mUseVideo = (Button) view.findViewById(R.id.useVideo);
-        mControlsFrame = view.findViewById(R.id.controlsFrame);
-        mStreamer = (EMVideoView) view.findViewById(R.id.playbackView);
-        mPlaybackContinueCountdownLabel = (TextView) view.findViewById(R.id.playbackContinueCountdownLabel);
+        mStreamer = (EasyVideoPlayer) view.findViewById(R.id.playbackView);
+        mStreamer.setCallback(this);
 
-        mUseVideo.setText(mInterface.labelUseVideo());
-        mRetry.setText(mInterface.labelRetry());
+        mStreamer.setSubmitTextRes(mInterface.labelUseVideo());
+        mStreamer.setRetryTextRes(mInterface.labelRetry());
+        mStreamer.setPlayDrawableRes(mInterface.iconPlay());
+        mStreamer.setPauseDrawableRes(mInterface.iconPause());
 
-        view.findViewById(R.id.playbackFrame).setOnClickListener(this);
-        mRetry.setOnClickListener(this);
-        mPlayPause.setOnClickListener(this);
-        mUseVideo.setOnClickListener(this);
+        if (getArguments().getBoolean(CameraIntentKey.ALLOW_RETRY, true))
+            mStreamer.setLeftAction(EasyVideoPlayer.LEFT_ACTION_RETRY);
 
-        int primaryColor = CameraUtil.darkenColor(getArguments().getInt(CameraIntentKey.PRIMARY_COLOR));
-        primaryColor = Color.argb((int) (255 * 0.75f), Color.red(primaryColor), Color.green(primaryColor), Color.blue(primaryColor));
-        mControlsFrame.setBackgroundColor(primaryColor);
-
-        mRetry.setVisibility(getArguments().getBoolean(CameraIntentKey.ALLOW_RETRY, true) ? View.VISIBLE : View.GONE);
-        mPositionSeek.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (fromUser) {
-                    if (mFinishedPlaying) {
-                        mFinishedPlaying = false;
-                        mStreamer.stopPlayback();
-                        mStreamer.reset();
-                        mStreamer.setOnPreparedListener(PlaybackVideoFragment.this);
-                        mStreamer.setVideoURI(Uri.parse(mOutputUri));
-                        mResumePosition = progress;
-                        return;
-                    }
-                    if (progress < seekBar.getMax())
-                        mFinishedPlaying = false;
-                    else if (progress >= seekBar.getMax())
-                        mFinishedPlaying = true;
-                    mStreamer.seekTo(progress);
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                mWasPlaying = mStreamer.isPlaying();
-                mStreamer.pause();
-                mProgressHandler.stop();
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                if (mWasPlaying) {
-                    mStreamer.start();
-                    mProgressHandler.start();
-                }
-            }
-        });
-        MDTintHelper.setTint(mPositionSeek, Color.WHITE);
         mOutputUri = getArguments().getString("output_uri");
 
-        if (mInterface.hasLengthLimit() && mInterface.shouldAutoSubmit() &&
-                mInterface.continueTimerInPlayback()) {
-            mPlaybackContinueCountdownLabel.setVisibility(View.VISIBLE);
+        if (mInterface.hasLengthLimit() && mInterface.shouldAutoSubmit() && mInterface.continueTimerInPlayback()) {
+            mStreamer.setRightAction(EasyVideoPlayer.RIGHT_ACTION_CUSTOM_LABEL);
             final long diff = mInterface.getRecordingEnd() - System.currentTimeMillis();
-            mPlaybackContinueCountdownLabel.setText(String.format("-%s", CameraUtil.getDurationString(diff)));
+            mStreamer.setCustomLabelText(String.format("-%s", CameraUtil.getDurationString(diff)));
             startCountdownTimer();
         } else {
-            mPlaybackContinueCountdownLabel.setVisibility(View.GONE);
+            mStreamer.setRightAction(EasyVideoPlayer.RIGHT_ACTION_NONE);
         }
 
-        mProgressHandler = new ProgressHandler(mStreamer, this);
-
-        mStreamer.setOnPreparedListener(this);
-        mStreamer.setOnErrorListener(this);
-        mStreamer.setOnCompletionListener(this);
-        mStreamer.setVideoURI(Uri.parse(mOutputUri));
-
-        if (mStreamer.isPlaying())
-            mPlayPause.setImageDrawable(VC.get(this, mInterface.iconPause()));
-        else
-            mPlayPause.setImageDrawable(VC.get(this, mInterface.iconPlay()));
+        mStreamer.setSource(Uri.parse(mOutputUri));
     }
 
     private void startCountdownTimer() {
@@ -216,58 +127,12 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
             mCountdownHandler.removeCallbacks(mCountdownRunnable);
             mCountdownHandler = null;
         }
-        mPosition = null;
-        mPositionSeek = null;
-        mDuration = null;
-        mPlayPause = null;
-        mRetry = null;
-        mUseVideo = null;
-        mControlsFrame = null;
+        mStreamer.release();
         mStreamer = null;
-        mPlaybackContinueCountdownLabel = null;
-    }
-
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.playbackFrame) {
-            mControlsFrame.animate().cancel();
-            final float targetAlpha = mControlsFrame.getAlpha() == 1f ? 0f :
-                    mControlsFrame.getAlpha() == 0f ? 1f :
-                            mControlsFrame.getAlpha() > 0.5f ? 0f : 1f;
-            mControlsFrame.animate().alpha(targetAlpha).start();
-        } else if (v.getId() == R.id.playPause) {
-            if (mStreamer != null) {
-                if (mStreamer.isPlaying()) {
-                    ((ImageButton) v).setImageDrawable(VC.get(this, mInterface.iconPlay()));
-                    mStreamer.pause();
-                    mProgressHandler.stop();
-                } else {
-                    if (mFinishedPlaying) {
-                        mFinishedPlaying = false;
-                        mStreamer.stopPlayback();
-                        mStreamer.reset();
-                        mStreamer.setOnPreparedListener(PlaybackVideoFragment.this);
-                        mStreamer.setVideoURI(Uri.parse(mOutputUri));
-                        mResumePosition = 0;
-                        return;
-                    }
-                    mResumePosition = 0;
-                    mFinishedPlaying = false;
-                    ((ImageButton) v).setImageDrawable(VC.get(this, mInterface.iconPause()));
-                    mStreamer.start();
-                    mProgressHandler.start();
-                }
-            }
-        } else if (v.getId() == R.id.retry) {
-            mInterface.onRetry(mOutputUri);
-        } else if (v.getId() == R.id.useVideo) {
-            useVideo();
-        }
     }
 
     private void useVideo() {
         if (mStreamer != null) {
-            mStreamer.stopPlayback();
             mStreamer.release();
             mStreamer = null;
         }
@@ -281,90 +146,38 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
     }
 
     @Override
-    public void onPrepared(MediaPlayer mediaPlayer) {
-        final long durationMs = mStreamer.getDuration();
-        mPositionSeek.setProgress((int) mResumePosition);
-        mPositionSeek.setMax((int) durationMs);
-        mDuration.setText(String.format("-%s", CameraUtil.getDurationString(durationMs - mResumePosition)));
-        mPlayPause.setEnabled(true);
-        mRetry.setEnabled(true);
-        mUseVideo.setEnabled(true);
-        if (mResumePosition > 0)
-            mStreamer.seekTo((int) mResumePosition);
-        mResumePosition = 0;
-//        mStreamer.start();
-//        mPlayPause.setImageDrawable(VC.get(this, mInterface.iconPause()));
-//        mProgressHandler.start();
+    public void onPreparing(EasyVideoPlayer player) {
     }
 
     @Override
-    public boolean onError(MediaPlayer mediaPlayer, int what, int extra) {
-        if (what == -38) {
-            // Error code -38 happens on some Samsung devices
-            // Just ignore it
-            return false;
-        }
-        String errorMsg = "Preparation/playback error: ";
-        switch (what) {
-            case MediaPlayer.MEDIA_ERROR_IO:
-                errorMsg += "I/O error";
-                break;
-            case MediaPlayer.MEDIA_ERROR_MALFORMED:
-                errorMsg += "Malformed";
-                break;
-            case MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
-                errorMsg += "Not valid for progressive playback";
-                break;
-            case MediaPlayer.MEDIA_ERROR_SERVER_DIED:
-                errorMsg += "Server died";
-                break;
-            case MediaPlayer.MEDIA_ERROR_TIMED_OUT:
-                errorMsg += "Timed out";
-                break;
-            case MediaPlayer.MEDIA_ERROR_UNSUPPORTED:
-                errorMsg += "Unsupported";
-                break;
-        }
+    public void onPrepared(EasyVideoPlayer player) {
+    }
+
+    @Override
+    public void onBuffering(int percent) {
+    }
+
+    @Override
+    public void onError(EasyVideoPlayer player, Exception e) {
         new MaterialDialog.Builder(getActivity())
-                .title("Playback Error")
-                .content("A playback error has occurred: " + errorMsg)
+                .title(R.string.mcam_error)
+                .content(e.getMessage())
                 .positiveText(android.R.string.ok)
                 .show();
-        return false;
     }
 
     @Override
-    public void onCompletion(MediaPlayer mediaPlayer) {
-        mFinishedPlaying = true;
-        if (mPlayPause != null)
-            mPlayPause.setImageDrawable(VC.get(this, mInterface.iconPlay()));
-        if (mPositionSeek != null) {
-            mPositionSeek.setProgress((int) mStreamer.getDuration());
-            mPosition.setText(CameraUtil.getDurationString(mStreamer.getDuration()));
-        }
-
-        if (mControlsFrame.getAlpha() < 1f) {
-            mControlsFrame.animate().cancel();
-            mControlsFrame.animate().alpha(1f).start();
-        }
+    public void onCompletion(EasyVideoPlayer player) {
     }
 
     @Override
-    public void onProgressUpdate(long position, long duration) {
-        if (position == duration)
-            mFinishedPlaying = true;
-        try {
-            if (mPosition != null)
-                mPosition.setText(CameraUtil.getDurationString(position));
-            if (mPositionSeek != null)
-                mPositionSeek.setProgress((int) position);
-            if (mDuration != null)
-                mDuration.setText(String.format("-%s", CameraUtil.getDurationString(duration - position)));
-        } catch (Throwable t) {
-            if (mPosition != null)
-                mPosition.setText(CameraUtil.getDurationString(0));
-            if (mPositionSeek != null)
-                mPositionSeek.setProgress(mPositionSeek.getMax());
-        }
+    public void onRetry(EasyVideoPlayer player, Uri source) {
+        if (mInterface != null)
+            mInterface.onRetry(mOutputUri);
+    }
+
+    @Override
+    public void onSubmit(EasyVideoPlayer player, Uri source) {
+        useVideo();
     }
 }

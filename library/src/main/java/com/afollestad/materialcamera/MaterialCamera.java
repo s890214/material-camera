@@ -73,6 +73,7 @@ public class MaterialCamera {
     private int mIconRearCamera;
     private int mIconPlay;
     private int mIconPause;
+    private int mIconRestart;
 
     private int mLabelRetry;
     private int mLabelUseVideo;
@@ -238,6 +239,11 @@ public class MaterialCamera {
         return this;
     }
 
+    public MaterialCamera iconRestart(@DrawableRes int iconRes) {
+        mIconRestart = iconRes;
+        return this;
+    }
+
     public MaterialCamera labelRetry(@StringRes int stringRes) {
         mLabelRetry = stringRes;
         return this;
@@ -291,6 +297,8 @@ public class MaterialCamera {
             intent.putExtra(CameraIntentKey.ICON_PLAY, mIconPlay);
         if (mIconPause != 0)
             intent.putExtra(CameraIntentKey.ICON_PAUSE, mIconPause);
+        if (mIconRestart != 0)
+            intent.putExtra(CameraIntentKey.ICON_RESTART, mIconRestart);
         if (mLabelRetry != 0)
             intent.putExtra(CameraIntentKey.LABEL_RETRY, mLabelRetry);
         if (mLabelUseVideo != 0)

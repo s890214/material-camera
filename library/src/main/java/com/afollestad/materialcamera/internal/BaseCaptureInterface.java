@@ -90,6 +90,9 @@ public interface BaseCaptureInterface {
     @DrawableRes
     int iconPause();
 
+    @DrawableRes
+    int iconRestart();
+
     @StringRes
     int labelRetry();
 

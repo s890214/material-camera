@@ -234,14 +234,17 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
     public void openCamera() {
         final int width = mTextureView.getWidth();
         final int height = mTextureView.getHeight();
+
         final Activity activity = getActivity();
         if (null == activity || activity.isFinishing()) return;
-        CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
+
+        final CameraManager manager = (CameraManager) activity.getSystemService(Context.CAMERA_SERVICE);
         try {
             if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
                 throwError(new Exception("Time out waiting to lock camera opening."));
                 return;
             }
+
             if (mInterface.getFrontCamera() == null || mInterface.getBackCamera() == null) {
                 for (String cameraId : manager.getCameraIdList()) {
                     if (cameraId == null) continue;
@@ -256,14 +259,15 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
                         mInterface.setBackCamera(cameraId);
                 }
             }
+
             if (mInterface.getCurrentCameraPosition() == CAMERA_POSITION_UNKNOWN) {
                 if (getArguments().getBoolean(CameraIntentKey.DEFAULT_TO_FRONT_FACING, false)) {
                     // Check front facing first
                     if (mInterface.getFrontCamera() != null) {
-                        mButtonFacing.setImageDrawable(VC.get(this, mInterface.iconRearCamera()));
+                        mButtonFacing.setImageResource(mInterface.iconRearCamera());
                         mInterface.setCameraPosition(CAMERA_POSITION_FRONT);
                     } else {
-                        mButtonFacing.setImageDrawable(VC.get(this, mInterface.iconFrontCamera()));
+                        mButtonFacing.setImageResource(mInterface.iconFrontCamera());
                         if (mInterface.getBackCamera() != null)
                             mInterface.setCameraPosition(CAMERA_POSITION_BACK);
                         else mInterface.setCameraPosition(CAMERA_POSITION_UNKNOWN);
@@ -271,10 +275,10 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
                 } else {
                     // Check back facing first
                     if (mInterface.getBackCamera() != null) {
-                        mButtonFacing.setImageDrawable(VC.get(this, mInterface.iconFrontCamera()));
+                        mButtonFacing.setImageResource(mInterface.iconFrontCamera());
                         mInterface.setCameraPosition(CAMERA_POSITION_BACK);
                     } else {
-                        mButtonFacing.setImageDrawable(VC.get(this, mInterface.iconRearCamera()));
+                        mButtonFacing.setImageResource(mInterface.iconRearCamera());
                         if (mInterface.getFrontCamera() != null)
                             mInterface.setCameraPosition(CAMERA_POSITION_FRONT);
                         else mInterface.setCameraPosition(CAMERA_POSITION_UNKNOWN);
@@ -309,6 +313,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
             } else {
                 mTextureView.setAspectRatio(mPreviewSize.getHeight(), mPreviewSize.getWidth());
             }
+
             configureTransform(width, height);
             mMediaRecorder = new MediaRecorder();
             // noinspection ResourceType
@@ -492,7 +497,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
         super.startRecordingVideo();
         try {
             // UI
-            mButtonVideo.setImageDrawable(VC.get(this, mInterface.iconStop()));
+            mButtonVideo.setImageResource(mInterface.iconStop());
             if (!CameraUtil.isArcWelder())
                 mButtonFacing.setVisibility(View.GONE);
 
@@ -539,7 +544,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
             mOutputUri = null;
 
         releaseRecorder();
-        mButtonVideo.setImageDrawable(VC.get(this, mInterface.iconRecord()));
+        mButtonVideo.setImageResource(mInterface.iconRecord());
         if (!CameraUtil.isArcWelder())
             mButtonFacing.setVisibility(View.VISIBLE);
         if (mInterface.getRecordingStart() > -1 && getActivity() != null)

@@ -84,12 +84,12 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
         if (CameraUtil.isArcWelder())
             mButtonFacing.setVisibility(View.GONE);
         mRecordDuration = (TextView) view.findViewById(R.id.recordDuration);
-        mButtonFacing.setImageDrawable(VC.get(this, mInterface.getCurrentCameraPosition() == CAMERA_POSITION_BACK ?
-                R.drawable.mcam_camera_front : R.drawable.mcam_camera_rear));
+        mButtonFacing.setImageResource(mInterface.getCurrentCameraPosition() == CAMERA_POSITION_BACK ?
+                mInterface.iconFrontCamera() : mInterface.iconRearCamera());
         if (mMediaRecorder != null && mIsRecording) {
-            mButtonVideo.setImageDrawable(VC.get(this, R.drawable.mcam_action_stop));
+            mButtonVideo.setImageResource(mInterface.iconStop());
         } else {
-            mButtonVideo.setImageDrawable(VC.get(this, R.drawable.mcam_action_capture));
+            mButtonVideo.setImageResource(mInterface.iconRecord());
             mInterface.setDidRecord(false);
         }
 
@@ -245,8 +245,8 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
     public void onClick(View view) {
         if (view.getId() == R.id.facing) {
             mInterface.toggleCameraPosition();
-            mButtonFacing.setImageDrawable(VC.get(this, mInterface.getCurrentCameraPosition() == BaseCaptureActivity.CAMERA_POSITION_BACK ?
-                    R.drawable.mcam_camera_front : R.drawable.mcam_camera_rear));
+            mButtonFacing.setImageResource(mInterface.getCurrentCameraPosition() == BaseCaptureActivity.CAMERA_POSITION_BACK ?
+                    mInterface.iconFrontCamera() : mInterface.iconRearCamera());
             closeCamera();
             openCamera();
         } else if (view.getId() == R.id.video) {
