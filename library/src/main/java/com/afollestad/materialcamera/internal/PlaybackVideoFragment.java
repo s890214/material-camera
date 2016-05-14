@@ -22,7 +22,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
  */
 public class PlaybackVideoFragment extends Fragment implements CameraUriInterface, EasyVideoCallback {
 
-    private EasyVideoPlayer mStreamer;
+    private EasyVideoPlayer mPlayer;
     private String mOutputUri;
     private BaseCaptureInterface mInterface;
 
@@ -30,13 +30,13 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
     private final Runnable mCountdownRunnable = new Runnable() {
         @Override
         public void run() {
-            if (mStreamer != null) {
+            if (mPlayer != null) {
                 long diff = mInterface.getRecordingEnd() - System.currentTimeMillis();
                 if (diff <= 0) {
                     useVideo();
                     return;
                 }
-                mStreamer.setCustomLabelText(String.format("-%s", CameraUtil.getDurationString(diff)));
+                mPlayer.setBottomLabelText(String.format("-%s", CameraUtil.getDurationString(diff)));
                 if (mCountdownHandler != null)
                     mCountdownHandler.postDelayed(mCountdownRunnable, 200);
             }
@@ -71,10 +71,10 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
     @Override
     public void onPause() {
         super.onPause();
-        if (mStreamer != null) {
-            mStreamer.release();
-            mStreamer.reset();
-            mStreamer = null;
+        if (mPlayer != null) {
+            mPlayer.release();
+            mPlayer.reset();
+            mPlayer = null;
         }
     }
 
@@ -88,29 +88,28 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mStreamer = (EasyVideoPlayer) view.findViewById(R.id.playbackView);
-        mStreamer.setCallback(this);
+        mPlayer = (EasyVideoPlayer) view.findViewById(R.id.playbackView);
+        mPlayer.setCallback(this);
+        mPlayer.setThemeColor(getArguments().getInt(CameraIntentKey.PRIMARY_COLOR));
 
-        mStreamer.setSubmitTextRes(mInterface.labelUseVideo());
-        mStreamer.setRetryTextRes(mInterface.labelRetry());
-        mStreamer.setPlayDrawableRes(mInterface.iconPlay());
-        mStreamer.setPauseDrawableRes(mInterface.iconPause());
+        mPlayer.setSubmitTextRes(mInterface.labelUseVideo());
+        mPlayer.setRetryTextRes(mInterface.labelRetry());
+        mPlayer.setPlayDrawableRes(mInterface.iconPlay());
+        mPlayer.setPauseDrawableRes(mInterface.iconPause());
 
         if (getArguments().getBoolean(CameraIntentKey.ALLOW_RETRY, true))
-            mStreamer.setLeftAction(EasyVideoPlayer.LEFT_ACTION_RETRY);
+            mPlayer.setLeftAction(EasyVideoPlayer.LEFT_ACTION_RETRY);
+        mPlayer.setRightAction(EasyVideoPlayer.RIGHT_ACTION_SUBMIT);
 
         mOutputUri = getArguments().getString("output_uri");
 
         if (mInterface.hasLengthLimit() && mInterface.shouldAutoSubmit() && mInterface.continueTimerInPlayback()) {
-            mStreamer.setRightAction(EasyVideoPlayer.RIGHT_ACTION_CUSTOM_LABEL);
             final long diff = mInterface.getRecordingEnd() - System.currentTimeMillis();
-            mStreamer.setCustomLabelText(String.format("-%s", CameraUtil.getDurationString(diff)));
+            mPlayer.setBottomLabelText(String.format("-%s", CameraUtil.getDurationString(diff)));
             startCountdownTimer();
-        } else {
-            mStreamer.setRightAction(EasyVideoPlayer.RIGHT_ACTION_NONE);
         }
 
-        mStreamer.setSource(Uri.parse(mOutputUri));
+        mPlayer.setSource(Uri.parse(mOutputUri));
     }
 
     private void startCountdownTimer() {
@@ -127,14 +126,16 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
             mCountdownHandler.removeCallbacks(mCountdownRunnable);
             mCountdownHandler = null;
         }
-        mStreamer.release();
-        mStreamer = null;
+        if (mPlayer != null) {
+            mPlayer.release();
+            mPlayer = null;
+        }
     }
 
     private void useVideo() {
-        if (mStreamer != null) {
-            mStreamer.release();
-            mStreamer = null;
+        if (mPlayer != null) {
+            mPlayer.release();
+            mPlayer = null;
         }
         if (mInterface != null)
             mInterface.useVideo(mOutputUri);
