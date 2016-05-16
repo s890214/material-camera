@@ -28,7 +28,7 @@ import java.lang.annotation.RetentionPolicy;
  */
 public class MaterialCamera {
 
-    @IntDef({QUALITY_HIGH, QUALITY_LOW, QUALITY_480P, QUALITY_720P, QUALITY_108PP})
+    @IntDef({QUALITY_HIGH, QUALITY_LOW, QUALITY_480P, QUALITY_720P, QUALITY_1080P})
     @Retention(RetentionPolicy.SOURCE)
     public @interface QualityProfile {
     }
@@ -37,7 +37,7 @@ public class MaterialCamera {
     public static final int QUALITY_LOW = CamcorderProfile.QUALITY_LOW;
     public static final int QUALITY_480P = CamcorderProfile.QUALITY_480P;
     public static final int QUALITY_720P = CamcorderProfile.QUALITY_720P;
-    public static final int QUALITY_108PP = CamcorderProfile.QUALITY_1080P;
+    public static final int QUALITY_1080P = CamcorderProfile.QUALITY_1080P;
 
     public static final String ERROR_EXTRA = "mcam_error";
     public static final String STATUS_EXTRA = "mcam_status";
