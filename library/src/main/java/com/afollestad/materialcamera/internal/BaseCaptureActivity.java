@@ -292,7 +292,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
             }
             useVideo(outputUri);
         } else {
-            if (!hasLengthLimit() || !shouldAutoSubmit() || !continueTimerInPlayback()) {
+            if (!hasLengthLimit() || !continueTimerInPlayback()) {
                 // No countdown or countdown should not continue through playback, reset timer to 0
                 setRecordingStart(-1);
             }

@@ -103,7 +103,7 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
 
         mOutputUri = getArguments().getString("output_uri");
 
-        if (mInterface.hasLengthLimit() && mInterface.shouldAutoSubmit() && mInterface.continueTimerInPlayback()) {
+        if (mInterface.hasLengthLimit() && mInterface.continueTimerInPlayback()) {
             final long diff = mInterface.getRecordingEnd() - System.currentTimeMillis();
             mPlayer.setBottomLabelText(String.format("-%s", CameraUtil.getDurationString(diff)));
             startCountdownTimer();
