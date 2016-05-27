@@ -3,8 +3,8 @@
 - [ ] I have given my issue a non-generic title.
 
 ###### Include the following:
- - Material Dialogs version: `0.8.5.8`
- - Device OS version: `6.0.1`
+ - Material Camera version: `0.2.13`
+ - Device OS version: `7.0`
  - Device Manufacturer: `Huawei`
  - Device Name: `Nexus 6P`
 
