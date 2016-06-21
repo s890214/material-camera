@@ -3,20 +3,22 @@ apply plugin: 'com.android.library'
 ext {
     PUBLISH_GROUP_ID = 'com.afollestad'
     PUBLISH_ARTIFACT_ID = 'material-camera'
-    PUBLISH_VERSION = '0.2.13'
-    PUBLISH_VERSION_CODE = 16
-    SUPPORT_LIB_VERSION = '23.4.0'
-    VIDEO_PLAYER_VERSION = '0.2.6'
-    MD_VERSION = '0.8.5.9'
+    PUBLISH_VERSION = '0.2.14'
+    PUBLISH_VERSION_CODE = 17
+    SUPPORT_LIB_VERSION = '24.0.0'
+    VIDEO_PLAYER_VERSION = '0.2.8'
+    MD_VERSION = '0.8.6.0'
+    TARGET_SDK = 24
+    BUILD_TOOLS = "24.0.0"
 }
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    compileSdkVersion TARGET_SDK
+    buildToolsVersion BUILD_TOOLS
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 23
+        targetSdkVersion TARGET_SDK
         versionCode PUBLISH_VERSION_CODE
         versionName PUBLISH_VERSION
     }
@@ -38,9 +40,9 @@ repositories {
 }
 
 dependencies {
-    compile "com.android.support:appcompat-v7:${SUPPORT_LIB_VERSION}"
-    compile "com.afollestad:easyvideoplayer:${VIDEO_PLAYER_VERSION}"
-    compile "com.afollestad.material-dialogs:core:${MD_VERSION}"
+    compile "com.android.support:appcompat-v7:$SUPPORT_LIB_VERSION"
+    compile "com.afollestad:easyvideoplayer:$VIDEO_PLAYER_VERSION"
+    compile "com.afollestad.material-dialogs:core:$MD_VERSION"
 }
 
-apply from: 'https://raw.githubusercontent.com/afollestad/aidanfollestad.com/master/android-release-aar.gradle'
+apply from: 'https://raw.githubusercontent.com/afollestad/aidanfollestad.com/master/android-lib-release.gradle'
