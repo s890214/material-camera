@@ -143,7 +143,7 @@ new MaterialCamera(this)
 ```java
 new MaterialCamera(this)
     /** all the previous methods can be called, but video ones would be ignored */
-    .stillShot(); // launches the Camera in stillshot mode
+    .stillShot() // launches the Camera in stillshot mode
     .start(CAMERA_RQ);
 ```
 ---
