@@ -1,6 +1,7 @@
 package com.afollestad.materialcamera;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.media.CamcorderProfile;
 import android.support.annotation.AttrRes;
@@ -13,6 +14,7 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 
 import com.afollestad.materialcamera.internal.CameraIntentKey;
@@ -45,7 +47,10 @@ public class MaterialCamera {
     public static final int STATUS_RECORDED = 1;
     public static final int STATUS_RETRY = 2;
 
-    private Activity mContext;
+    private Context mContext;
+    private Activity mActivityContext;
+    private Fragment mFragmentContext;
+    private boolean mIsFragment = false;
     private long mLengthLimit = -1;
     private boolean mAllowRetry = true;
     private boolean mAutoSubmit = false;
@@ -82,7 +87,15 @@ public class MaterialCamera {
 
     public MaterialCamera(@NonNull Activity context) {
         mContext = context;
+        mActivityContext = context;
         mPrimaryColor = DialogUtils.resolveColor(context, R.attr.colorPrimary);
+    }
+
+    public MaterialCamera(@NonNull Fragment context) {
+        mIsFragment = true;
+        mContext = context.getContext();
+        mFragmentContext = context;
+        mPrimaryColor = DialogUtils.resolveColor(mContext, R.attr.colorPrimary);
     }
 
     public MaterialCamera countdownMillis(long lengthLimitMs) {
@@ -323,6 +336,9 @@ public class MaterialCamera {
     }
 
     public void start(int requestCode) {
-        mContext.startActivityForResult(getIntent(), requestCode);
+        if( mIsFragment )
+            mFragmentContext.startActivityForResult(getIntent(), requestCode);
+        else
+            mActivityContext.startActivityForResult(getIntent(), requestCode);
     }
 }

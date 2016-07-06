@@ -9,10 +9,11 @@
         android:orientation="vertical"
         android:layout_gravity="center">
 
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/demo_from_activity"/>
+            android:text="@string/demo_from_fragment"/>
 
         <Button
             android:id="@+id/launchCamera"
@@ -29,14 +30,6 @@
             android:layout_gravity="center"
             android:padding="@dimen/mcam_content_inset"
             android:text="@string/launch_camera_stillshot" />
-
-
-        <Button
-            android:id="@+id/launchFromFragment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:padding="@dimen/mcam_content_inset"
-            android:text="@string/launch_from_fragment" />
     </LinearLayout>
+
 </FrameLayout>
