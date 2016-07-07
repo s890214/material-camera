@@ -140,13 +140,21 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
             return;
         }
         final boolean videoGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        final boolean audioGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+        final boolean audioNeeded = !useStillshot();
+
+        if (videoGranted && !audioGranted && audioNeeded) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSION_RC);
+            mRequestingPermission = true;
+        }
+
         if (videoGranted) {
             showInitialRecorder();
         } else {
-            final boolean audioGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
             String[] perms;
             if (audioGranted) perms = new String[]{Manifest.permission.CAMERA};
-            else perms = new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
+            else if(audioNeeded) perms = new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
+            else perms = new String[]{Manifest.permission.CAMERA};
             ActivityCompat.requestPermissions(this, perms, PERMISSION_RC);
             mRequestingPermission = true;
         }
