@@ -375,7 +375,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
         if (uri != null) {
             setResult(Activity.RESULT_OK, getIntent()
                     .putExtra(MaterialCamera.STATUS_EXTRA, MaterialCamera.STATUS_RECORDED)
-                    .setDataAndType(Uri.parse(uri), useStillshot() ? "image/jpg" : "video/mp4"));
+                    .setDataAndType(Uri.parse(uri), useStillshot() ? "image/jpeg" : "video/mp4"));
         }
         finish();
     }
