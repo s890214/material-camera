@@ -86,7 +86,7 @@ new MaterialCamera(this)                               // Constructor takes an A
     .videoPreferredHeight(720)                         // Sets a preferred height for the recorded video output.
     .videoPreferredAspect(4f / 3f)                     // Sets a preferred aspect ratio for the recorded video output.
     .maxAllowedFileSize(1024 * 1024 * 5)               // Sets a max file size of 5MB, recording will stop if file reaches this limit. Keep in mind, the FAT file system has a file size limit of 4GB.
-    .iconRecord(R.drawable.mcam_action_play)           // Sets a custom icon for the button used to start recording
+    .iconRecord(R.drawable.mcam_action_capture)        // Sets a custom icon for the button used to start recording
     .iconStop(R.drawable.mcam_action_stop)             // Sets a custom icon for the button used to stop recording
     .iconFrontCamera(R.drawable.mcam_camera_front)     // Sets a custom icon for the button used to switch to the front camera
     .iconRearCamera(R.drawable.mcam_camera_rear)       // Sets a custom icon for the button used to switch to the rear camera
