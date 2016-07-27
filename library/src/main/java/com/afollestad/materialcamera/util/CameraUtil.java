@@ -105,7 +105,7 @@ public class CameraUtil {
     // TODO: Take a hard look at how this works
     public static List<Integer> getSupportedFlashModes(Context context, CameraCharacteristics characteristics) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            return null;
+            return null; //doesn't support camera2
         } else if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
             Boolean flashAvailable = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
             if (flashAvailable == null || !flashAvailable)
@@ -126,7 +126,7 @@ public class CameraUtil {
                             if (!flashModes.contains(BaseCaptureActivity.FLASH_MODE_ALWAYS_ON))
                                 flashModes.add(BaseCaptureActivity.FLASH_MODE_ALWAYS_ON);
                             break;
-                        case CameraCharacteristics.CONTROL_AE_MODE_ON: // TODO: Verify correct
+                        case CameraCharacteristics.CONTROL_AE_MODE_ON:
                             if (!flashModes.contains(BaseCaptureActivity.FLASH_MODE_OFF))
                                 flashModes.add(BaseCaptureActivity.FLASH_MODE_OFF);
                         default:
