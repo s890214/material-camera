@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Matrix;
+import android.hardware.Camera;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
 import android.media.ExifInterface;
@@ -23,8 +24,11 @@ import com.afollestad.materialcamera.ICallback;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -62,6 +66,20 @@ public class CameraUtil {
     public static boolean hasCamera(Context context) {
         return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA) ||
                 context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT);
+    }
+
+    public static List<String> getSupportedFlashModes(Context context, Camera.Parameters parameters) {
+        //check has system feature for flash
+        if(context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
+            List<String> modes = parameters.getSupportedFlashModes();
+            if(modes.size() == 1 && modes.get(0).equals(parameters.FLASH_MODE_OFF)){
+                return null; //not supported
+            } else {
+                return modes;
+            }
+        } else {
+            return null; //not supported
+        }
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)

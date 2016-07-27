@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.net.Uri;
 import android.os.Build;
@@ -30,6 +31,9 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -37,7 +41,7 @@ import java.lang.annotation.RetentionPolicy;
 public abstract class BaseCaptureActivity extends AppCompatActivity implements BaseCaptureInterface {
 
     private int mCameraPosition = CAMERA_POSITION_UNKNOWN;
-    private int mFlashMode = FLASH_MODE_AUTO;
+    private int mFlashMode = FLASH_MODE_OFF;
     private boolean mRequestingPermission;
     private long mRecordingStart = -1;
     private long mRecordingEnd = -1;
@@ -45,6 +49,8 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     private Object mFrontCameraId;
     private Object mBackCameraId;
     private boolean mDidRecord = false;
+    private int[] mFlashModes;
+    private Boolean mFlashButtonVisible;
 
     public static final int PERMISSION_RC = 69;
 
@@ -405,7 +411,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
 
     @Override
     public void toggleFlashMode() {
-        switch (mFlashMode) {
+        /*switch (mFlashMode) {
             case FLASH_MODE_AUTO:
                 mFlashMode = FLASH_MODE_ALWAYS_ON;
                 break;
@@ -415,6 +421,11 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
             case FLASH_MODE_OFF:
             default:
                 mFlashMode = FLASH_MODE_AUTO;
+        }*/
+        if(mFlashModes != null) {
+            int index = (Arrays.asList(mFlashModes).indexOf(mFlashMode));
+
+            mFlashMode = mFlashModes[(Arrays.asList(mFlashModes).indexOf(mFlashMode) + 1) % mFlashModes.length];
         }
     }
 
@@ -546,4 +557,27 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
         return getIntent().getIntExtra(CameraIntentKey.ICON_FLASH_OFF, R.drawable.mcam_action_flash_off);
     }
 
+    @Override
+    public void setFlashModes(List<String> modes) {
+        if(modes == null){
+            mFlashModes = null;
+            return;
+        }
+        mFlashModes = new int[modes.size()];
+        for(int i = 0; i < modes.size(); i++){
+            switch(modes.get(i)){
+                case Camera.Parameters.FLASH_MODE_AUTO:
+                    mFlashModes[i] = FLASH_MODE_AUTO;
+                    break;
+                case Camera.Parameters.FLASH_MODE_ON:
+                    mFlashModes[i] = FLASH_MODE_ALWAYS_ON;
+                    break;
+                case Camera.Parameters.FLASH_MODE_OFF:
+                    mFlashModes[i] = FLASH_MODE_OFF;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 }
