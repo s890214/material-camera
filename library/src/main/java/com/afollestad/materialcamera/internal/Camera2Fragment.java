@@ -628,8 +628,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
 
             configureTransform(width, height);
 
-            Boolean flashAvailable = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
-            mFlashSupported = flashAvailable == null ? false : flashAvailable;
+            mInterface.setFlashModes(CameraUtil.getSupportedFlashModes(getActivity(), characteristics));
 
             // noinspection ResourceType
             manager.openCamera((String) mInterface.getCurrentCameraId(), mStateCallback, null);
@@ -1032,30 +1031,28 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
     }
 
     private void setFlashMode(CaptureRequest.Builder requestBuilder) {
-        if (mFlashSupported) {
-            mPreviewBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
+        mPreviewBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
 
-            int aeMode;
-            int flashMode;
-            switch (mInterface.getFlashMode()) {
-                case FLASH_MODE_AUTO:
-                    aeMode = CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH;
-                    flashMode = CameraMetadata.FLASH_MODE_SINGLE;
-                    break;
-                case FLASH_MODE_ALWAYS_ON:
-                    aeMode = CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH;
-                    flashMode = CameraMetadata.FLASH_MODE_TORCH;
-                    break;
-                case FLASH_MODE_OFF:
-                default:
-                    aeMode = CaptureRequest.CONTROL_AE_MODE_ON;
-                    flashMode = CameraMetadata.FLASH_MODE_OFF;
-                    break;
-            }
-
-            requestBuilder.set(CaptureRequest.CONTROL_AE_MODE, aeMode);
-            requestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
+        int aeMode;
+        int flashMode;
+        switch (mInterface.getFlashMode()) {
+            case FLASH_MODE_AUTO:
+                aeMode = CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH;
+                flashMode = CameraMetadata.FLASH_MODE_SINGLE;
+                break;
+            case FLASH_MODE_ALWAYS_ON:
+                aeMode = CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH;
+                flashMode = CameraMetadata.FLASH_MODE_TORCH;
+                break;
+            case FLASH_MODE_OFF:
+            default:
+                aeMode = CaptureRequest.CONTROL_AE_MODE_ON;
+                flashMode = CameraMetadata.FLASH_MODE_OFF;
+                break;
         }
+
+        requestBuilder.set(CaptureRequest.CONTROL_AE_MODE, aeMode);
+        requestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
     }
 
     //////////////////////// END OF STILL SHOT

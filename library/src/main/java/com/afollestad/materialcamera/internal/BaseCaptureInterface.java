@@ -126,6 +126,8 @@ public interface BaseCaptureInterface {
     @DrawableRes
     int iconFlashOff();
 
-    void setFlashModes(List<String> modes);
+    void setFlashModes(List<Integer> modes);
+
+    boolean shouldHideFlash();
 
 }

@@ -45,7 +45,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
     private Point mWindowSize;
     private int mDisplayOrientation;
     private boolean mIsAutoFocusing;
-    List<String> mFlashModes;
+    List<Integer> mFlashModes;
 
     public static CameraFragment newInstance() {
         CameraFragment fragment = new CameraFragment();
@@ -209,7 +209,6 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
                 parameters.setRecordingHint(true);
 
-            System.out.println(parameters.getSupportedFlashModes().toString() + "====================================================================================================");
             mFlashModes = CameraUtil.getSupportedFlashModes(this.getActivity(), parameters);
             mInterface.setFlashModes(mFlashModes);
             System.out.println("Modes after parse: " + ((mFlashModes == null) ? "null": mFlashModes.toString()) + "====================================================================================================");
@@ -458,24 +457,24 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
     }
 
     private void setupFlashMode() {
-            String flashMode = null;
-            switch (mInterface.getFlashMode()) {
-                case FLASH_MODE_AUTO:
-                    flashMode = Camera.Parameters.FLASH_MODE_AUTO;
-                    break;
-                case FLASH_MODE_ALWAYS_ON:
-                    flashMode = Camera.Parameters.FLASH_MODE_ON;
-                    break;
-                case FLASH_MODE_OFF:
-                    flashMode = Camera.Parameters.FLASH_MODE_OFF;
-                default:
-                    break;
-            }
-            if(flashMode != null) {
-                Camera.Parameters parameters = mCamera.getParameters();
-                parameters.setFlashMode(flashMode);
-                mCamera.setParameters(parameters);
-            }
+        String flashMode = null;
+        switch (mInterface.getFlashMode()) {
+            case FLASH_MODE_AUTO:
+                flashMode = Camera.Parameters.FLASH_MODE_AUTO;
+                break;
+            case FLASH_MODE_ALWAYS_ON:
+                flashMode = Camera.Parameters.FLASH_MODE_ON;
+                break;
+            case FLASH_MODE_OFF:
+                flashMode = Camera.Parameters.FLASH_MODE_OFF;
+            default:
+                break;
+        }
+        if(flashMode != null) {
+            Camera.Parameters parameters = mCamera.getParameters();
+            parameters.setFlashMode(flashMode);
+            mCamera.setParameters(parameters);
+        }
     }
 
     @Override

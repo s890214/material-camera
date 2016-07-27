@@ -284,6 +284,7 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
                     mInterface.iconFrontCamera() : mInterface.iconRearCamera());
             closeCamera();
             openCamera();
+            setupFlashMode();
         } else if (id == R.id.video) {
             if (mIsRecording) {
                 stopRecordingVideo(false);
@@ -317,6 +318,13 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
     }
 
     private void setupFlashMode() {
+        if (mInterface.shouldHideFlash()) {
+            mButtonFlash.setVisibility(View.GONE);
+            return;
+        } else {
+            mButtonFlash.setVisibility(View.VISIBLE);
+        }
+
         final int res;
         switch (mInterface.getFlashMode()) {
             case FLASH_MODE_AUTO:

@@ -20,6 +20,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.afollestad.materialcamera.ICallback;
+import com.afollestad.materialcamera.internal.BaseCaptureActivity;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -68,18 +69,72 @@ public class CameraUtil {
                 context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT);
     }
 
-    public static List<String> getSupportedFlashModes(Context context, Camera.Parameters parameters) {
+    public static List<Integer> getSupportedFlashModes(Context context, Camera.Parameters parameters) {
         //check has system feature for flash
         if(context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
             List<String> modes = parameters.getSupportedFlashModes();
-            if(modes.size() == 1 && modes.get(0).equals(parameters.FLASH_MODE_OFF)){
+            if (modes == null || (modes.size() == 1 && modes.get(0).equals(parameters.FLASH_MODE_OFF))) {
                 return null; //not supported
             } else {
-                return modes;
+                ArrayList<Integer> flashModes = new ArrayList<>();
+                for(String mode : modes){
+                    switch(mode){
+                        case Camera.Parameters.FLASH_MODE_AUTO:
+                            if (!flashModes.contains(BaseCaptureActivity.FLASH_MODE_AUTO))
+                                flashModes.add(BaseCaptureActivity.FLASH_MODE_AUTO);
+                            break;
+                        case Camera.Parameters.FLASH_MODE_ON:
+                            if (!flashModes.contains(BaseCaptureActivity.FLASH_MODE_ALWAYS_ON))
+                                flashModes.add(BaseCaptureActivity.FLASH_MODE_ALWAYS_ON);
+                            break;
+                        case Camera.Parameters.FLASH_MODE_OFF:
+                            if (!flashModes.contains(BaseCaptureActivity.FLASH_MODE_OFF))
+                                flashModes.add(BaseCaptureActivity.FLASH_MODE_OFF);
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                return flashModes;
             }
         } else {
             return null; //not supported
         }
+    }
+
+    // TODO: Take a hard look at how this works
+    public static List<Integer> getSupportedFlashModes(Context context, CameraCharacteristics characteristics) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            return null;
+        } else if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
+            Boolean flashAvailable = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
+            if (flashAvailable == null || !flashAvailable)
+                return null;
+
+            int[] modes = characteristics.get(CameraCharacteristics.CONTROL_AE_AVAILABLE_MODES);
+            if (modes == null || (modes.length == 1 && modes[0] == CameraCharacteristics.CONTROL_AE_MODE_OFF)) {
+                return null; //not supported
+            } else {
+                ArrayList<Integer> flashModes = new ArrayList<>();
+                for (int i = 0; i < modes.length; i++) {
+                    switch (modes[i]) {
+                        case CameraCharacteristics.CONTROL_AE_MODE_ON_AUTO_FLASH:
+                            if (!flashModes.contains(BaseCaptureActivity.FLASH_MODE_AUTO))
+                                flashModes.add(BaseCaptureActivity.FLASH_MODE_AUTO);
+                            break;
+                        case CameraCharacteristics.CONTROL_AE_MODE_ON_ALWAYS_FLASH:
+                            if (!flashModes.contains(BaseCaptureActivity.FLASH_MODE_ALWAYS_ON))
+                                flashModes.add(BaseCaptureActivity.FLASH_MODE_ALWAYS_ON);
+                            break;
+                        case CameraCharacteristics.CONTROL_AE_MODE_ON: // TODO: Verify correct
+                            if (!flashModes.contains(BaseCaptureActivity.FLASH_MODE_OFF))
+                                flashModes.add(BaseCaptureActivity.FLASH_MODE_OFF);
+                        default:
+                            break;
+                    }
+                } return flashModes;
+            }
+        } return null; //not supported
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
