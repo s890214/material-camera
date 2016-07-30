@@ -144,24 +144,28 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
             showInitialRecorder();
             return;
         }
-        final boolean videoGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        final boolean cameraGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
         final boolean audioGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
         final boolean audioNeeded = !useStillshot();
 
-        if (videoGranted && !audioGranted && audioNeeded) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, PERMISSION_RC);
-            mRequestingPermission = true;
+        String[] perms = null;
+        if (cameraGranted) {
+            if (audioNeeded && !audioGranted) {
+                perms = new String[]{Manifest.permission.RECORD_AUDIO};
+            }
+        } else {
+            if (audioNeeded && !audioGranted) {
+                perms = new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
+            } else {
+                perms = new String[]{Manifest.permission.CAMERA};
+            }
         }
 
-        if (videoGranted) {
-            showInitialRecorder();
-        } else {
-            String[] perms;
-            if (audioGranted) perms = new String[]{Manifest.permission.CAMERA};
-            else if(audioNeeded) perms = new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
-            else perms = new String[]{Manifest.permission.CAMERA};
+        if (perms != null) {
             ActivityCompat.requestPermissions(this, perms, PERMISSION_RC);
             mRequestingPermission = true;
+        } else {
+            showInitialRecorder();
         }
     }
 
@@ -550,10 +554,6 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
 
     @Override
     public boolean shouldHideFlash() {
-        if(!useStillshot()){
-            return true;
-        } else {
-            return mFlashModes == null;
-        }
+        return !useStillshot() || mFlashModes == null;
     }
 }
