@@ -103,6 +103,7 @@ public class CameraUtil {
     }
 
     // TODO: Take a hard look at how this works
+    // Camera2
     public static List<Integer> getSupportedFlashModes(Context context, CameraCharacteristics characteristics) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             return null; //doesn't support camera2
@@ -138,9 +139,10 @@ public class CameraUtil {
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public static boolean hasCamera2(Context context) {
+    public static boolean hasCamera2(Context context, boolean stillShot) {
         if (context == null) return false;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return false;
+        if (stillShot && "samsung".equals(Build.MANUFACTURER)) return false;
         try {
             CameraManager manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
             String[] idList = manager.getCameraIdList();
