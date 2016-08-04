@@ -205,13 +205,19 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             mVideoSize = chooseVideoSize((BaseCaptureActivity) activity, videoSizes);
             Camera.Size previewSize = chooseOptimalSize(parameters.getSupportedPreviewSizes(),
                     mWindowSize.x, mWindowSize.y, mVideoSize);
-            parameters.setPreviewSize(previewSize.width, previewSize.height);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-                parameters.setRecordingHint(true);
+
+            // some Samsung S3 devices
+            if (Build.DEVICE.startsWith("d2"))
+                parameters.setPreviewSize(640,480);
+            else {
+                parameters.setPreviewSize(previewSize.width, previewSize.height);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+                    parameters.setRecordingHint(true);
+            }
+
 
             mFlashModes = CameraUtil.getSupportedFlashModes(this.getActivity(), parameters);
             mInterface.setFlashModes(mFlashModes);
-            System.out.println("Modes after parse: " + ((mFlashModes == null) ? "null": mFlashModes.toString()) + "====================================================================================================");
 
             Camera.Size mStillShotSize = getHighestSupportedStillShotSize(parameters.getSupportedPictureSizes());
             parameters.setPictureSize(mStillShotSize.width, mStillShotSize.height);
