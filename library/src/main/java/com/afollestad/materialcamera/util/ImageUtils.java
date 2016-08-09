@@ -60,14 +60,18 @@ public class ImageUtils {
      * @return rotated bitmap or null
      */
     @Nullable
-    public static Bitmap getRotatedBitmap(String inputFile, int reqWidth, int reqHeight) {
+    public static Bitmap getRotatedBitmap(String inputFile, int reqWidth, int reqHeight, int inSampleSize) {
         final int rotationInDegrees = getExifDegreesFromJpeg(inputFile);
 
         final BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(inputFile, opts);
-        opts.inSampleSize = calculateInSampleSize(opts, reqWidth, reqHeight);
+        opts.inSampleSize = calculateInSampleSize(opts, reqWidth, reqHeight, inSampleSize);
+
         opts.inJustDecodeBounds = false;
+//        opts.inPreferredConfig = Bitmap.Config.RGB_565;
+//        opts.inDither = true;
+
         final Bitmap origBitmap = BitmapFactory.decodeFile(inputFile, opts);
 
         if (origBitmap == null)
@@ -76,17 +80,19 @@ public class ImageUtils {
         Matrix matrix = new Matrix();
         matrix.preRotate(rotationInDegrees);
         // we need not check if the rotation is not needed, since the below function will then return the same bitmap. Thus no memory loss occurs.
-        Bitmap rotatedBitmap = Bitmap.createBitmap(origBitmap, 0, 0, origBitmap.getWidth(), origBitmap.getHeight(), matrix, true);
 
-        return rotatedBitmap;
+        try {
+            return Bitmap.createBitmap(origBitmap, 0, 0, origBitmap.getWidth(), origBitmap.getHeight(), matrix, true);
+        } catch (OutOfMemoryError e) {
+            return getRotatedBitmap(inputFile, reqWidth, reqHeight, opts.inSampleSize+1);
+        }
     }
 
     private static int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+            BitmapFactory.Options options, int reqWidth, int reqHeight, int inSampleSize) {
         // Raw height and width of image
         final int height = options.outHeight;
         final int width = options.outWidth;
-        int inSampleSize = 1;
 
         if (height > reqHeight || width > reqWidth) {
 
@@ -108,7 +114,6 @@ public class ImageUtils {
         try {
             ExifInterface exif = new ExifInterface(inputFile);
             int exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-
 
             if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) {
                 return 90;
