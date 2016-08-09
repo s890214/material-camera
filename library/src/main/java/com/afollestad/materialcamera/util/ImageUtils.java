@@ -54,7 +54,18 @@ public class ImageUtils {
     }
 
     /**
-     * Rotates the bitmap per their EXIF flag.
+     * Helper function for getRotatedBitmap(String, int, int, int)
+     *
+     * @param inputFile inputFile Expects an JPEG file if corrected orientation wants to be set.
+     * @return rotated bitmap or null
+     */
+    public static Bitmap getRotatedBitmap(String inputFile, int reqWidth, int reqHeight) {
+        return getRotatedBitmap(inputFile, reqWidth, reqHeight, 1);
+    }
+
+    /**
+     * Rotates the bitmap per their EXIF flag. This is a recursive function that will
+     * be called again if the image needs to be downsized more.
      *
      * @param inputFile Expects an JPEG file if corrected orientation wants to be set.
      * @return rotated bitmap or null
@@ -67,10 +78,7 @@ public class ImageUtils {
         opts.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(inputFile, opts);
         opts.inSampleSize = calculateInSampleSize(opts, reqWidth, reqHeight, inSampleSize);
-
         opts.inJustDecodeBounds = false;
-//        opts.inPreferredConfig = Bitmap.Config.RGB_565;
-//        opts.inDither = true;
 
         final Bitmap origBitmap = BitmapFactory.decodeFile(inputFile, opts);
 
