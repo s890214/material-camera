@@ -60,7 +60,8 @@ public class ImageUtils {
      * @return rotated bitmap or null
      */
     public static Bitmap getRotatedBitmap(String inputFile, int reqWidth, int reqHeight) {
-        return getRotatedBitmap(inputFile, reqWidth, reqHeight, 1);
+        final int IN_SAMPLE_SIZE_DEFAULT_VAL = 1;
+        return getRotatedBitmap(inputFile, reqWidth, reqHeight, IN_SAMPLE_SIZE_DEFAULT_VAL);
     }
 
     /**
