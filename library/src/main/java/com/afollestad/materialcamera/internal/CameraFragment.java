@@ -21,6 +21,7 @@ import com.afollestad.materialcamera.R;
 import com.afollestad.materialcamera.util.CameraUtil;
 import com.afollestad.materialcamera.util.Degrees;
 import com.afollestad.materialcamera.util.ImageUtils;
+import com.afollestad.materialcamera.util.ManufacturerUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -206,12 +207,10 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             Camera.Size previewSize = chooseOptimalSize(parameters.getSupportedPreviewSizes(),
                     mWindowSize.x, mWindowSize.y, mVideoSize);
 
-            // some Samsung S3 devices
-            final String SAMSUNG_S3_DEVICE_COMMON_PREFIX = "d2";
-            if (Build.DEVICE.startsWith(SAMSUNG_S3_DEVICE_COMMON_PREFIX)) {
-                final Integer SAMSUNG_S3_PREVIEW_WIDTH = 640;
-                final Integer SAMSUNG_S3_PREVIEW_HEIGHT = 480;
-                parameters.setPreviewSize(SAMSUNG_S3_PREVIEW_WIDTH, SAMSUNG_S3_PREVIEW_HEIGHT);
+
+            if (ManufacturerUtil.isSamsungGalaxyS3()) {
+                parameters.setPreviewSize(ManufacturerUtil.SAMSUNG_S3_PREVIEW_WIDTH,
+                                          ManufacturerUtil.SAMSUNG_S3_PREVIEW_HEIGHT);
             } else {
                 parameters.setPreviewSize(previewSize.width, previewSize.height);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)

@@ -142,8 +142,7 @@ public class CameraUtil {
     public static boolean hasCamera2(Context context, boolean stillShot) {
         if (context == null) return false;
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) return false;
-        final String SAMSUNG_MANUFACTURER = "samsung";
-        if (stillShot && SAMSUNG_MANUFACTURER.equals(Build.MANUFACTURER.toLowerCase())) return false;
+        if (stillShot && ManufacturerUtil.isSamsungDevice()) return false;
         try {
             CameraManager manager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
             String[] idList = manager.getCameraIdList();
