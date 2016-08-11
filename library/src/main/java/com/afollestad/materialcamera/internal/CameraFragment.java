@@ -20,7 +20,7 @@ import com.afollestad.materialcamera.ICallback;
 import com.afollestad.materialcamera.R;
 import com.afollestad.materialcamera.util.CameraUtil;
 import com.afollestad.materialcamera.util.Degrees;
-import com.afollestad.materialcamera.util.ImageUtils;
+import com.afollestad.materialcamera.util.ImageUtil;
 import com.afollestad.materialcamera.util.ManufacturerUtil;
 
 import java.io.File;
@@ -515,7 +515,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
                 final File outputPic = getOutputPictureFile();
 
                 // lets save the image to disk
-                ImageUtils.saveToDiskAsync(data, outputPic, new ICallback() {
+                ImageUtil.saveToDiskAsync(data, outputPic, new ICallback() {
                     @Override
                     public void done(Exception e) {
                         if (e == null) {

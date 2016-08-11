@@ -17,7 +17,7 @@ import java.io.IOException;
 /**
  * Created by tomiurankar on 06/03/16.
  */
-public class ImageUtils {
+public class ImageUtil {
     /**
      * Saves byte[] array to disk
      * @param input byte array
