@@ -20,7 +20,8 @@ import com.afollestad.materialcamera.ICallback;
 import com.afollestad.materialcamera.R;
 import com.afollestad.materialcamera.util.CameraUtil;
 import com.afollestad.materialcamera.util.Degrees;
-import com.afollestad.materialcamera.util.ImageUtils;
+import com.afollestad.materialcamera.util.ImageUtil;
+import com.afollestad.materialcamera.util.ManufacturerUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
     private Point mWindowSize;
     private int mDisplayOrientation;
     private boolean mIsAutoFocusing;
-    boolean mFlashSupported;
+    List<Integer> mFlashModes;
 
     public static CameraFragment newInstance() {
         CameraFragment fragment = new CameraFragment();
@@ -205,11 +206,20 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             mVideoSize = chooseVideoSize((BaseCaptureActivity) activity, videoSizes);
             Camera.Size previewSize = chooseOptimalSize(parameters.getSupportedPreviewSizes(),
                     mWindowSize.x, mWindowSize.y, mVideoSize);
-            parameters.setPreviewSize(previewSize.width, previewSize.height);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-                parameters.setRecordingHint(true);
 
-            mFlashSupported = parameters.getSupportedFlashModes() != null; // TODO which supported
+
+            if (ManufacturerUtil.isSamsungGalaxyS3()) {
+                parameters.setPreviewSize(ManufacturerUtil.SAMSUNG_S3_PREVIEW_WIDTH,
+                                          ManufacturerUtil.SAMSUNG_S3_PREVIEW_HEIGHT);
+            } else {
+                parameters.setPreviewSize(previewSize.width, previewSize.height);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+                    parameters.setRecordingHint(true);
+            }
+
+
+            mFlashModes = CameraUtil.getSupportedFlashModes(this.getActivity(), parameters);
+            mInterface.setFlashModes(mFlashModes);
 
             Camera.Size mStillShotSize = getHighestSupportedStillShotSize(parameters.getSupportedPictureSizes());
             parameters.setPictureSize(mStillShotSize.width, mStillShotSize.height);
@@ -455,20 +465,20 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
     }
 
     private void setupFlashMode() {
-        if (mFlashSupported) {
-            String flashMode;
-            switch (mInterface.getFlashMode()) {
-                case FLASH_MODE_AUTO:
-                    flashMode = Camera.Parameters.FLASH_MODE_AUTO;
-                    break;
-                case FLASH_MODE_ALWAYS_ON:
-                    flashMode = Camera.Parameters.FLASH_MODE_ON;
-                    break;
-                case FLASH_MODE_OFF:
-                default:
-                    flashMode = Camera.Parameters.FLASH_MODE_OFF;
-                    break;
-            }
+        String flashMode = null;
+        switch (mInterface.getFlashMode()) {
+            case FLASH_MODE_AUTO:
+                flashMode = Camera.Parameters.FLASH_MODE_AUTO;
+                break;
+            case FLASH_MODE_ALWAYS_ON:
+                flashMode = Camera.Parameters.FLASH_MODE_ON;
+                break;
+            case FLASH_MODE_OFF:
+                flashMode = Camera.Parameters.FLASH_MODE_OFF;
+            default:
+                break;
+        }
+        if(flashMode != null) {
             Camera.Parameters parameters = mCamera.getParameters();
             parameters.setFlashMode(flashMode);
             mCamera.setParameters(parameters);
@@ -505,7 +515,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
                 final File outputPic = getOutputPictureFile();
 
                 // lets save the image to disk
-                ImageUtils.saveToDiskAsync(data, outputPic, new ICallback() {
+                ImageUtil.saveToDiskAsync(data, outputPic, new ICallback() {
                     @Override
                     public void done(Exception e) {
                         if (e == null) {

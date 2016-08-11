@@ -4,6 +4,8 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 
+import java.util.List;
+
 /**
  * @author Aidan Follestad (afollestad)
  */
@@ -123,5 +125,9 @@ public interface BaseCaptureInterface {
 
     @DrawableRes
     int iconFlashOff();
+
+    void setFlashModes(List<Integer> modes);
+
+    boolean shouldHideFlash();
 
 }

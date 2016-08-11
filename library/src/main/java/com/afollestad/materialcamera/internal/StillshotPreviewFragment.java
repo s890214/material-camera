@@ -11,7 +11,7 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 
 import com.afollestad.materialcamera.R;
-import com.afollestad.materialcamera.util.ImageUtils;
+import com.afollestad.materialcamera.util.ImageUtil;
 
 /**
  * Created by tomiurankar on 04/03/16.
@@ -71,7 +71,7 @@ public class StillshotPreviewFragment extends BaseGalleryFragment {
         final int height = mImageView.getMeasuredHeight();
 
         if (mBitmap == null) {
-            Bitmap bitmap = ImageUtils.getRotatedBitmap(Uri.parse(mOutputUri).getPath(), width, height);
+            Bitmap bitmap = ImageUtil.getRotatedBitmap(Uri.parse(mOutputUri).getPath(), width, height);
             mBitmap = bitmap;
         }
 
