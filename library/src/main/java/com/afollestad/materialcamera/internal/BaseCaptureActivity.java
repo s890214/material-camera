@@ -6,6 +6,7 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.net.Uri;
 import android.os.Build;
@@ -30,6 +31,9 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -37,6 +41,7 @@ import java.lang.annotation.RetentionPolicy;
 public abstract class BaseCaptureActivity extends AppCompatActivity implements BaseCaptureInterface {
 
     private int mCameraPosition = CAMERA_POSITION_UNKNOWN;
+    private int mFlashMode = FLASH_MODE_OFF;
     private boolean mRequestingPermission;
     private long mRecordingStart = -1;
     private long mRecordingEnd = -1;
@@ -44,6 +49,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     private Object mFrontCameraId;
     private Object mBackCameraId;
     private boolean mDidRecord = false;
+    private List<Integer> mFlashModes;
 
     public static final int PERMISSION_RC = 69;
 
@@ -55,6 +61,15 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     public static final int CAMERA_POSITION_UNKNOWN = 0;
     public static final int CAMERA_POSITION_FRONT = 1;
     public static final int CAMERA_POSITION_BACK = 2;
+
+    @IntDef({FLASH_MODE_OFF, FLASH_MODE_ALWAYS_ON, FLASH_MODE_AUTO})
+    @Retention(RetentionPolicy.SOURCE)
+    public @interface FlashMode {
+    }
+
+    public static final int FLASH_MODE_OFF = 0;
+    public static final int FLASH_MODE_ALWAYS_ON = 1;
+    public static final int FLASH_MODE_AUTO = 2;
 
     @Override
     protected final void onSaveInstanceState(Bundle outState) {
@@ -73,6 +88,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
             if (mBackCameraId != null)
                 outState.putInt("back_camera_id_int", (Integer) mBackCameraId);
         }
+        outState.putInt("flash_mode", mFlashMode);
     }
 
     @Override
@@ -116,6 +132,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
                 mFrontCameraId = savedInstanceState.getInt("front_camera_id_int");
                 mBackCameraId = savedInstanceState.getInt("back_camera_id_int");
             }
+            mFlashMode = savedInstanceState.getInt("flash_mode");
         }
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON |
@@ -127,16 +144,28 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
             showInitialRecorder();
             return;
         }
-        final boolean videoGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
-        if (videoGranted) {
-            showInitialRecorder();
+        final boolean cameraGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        final boolean audioGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+        final boolean audioNeeded = !useStillshot();
+
+        String[] perms = null;
+        if (cameraGranted) {
+            if (audioNeeded && !audioGranted) {
+                perms = new String[]{Manifest.permission.RECORD_AUDIO};
+            }
         } else {
-            final boolean audioGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
-            String[] perms;
-            if (audioGranted) perms = new String[]{Manifest.permission.CAMERA};
-            else perms = new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
+            if (audioNeeded && !audioGranted) {
+                perms = new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO};
+            } else {
+                perms = new String[]{Manifest.permission.CAMERA};
+            }
+        }
+
+        if (perms != null) {
             ActivityCompat.requestPermissions(this, perms, PERMISSION_RC);
             mRequestingPermission = true;
+        } else {
+            showInitialRecorder();
         }
     }
 
@@ -156,6 +185,9 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
                 return;
             } else if (frag instanceof BaseCameraFragment) {
                 ((BaseCameraFragment) frag).cleanup();
+            } else if (frag instanceof BaseGalleryFragment && allowRetry()) {
+                onRetry(((CameraUriInterface) frag).getOutputUri());
+                return;
             }
         }
         finish();
@@ -305,6 +337,15 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     }
 
     @Override
+    public void onShowStillshot(String outputUri) {
+        Fragment frag = StillshotPreviewFragment.newInstance(outputUri, allowRetry(),
+                getIntent().getIntExtra(CameraIntentKey.PRIMARY_COLOR, 0));
+        getFragmentManager().beginTransaction()
+                .replace(R.id.container, frag)
+                .commit();
+    }
+
+    @Override
     public final boolean allowRetry() {
         return getIntent().getBooleanExtra(CameraIntentKey.ALLOW_RETRY, true);
     }
@@ -351,7 +392,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
         if (uri != null) {
             setResult(Activity.RESULT_OK, getIntent()
                     .putExtra(MaterialCamera.STATUS_EXTRA, MaterialCamera.STATUS_RECORDED)
-                    .setDataAndType(Uri.parse(uri), "video/mp4"));
+                    .setDataAndType(Uri.parse(uri), useStillshot() ? "image/jpeg" : "video/mp4"));
         }
         finish();
     }
@@ -364,6 +405,18 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     @Override
     public boolean didRecord() {
         return mDidRecord;
+    }
+
+    @Override
+    public int getFlashMode() {
+        return mFlashMode;
+    }
+
+    @Override
+    public void toggleFlashMode() {
+        if (mFlashModes != null) {
+            mFlashMode = mFlashModes.get((mFlashModes.indexOf(mFlashMode) + 1) % mFlashModes.size());
+        }
     }
 
     @Override
@@ -463,5 +516,44 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     @Override
     public int labelUseVideo() {
         return getIntent().getIntExtra(CameraIntentKey.LABEL_USE_VIDEO, R.string.mcam_use_video);
+    }
+
+    @DrawableRes
+    @Override
+    public int iconStillshot() {
+        return getIntent().getIntExtra(CameraIntentKey.ICON_STILL_SHOT, R.drawable.mcam_action_stillshot);
+    }
+
+    @Override
+    public boolean useStillshot() {
+        return getIntent().getBooleanExtra(CameraIntentKey.STILL_SHOT, false);
+    }
+
+    @DrawableRes
+    @Override
+    public int iconFlashAuto() {
+        return getIntent().getIntExtra(CameraIntentKey.ICON_FLASH_AUTO, R.drawable.mcam_action_flash_auto);
+    }
+
+    @DrawableRes
+    @Override
+    public int iconFlashOn() {
+        return getIntent().getIntExtra(CameraIntentKey.ICON_FLASH_ON, R.drawable.mcam_action_flash);
+    }
+
+    @DrawableRes
+    @Override
+    public int iconFlashOff() {
+        return getIntent().getIntExtra(CameraIntentKey.ICON_FLASH_OFF, R.drawable.mcam_action_flash_off);
+    }
+
+    @Override
+    public void setFlashModes(List<Integer> modes) {
+        mFlashModes = modes;
+    }
+
+    @Override
+    public boolean shouldHideFlash() {
+        return !useStillshot() || mFlashModes == null;
     }
 }

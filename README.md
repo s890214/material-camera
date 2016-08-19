@@ -60,7 +60,7 @@ First, you have to register two library Activities from your app's `AndroidManif
 Feel free to use your own custom theme. The included themes give the activities a good default look. 
 See the sample project for more details.
 
-### Code
+### Code for video
 
 ```java
 private final static int CAMERA_RQ = 6969; 
@@ -136,6 +136,16 @@ new MaterialCamera(this)
     .start(CAMERA_RQ);
 ```
 
+---
+
+### Code for stillshots/pictures
+
+```java
+new MaterialCamera(this)
+    /** all the previous methods can be called, but video ones would be ignored */
+    .stillShot() // launches the Camera in stillshot mode
+    .start(CAMERA_RQ);
+```
 ---
 
 # Receiving Results

@@ -16,18 +16,20 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.afollestad.materialcamera.ICallback;
 import com.afollestad.materialcamera.R;
 import com.afollestad.materialcamera.util.CameraUtil;
 import com.afollestad.materialcamera.util.Degrees;
+import com.afollestad.materialcamera.util.ImageUtil;
+import com.afollestad.materialcamera.util.ManufacturerUtil;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.afollestad.materialcamera.internal.BaseCaptureActivity.CAMERA_POSITION_BACK;
-import static com.afollestad.materialcamera.internal.BaseCaptureActivity.CAMERA_POSITION_FRONT;
-import static com.afollestad.materialcamera.internal.BaseCaptureActivity.CAMERA_POSITION_UNKNOWN;
+import static com.afollestad.materialcamera.internal.BaseCaptureActivity.*;
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -44,6 +46,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
     private Point mWindowSize;
     private int mDisplayOrientation;
     private boolean mIsAutoFocusing;
+    List<Integer> mFlashModes;
 
     public static CameraFragment newInstance() {
         CameraFragment fragment = new CameraFragment();
@@ -203,9 +206,24 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             mVideoSize = chooseVideoSize((BaseCaptureActivity) activity, videoSizes);
             Camera.Size previewSize = chooseOptimalSize(parameters.getSupportedPreviewSizes(),
                     mWindowSize.x, mWindowSize.y, mVideoSize);
-            parameters.setPreviewSize(previewSize.width, previewSize.height);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-                parameters.setRecordingHint(true);
+
+
+            if (ManufacturerUtil.isSamsungGalaxyS3()) {
+                parameters.setPreviewSize(ManufacturerUtil.SAMSUNG_S3_PREVIEW_WIDTH,
+                                          ManufacturerUtil.SAMSUNG_S3_PREVIEW_HEIGHT);
+            } else {
+                parameters.setPreviewSize(previewSize.width, previewSize.height);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+                    parameters.setRecordingHint(true);
+            }
+
+
+            mFlashModes = CameraUtil.getSupportedFlashModes(this.getActivity(), parameters);
+            mInterface.setFlashModes(mFlashModes);
+
+            Camera.Size mStillShotSize = getHighestSupportedStillShotSize(parameters.getSupportedPictureSizes());
+            parameters.setPictureSize(mStillShotSize.width, mStillShotSize.height);
+
             setCameraDisplayOrientation(parameters);
             mCamera.setParameters(parameters);
             createPreview();
@@ -215,6 +233,22 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
         } catch (RuntimeException e2) {
             throwError(new Exception("Cannot access the camera, you may need to restart your device.", e2));
         }
+    }
+
+    private Camera.Size getHighestSupportedStillShotSize(List<Camera.Size> supportedPictureSizes) {
+        Collections.sort(supportedPictureSizes, new Comparator<Camera.Size>() {
+            @Override
+            public int compare(Camera.Size lhs, Camera.Size rhs) {
+                if (lhs.height * lhs.width > rhs.height * rhs.width)
+                    return -1;
+                return 1;
+
+            }
+        });
+        Camera.Size maxSize = supportedPictureSizes.get(0);
+
+        Log.d("stillshot", "using resolution: " + maxSize.width + "x" + maxSize.height);
+        return maxSize;
     }
 
     @SuppressWarnings("WrongConstant")
@@ -229,14 +263,18 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
                 info.orientation, deviceOrientation, mDisplayOrientation));
 
         int previewOrientation;
+        int jpegOrientation;
         if (CameraUtil.isArcWelder()) {
             previewOrientation = 0;
+            jpegOrientation = 0;
         } else {
-            previewOrientation = mDisplayOrientation;
+            jpegOrientation = previewOrientation = mDisplayOrientation;
+
             if (Degrees.isPortrait(deviceOrientation) && getCurrentCameraPosition() == CAMERA_POSITION_FRONT)
                 previewOrientation = Degrees.mirror(mDisplayOrientation);
         }
-        parameters.setRotation(previewOrientation);
+
+        parameters.setRotation(jpegOrientation);
         mCamera.setDisplayOrientation(previewOrientation);
     }
 
@@ -424,6 +462,85 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             mInterface.onShowPreview(mOutputUri, reachedZero);
 
         stopCounter();
+    }
+
+    private void setupFlashMode() {
+        String flashMode = null;
+        switch (mInterface.getFlashMode()) {
+            case FLASH_MODE_AUTO:
+                flashMode = Camera.Parameters.FLASH_MODE_AUTO;
+                break;
+            case FLASH_MODE_ALWAYS_ON:
+                flashMode = Camera.Parameters.FLASH_MODE_ON;
+                break;
+            case FLASH_MODE_OFF:
+                flashMode = Camera.Parameters.FLASH_MODE_OFF;
+            default:
+                break;
+        }
+        if(flashMode != null) {
+            Camera.Parameters parameters = mCamera.getParameters();
+            parameters.setFlashMode(flashMode);
+            mCamera.setParameters(parameters);
+        }
+    }
+
+    @Override
+    public void onPreferencesUpdated() {
+        setupFlashMode();
+    }
+
+    @Override
+    public void takeStillshot() {
+
+        //https://github.com/josnidhin/Android-Camera-Example/blob/master/src/com/example/cam/CamTestActivity.java
+        final String TAG = "takeStillShot";
+
+        Camera.ShutterCallback shutterCallback = new Camera.ShutterCallback() {
+            public void onShutter() {
+//                			 Log.d(TAG, "onShutter'd");
+            }
+        };
+
+        Camera.PictureCallback rawCallback = new Camera.PictureCallback() {
+            public void onPictureTaken(byte[] data, Camera camera) {
+//                			 Log.d(TAG, "onPictureTaken - raw. Raw is null: " + (data == null));
+            }
+        };
+
+        Camera.PictureCallback jpegCallback = new Camera.PictureCallback() {
+            public void onPictureTaken(final byte[] data, Camera camera) {
+//                Log.d(TAG, "onPictureTaken - jpeg, size: " + data.length);
+
+                final File outputPic = getOutputPictureFile();
+
+                // lets save the image to disk
+                ImageUtil.saveToDiskAsync(data, outputPic, new ICallback() {
+                    @Override
+                    public void done(Exception e) {
+                        if (e == null) {
+                            Log.d(TAG, "picture saved to disk - jpeg, size: " + data.length);
+                            mOutputUri = Uri.fromFile(outputPic).toString();
+                            mInterface.onShowStillshot(mOutputUri);
+
+//                            mCamera.startPreview();
+                            mButtonStillshot.setEnabled(true);
+                        } else {
+                            throwError(e);
+                        }
+                    }
+                });
+            }
+        };
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            //We could have configurable shutter sound here
+
+            //mCamera.enableShutterSound(false);
+        }
+        
+        mButtonStillshot.setEnabled(false);
+        mCamera.takePicture(shutterCallback, rawCallback, jpegCallback);
     }
 
     static class CompareSizesByArea implements Comparator<Camera.Size> {

@@ -4,6 +4,8 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 
+import java.util.List;
+
 /**
  * @author Aidan Follestad (afollestad)
  */
@@ -12,6 +14,8 @@ public interface BaseCaptureInterface {
     void onRetry(@Nullable String outputUri);
 
     void onShowPreview(@Nullable String outputUri, boolean countdownIsAtZero);
+
+    void onShowStillshot(String outputUri);
 
     void setRecordingStart(long start);
 
@@ -98,4 +102,32 @@ public interface BaseCaptureInterface {
 
     @StringRes
     int labelUseVideo();
+
+    @DrawableRes
+    int iconStillshot();
+
+    /**
+     *
+     * @return true if we only want to take photographs instead of video capture
+     */
+    boolean useStillshot();
+
+    void toggleFlashMode();
+
+    @BaseCaptureActivity.FlashMode
+    int getFlashMode();
+
+    @DrawableRes
+    int iconFlashAuto();
+
+    @DrawableRes
+    int iconFlashOn();
+
+    @DrawableRes
+    int iconFlashOff();
+
+    void setFlashModes(List<Integer> modes);
+
+    boolean shouldHideFlash();
+
 }

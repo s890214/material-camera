@@ -7,6 +7,7 @@ import android.content.pm.ActivityInfo;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,15 +26,21 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import java.io.File;
 
 import static android.app.Activity.RESULT_CANCELED;
-import static com.afollestad.materialcamera.internal.BaseCaptureActivity.CAMERA_POSITION_BACK;
+import static com.afollestad.materialcamera.internal.BaseCaptureActivity.*;
 
 /**
  * @author Aidan Follestad (afollestad)
  */
 abstract class BaseCameraFragment extends Fragment implements CameraUriInterface, View.OnClickListener {
+    /**
+     * Handler to UI thread.
+     */
+    final Handler mUiHandler = new Handler(Looper.getMainLooper());
 
     protected ImageButton mButtonVideo;
+    protected ImageButton mButtonStillshot;
     protected ImageButton mButtonFacing;
+    protected ImageButton mButtonFlash;
     protected TextView mRecordDuration;
 
     private boolean mIsRecording;
@@ -41,6 +48,9 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
     protected BaseCaptureInterface mInterface;
     protected Handler mPositionHandler;
     protected MediaRecorder mMediaRecorder;
+
+    @BaseCaptureActivity.FlashMode
+    private int mFlashMode = FLASH_MODE_AUTO;
 
     protected static void LOG(Object context, String message) {
         Log.d(context instanceof Class<?> ? ((Class<?>) context).getSimpleName() :
@@ -80,6 +90,7 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
         super.onViewCreated(view, savedInstanceState);
 
         mButtonVideo = (ImageButton) view.findViewById(R.id.video);
+        mButtonStillshot = (ImageButton) view.findViewById(R.id.stillshot);
         mButtonFacing = (ImageButton) view.findViewById(R.id.facing);
         if (CameraUtil.isArcWelder())
             mButtonFacing.setVisibility(View.GONE);
@@ -92,22 +103,36 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
             mButtonVideo.setImageResource(mInterface.iconRecord());
             mInterface.setDidRecord(false);
         }
+        mButtonFlash = (ImageButton) view.findViewById(R.id.flash);
+        setupFlashMode();
 
         mButtonVideo.setOnClickListener(this);
+        mButtonStillshot.setOnClickListener(this);
         mButtonFacing.setOnClickListener(this);
+        mButtonFlash.setOnClickListener(this);
 
         final int primaryColor = getArguments().getInt(CameraIntentKey.PRIMARY_COLOR);
         view.findViewById(R.id.controlsFrame).setBackgroundColor(CameraUtil.darkenColor(primaryColor));
 
         if (savedInstanceState != null)
             mOutputUri = savedInstanceState.getString("output_uri");
+
+        if (mInterface.useStillshot()) {
+            mButtonVideo.setVisibility(View.GONE);
+            mRecordDuration.setVisibility(View.GONE);
+            mButtonStillshot.setVisibility(View.VISIBLE);
+            mButtonStillshot.setImageResource(mInterface.iconStillshot());
+            mButtonFlash.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         mButtonVideo = null;
+        mButtonStillshot = null;
         mButtonFacing = null;
+        mButtonFlash = null;
         mRecordDuration = null;
     }
 
@@ -134,7 +159,12 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
 
     @NonNull
     protected final File getOutputMediaFile() {
-        return CameraUtil.makeTempFile(getActivity(), getArguments().getString(CameraIntentKey.SAVE_DIR), ".mp4");
+        return CameraUtil.makeTempFile(getActivity(), getArguments().getString(CameraIntentKey.SAVE_DIR), "VID_", ".mp4");
+    }
+
+    @NonNull
+    protected final File getOutputPictureFile() {
+        return CameraUtil.makeTempFile(getActivity(), getArguments().getString(CameraIntentKey.SAVE_DIR), "IMG_", ".jpg");
     }
 
     public abstract void openCamera();
@@ -146,6 +176,10 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
         releaseRecorder();
         stopCounter();
     }
+
+    public abstract void takeStillshot();
+
+    public abstract void onPreferencesUpdated();
 
     @Override
     public void onPause() {
@@ -243,13 +277,15 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
 
     @Override
     public void onClick(View view) {
-        if (view.getId() == R.id.facing) {
+        final int id = view.getId();
+        if (id == R.id.facing) {
             mInterface.toggleCameraPosition();
             mButtonFacing.setImageResource(mInterface.getCurrentCameraPosition() == BaseCaptureActivity.CAMERA_POSITION_BACK ?
                     mInterface.iconFrontCamera() : mInterface.iconRearCamera());
             closeCamera();
             openCamera();
-        } else if (view.getId() == R.id.video) {
+            setupFlashMode();
+        } else if (id == R.id.video) {
             if (mIsRecording) {
                 stopRecordingVideo(false);
                 mIsRecording = false;
@@ -272,6 +308,36 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
                     mIsRecording = startRecordingVideo();
                 }
             }
+        } else if (id == R.id.stillshot) {
+            takeStillshot();
+        } else if (id == R.id.flash) {
+            mInterface.toggleFlashMode();
+            setupFlashMode();
+            onPreferencesUpdated();
         }
+    }
+
+    private void setupFlashMode() {
+        if (mInterface.shouldHideFlash()) {
+            mButtonFlash.setVisibility(View.GONE);
+            return;
+        } else {
+            mButtonFlash.setVisibility(View.VISIBLE);
+        }
+
+        final int res;
+        switch (mInterface.getFlashMode()) {
+            case FLASH_MODE_AUTO:
+                res = mInterface.iconFlashAuto();
+                break;
+            case FLASH_MODE_ALWAYS_ON:
+                res = mInterface.iconFlashOn();
+                break;
+            case FLASH_MODE_OFF:
+            default:
+                res = mInterface.iconFlashOff();
+        }
+
+        mButtonFlash.setImageResource(res);
     }
 }
