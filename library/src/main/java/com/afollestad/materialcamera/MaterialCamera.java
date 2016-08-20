@@ -14,7 +14,6 @@ import android.support.annotation.IntRange;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 
 import com.afollestad.materialcamera.internal.CameraIntentKey;
@@ -49,7 +48,8 @@ public class MaterialCamera {
 
     private Context mContext;
     private Activity mActivityContext;
-    private Fragment mFragmentContext;
+    private android.app.Fragment mAppFragment;
+    private android.support.v4.app.Fragment mSupportFragment;
     private boolean mIsFragment = false;
     private long mLengthLimit = -1;
     private boolean mAllowRetry = true;
@@ -91,10 +91,19 @@ public class MaterialCamera {
         mPrimaryColor = DialogUtils.resolveColor(context, R.attr.colorPrimary);
     }
 
-    public MaterialCamera(@NonNull Fragment context) {
+    public MaterialCamera(@NonNull android.app.Fragment context) {
+        mIsFragment = true;
+        mContext = context.getActivity();
+        mAppFragment = context;
+        mSupportFragment = null;
+        mPrimaryColor = DialogUtils.resolveColor(mContext, R.attr.colorPrimary);
+    }
+
+    public MaterialCamera(@NonNull android.support.v4.app.Fragment context) {
         mIsFragment = true;
         mContext = context.getContext();
-        mFragmentContext = context;
+        mSupportFragment = context;
+        mAppFragment = null;
         mPrimaryColor = DialogUtils.resolveColor(mContext, R.attr.colorPrimary);
     }
 
@@ -336,8 +345,10 @@ public class MaterialCamera {
     }
 
     public void start(int requestCode) {
-        if( mIsFragment )
-            mFragmentContext.startActivityForResult(getIntent(), requestCode);
+        if( mIsFragment && mSupportFragment != null )
+            mSupportFragment.startActivityForResult(getIntent(), requestCode);
+        else if( mIsFragment && mAppFragment != null )
+            mAppFragment.startActivityForResult(getIntent(), requestCode);
         else
             mActivityContext.startActivityForResult(getIntent(), requestCode);
     }

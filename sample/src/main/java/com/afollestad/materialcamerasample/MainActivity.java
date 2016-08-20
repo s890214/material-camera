@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         findViewById(R.id.launchCamera).setOnClickListener(this);
         findViewById(R.id.launchCameraStillshot).setOnClickListener(this);
         findViewById(R.id.launchFromFragment).setOnClickListener(this);
+        findViewById(R.id.launchFromFragmentSupport).setOnClickListener(this);
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             // Request permission to save videos in external storage
@@ -45,6 +46,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         if( view.getId() == R.id.launchFromFragment ) {
             Intent intent = new Intent(this, FragmentActivity.class);
+            startActivity(intent);
+            return;
+        }
+        if( view.getId() == R.id.launchFromFragmentSupport ) {
+            Intent intent = new Intent(this, FragmentActivity.class);
+            intent.putExtra("support", true);
             startActivity(intent);
             return;
         }
