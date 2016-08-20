@@ -519,27 +519,6 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
             Log.d("Camera2Fragment", String.format("Orientations: Sensor = %d˚, Device = %d˚, Display = %d˚",
                     sensorOrientation, deviceRotation, mDisplayOrientation));
 
-            int orientation = VideoStreamView.getScreenOrientation(activity);
-            if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE ||
-                    orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
-                mTextureView.setAspectRatio(mPreviewSize.getWidth(), mPreviewSize.getHeight());
-            } else {
-                mTextureView.setAspectRatio(mPreviewSize.getHeight(), mPreviewSize.getWidth());
-            }
-
-            mAfAvailable = false;
-            int[] afModes = characteristics.get(CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES);
-            if (afModes != null) {
-                for (int i : afModes) {
-                    if (i != 0) {
-                        mAfAvailable = true;
-                        break;
-                    }
-                }
-            }
-
-            configureTransform(width, height);
-
             if (mInterface.useStillshot()) {
                 boolean swappedDimensions = false;
                 switch (displayRotation) {
@@ -585,51 +564,71 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
                 // bus' bandwidth limitation, resulting in gorgeous previews but the storage of
                 // garbage capture data.
                 mPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
-                    rotatedPreviewWidth, rotatedPreviewHeight, maxPreviewWidth,
-                    maxPreviewHeight, largest);
+                        rotatedPreviewWidth, rotatedPreviewHeight, maxPreviewWidth,
+                        maxPreviewHeight, largest);
 
                 mImageReader = ImageReader.newInstance(largest.getWidth(), largest.getHeight(), ImageFormat.JPEG, 2);
                 mImageReader.setOnImageAvailableListener(
-                    new ImageReader.OnImageAvailableListener() {
-                        @Override
-                        public void onImageAvailable(ImageReader reader) {
-                            Image image = reader.acquireNextImage();
-                            ByteBuffer buffer = image.getPlanes()[0].getBuffer();
-                            final byte[] bytes = new byte[buffer.remaining()];
-                            buffer.get(bytes);
+                        new ImageReader.OnImageAvailableListener() {
+                            @Override
+                            public void onImageAvailable(ImageReader reader) {
+                                Image image = reader.acquireNextImage();
+                                ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+                                final byte[] bytes = new byte[buffer.remaining()];
+                                buffer.get(bytes);
 
-                            final File outputPic = getOutputPictureFile();
+                                final File outputPic = getOutputPictureFile();
 
-                            FileOutputStream output = null;
-                            try {
-                                output = new FileOutputStream(outputPic);
-                                output.write(bytes);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            } finally {
-                                image.close();
-                                if (null != output) {
-                                    try {
-                                        output.close();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
+                                FileOutputStream output = null;
+                                try {
+                                    output = new FileOutputStream(outputPic);
+                                    output.write(bytes);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                } finally {
+                                    image.close();
+                                    if (null != output) {
+                                        try {
+                                            output.close();
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
                                     }
                                 }
+                                Log.d("stillshot", "picture saved to disk - jpeg, size: " + bytes.length);
+                                mOutputUri = Uri.fromFile(outputPic).toString();
+                                mInterface.onShowStillshot(mOutputUri);
                             }
-                            Log.d("stillshot", "picture saved to disk - jpeg, size: " + bytes.length);
-                            mOutputUri = Uri.fromFile(outputPic).toString();
-                            mInterface.onShowStillshot(mOutputUri);
-                        }
-                    }, mBackgroundHandler);
+                        }, mBackgroundHandler);
             } else {
                 mMediaRecorder = new MediaRecorder();
                 mVideoSize = chooseVideoSize((BaseCaptureInterface) activity, map.getOutputSizes(MediaRecorder.class));
                 mPreviewSize = chooseOptimalSize(map.getOutputSizes(SurfaceTexture.class),
-                    width, height, mVideoSize);
+                        width, height, mVideoSize);
             }
 
-            Boolean flashAvailable = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
-            mFlashSupported = flashAvailable == null ? false : flashAvailable;
+            int orientation = VideoStreamView.getScreenOrientation(activity);
+            if (orientation == ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE ||
+                    orientation == ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE) {
+                mTextureView.setAspectRatio(mPreviewSize.getWidth(), mPreviewSize.getHeight());
+            } else {
+                mTextureView.setAspectRatio(mPreviewSize.getHeight(), mPreviewSize.getWidth());
+            }
+
+            mAfAvailable = false;
+            int[] afModes = characteristics.get(CameraCharacteristics.CONTROL_AF_AVAILABLE_MODES);
+            if (afModes != null) {
+                for (int i : afModes) {
+                    if (i != 0) {
+                        mAfAvailable = true;
+                        break;
+                    }
+                }
+            }
+
+            configureTransform(width, height);
+
+            mInterface.setFlashModes(CameraUtil.getSupportedFlashModes(getActivity(), characteristics));
 
             // noinspection ResourceType
             manager.openCamera((String) mInterface.getCurrentCameraId(), mStateCallback, null);
@@ -1032,30 +1031,28 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
     }
 
     private void setFlashMode(CaptureRequest.Builder requestBuilder) {
-        if (mFlashSupported) {
-            mPreviewBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
+        mPreviewBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
 
-            int aeMode;
-            int flashMode;
-            switch (mInterface.getFlashMode()) {
-                case FLASH_MODE_AUTO:
-                    aeMode = CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH;
-                    flashMode = CameraMetadata.FLASH_MODE_SINGLE;
-                    break;
-                case FLASH_MODE_ALWAYS_ON:
-                    aeMode = CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH;
-                    flashMode = CameraMetadata.FLASH_MODE_TORCH;
-                    break;
-                case FLASH_MODE_OFF:
-                default:
-                    aeMode = CaptureRequest.CONTROL_AE_MODE_ON;
-                    flashMode = CameraMetadata.FLASH_MODE_OFF;
-                    break;
-            }
-
-            requestBuilder.set(CaptureRequest.CONTROL_AE_MODE, aeMode);
-            requestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
+        int aeMode;
+        int flashMode;
+        switch (mInterface.getFlashMode()) {
+            case FLASH_MODE_AUTO:
+                aeMode = CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH;
+                flashMode = CameraMetadata.FLASH_MODE_SINGLE;
+                break;
+            case FLASH_MODE_ALWAYS_ON:
+                aeMode = CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH;
+                flashMode = CameraMetadata.FLASH_MODE_TORCH;
+                break;
+            case FLASH_MODE_OFF:
+            default:
+                aeMode = CaptureRequest.CONTROL_AE_MODE_ON;
+                flashMode = CameraMetadata.FLASH_MODE_OFF;
+                break;
         }
+
+        requestBuilder.set(CaptureRequest.CONTROL_AE_MODE, aeMode);
+        requestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
     }
 
     //////////////////////// END OF STILL SHOT
