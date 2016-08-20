@@ -35,7 +35,7 @@ Add this in your module's `build.gradle` file:
 dependencies {
     // ... other dependencies
 
-    compile 'com.afollestad:material-camera:0.2.14'
+    compile 'com.afollestad:material-camera:0.3.0'
 }
 ```
 
@@ -60,7 +60,7 @@ First, you have to register two library Activities from your app's `AndroidManif
 Feel free to use your own custom theme. The included themes give the activities a good default look. 
 See the sample project for more details.
 
-### Code for video
+### Code for Video
 
 ```java
 private final static int CAMERA_RQ = 6969; 
@@ -138,7 +138,7 @@ new MaterialCamera(this)
 
 ---
 
-### Code for stillshots/pictures
+### Code for Stillshots (Pictures)
 
 ```java
 new MaterialCamera(this)
