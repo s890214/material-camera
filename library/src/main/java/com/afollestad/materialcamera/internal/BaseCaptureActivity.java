@@ -446,7 +446,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
 
     @Override
     public float videoPreferredAspect() {
-        return getIntent().getFloatExtra(CameraIntentKey.VIDEO_PREFERRED_ASPECT, 4f / 3f);
+        return getIntent().getFloatExtra(CameraIntentKey.VIDEO_PREFERRED_ASPECT, 16f / 9f);
     }
 
     @Override
