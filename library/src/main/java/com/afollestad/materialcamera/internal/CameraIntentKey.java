@@ -42,5 +42,6 @@ public class CameraIntentKey {
     public static final String LABEL_RETRY = "label_retry";
     public static final String LABEL_USE_VIDEO = "label_use_video";
     public static final String STILL_SHOT = "still_shot";
+    public static final String LABEL_USE_STILLSHOT = "label_use_stillshot";
 
 }

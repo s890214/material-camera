@@ -518,6 +518,12 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
         return getIntent().getIntExtra(CameraIntentKey.LABEL_USE_VIDEO, R.string.mcam_use_video);
     }
 
+    @StringRes
+    @Override
+    public int labelUseStillshot() {
+        return getIntent().getIntExtra(CameraIntentKey.LABEL_USE_STILLSHOT, R.string.mcam_use_stillshot);
+    }
+
     @DrawableRes
     @Override
     public int iconStillshot() {

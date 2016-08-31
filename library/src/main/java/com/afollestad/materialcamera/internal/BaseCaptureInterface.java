@@ -103,6 +103,9 @@ public interface BaseCaptureInterface {
     @StringRes
     int labelUseVideo();
 
+    @StringRes
+    int labelUseStillshot();
+
     @DrawableRes
     int iconStillshot();
 

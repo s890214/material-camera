@@ -79,6 +79,7 @@ public class MaterialCamera {
 
     private int mLabelRetry;
     private int mLabelUseVideo;
+    private int mLabelUseStillshot;
 
     public MaterialCamera(@NonNull Activity context) {
         mContext = context;
@@ -256,6 +257,11 @@ public class MaterialCamera {
         return this;
     }
 
+    public MaterialCamera labelUseStillshot(@StringRes int stringRes) {
+        mLabelUseStillshot = stringRes;
+        return this;
+    }
+
     /**
      * Will take a still shot instead of recording
      * Note: Current implementation will default to using Camera1 API.
@@ -318,6 +324,8 @@ public class MaterialCamera {
             intent.putExtra(CameraIntentKey.LABEL_RETRY, mLabelRetry);
         if (mLabelUseVideo != 0)
             intent.putExtra(CameraIntentKey.LABEL_USE_VIDEO, mLabelUseVideo);
+        if (mLabelUseStillshot != 0)
+            intent.putExtra(CameraIntentKey.LABEL_USE_STILLSHOT, mLabelUseStillshot);
 
         return intent;
     }
