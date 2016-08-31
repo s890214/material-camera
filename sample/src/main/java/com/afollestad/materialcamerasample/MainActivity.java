@@ -54,14 +54,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .saveDir(saveDir)
                 .showPortraitWarning(true)
                 .allowRetry(true)
-                .defaultToFrontFacing(true);
+                .defaultToFrontFacing(true)
+                .labelConfirm(R.string.mcam_use_video);
 
         if (view.getId() == R.id.launchCameraStillshot)
             materialCamera
                     .stillShot() // launches the Camera in stillshot mode
-                    .labelRetry(R.string.mcam_retry)
-                    .labelUseStillshot(R.string.mcam_use_stillshot) // Sets a custom button label for the button used to confirm the still shot
-                    ;
+                    .labelConfirm(R.string.mcam_use_stillshot);
         materialCamera.start(CAMERA_RQ);
     }
 

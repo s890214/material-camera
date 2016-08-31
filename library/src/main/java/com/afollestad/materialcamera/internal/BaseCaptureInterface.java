@@ -100,11 +100,12 @@ public interface BaseCaptureInterface {
     @StringRes
     int labelRetry();
 
+    @Deprecated
     @StringRes
     int labelUseVideo();
 
     @StringRes
-    int labelUseStillshot();
+    int labelConfirm();
 
     @DrawableRes
     int iconStillshot();

@@ -512,16 +512,17 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
         return getIntent().getIntExtra(CameraIntentKey.LABEL_RETRY, R.string.mcam_retry);
     }
 
+    @Deprecated
     @StringRes
     @Override
     public int labelUseVideo() {
-        return getIntent().getIntExtra(CameraIntentKey.LABEL_USE_VIDEO, R.string.mcam_use_video);
+        return getIntent().getIntExtra(CameraIntentKey.LABEL_CONFIRM, R.string.mcam_confirm);
     }
 
     @StringRes
     @Override
-    public int labelUseStillshot() {
-        return getIntent().getIntExtra(CameraIntentKey.LABEL_USE_STILLSHOT, R.string.mcam_use_stillshot);
+    public int labelConfirm() {
+        return getIntent().getIntExtra(CameraIntentKey.LABEL_CONFIRM, R.string.mcam_confirm);
     }
 
     @DrawableRes

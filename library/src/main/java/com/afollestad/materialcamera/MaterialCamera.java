@@ -78,8 +78,7 @@ public class MaterialCamera {
     private int mIconRestart;
 
     private int mLabelRetry;
-    private int mLabelUseVideo;
-    private int mLabelUseStillshot;
+    private int mLabelConfirm;
 
     public MaterialCamera(@NonNull Activity context) {
         mContext = context;
@@ -252,13 +251,17 @@ public class MaterialCamera {
         return this;
     }
 
+    @Deprecated
+    /*
+        This has been replaced with labelConfirm
+     */
     public MaterialCamera labelUseVideo(@StringRes int stringRes) {
-        mLabelUseVideo = stringRes;
+        mLabelConfirm = stringRes;
         return this;
     }
 
-    public MaterialCamera labelUseStillshot(@StringRes int stringRes) {
-        mLabelUseStillshot = stringRes;
+    public MaterialCamera labelConfirm(@StringRes int stringRes) {
+        mLabelConfirm = stringRes;
         return this;
     }
 
@@ -267,6 +270,7 @@ public class MaterialCamera {
      * Note: Current implementation will default to using Camera1 API.
      * Also the library owner has chosen to disregard the Camera2 API regardless of settings, so
      * this is a non issue anyway.
+     *
      * @return
      */
     public MaterialCamera stillShot() {
@@ -322,10 +326,8 @@ public class MaterialCamera {
             intent.putExtra(CameraIntentKey.ICON_RESTART, mIconRestart);
         if (mLabelRetry != 0)
             intent.putExtra(CameraIntentKey.LABEL_RETRY, mLabelRetry);
-        if (mLabelUseVideo != 0)
-            intent.putExtra(CameraIntentKey.LABEL_USE_VIDEO, mLabelUseVideo);
-        if (mLabelUseStillshot != 0)
-            intent.putExtra(CameraIntentKey.LABEL_USE_STILLSHOT, mLabelUseStillshot);
+        if (mLabelConfirm != 0)
+            intent.putExtra(CameraIntentKey.LABEL_CONFIRM, mLabelConfirm);
 
         return intent;
     }

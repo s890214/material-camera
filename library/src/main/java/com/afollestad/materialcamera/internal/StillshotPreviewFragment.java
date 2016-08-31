@@ -1,6 +1,5 @@
 package com.afollestad.materialcamera.internal;
 
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -49,11 +48,11 @@ public class StillshotPreviewFragment extends BaseGalleryFragment {
         super.onViewCreated(view, savedInstanceState);
         mImageView = (ImageView) view.findViewById(R.id.stillshot_imageview);
 
-        ((Button)mUseVideo).setText(mInterface.labelUseStillshot());
-        ((Button)mRetry).setText(mInterface.labelRetry());
+        ((Button) mConfirm).setText(mInterface.labelConfirm());
+        ((Button) mRetry).setText(mInterface.labelRetry());
 
         mRetry.setOnClickListener(this);
-        mUseVideo.setOnClickListener(this);
+        mConfirm.setOnClickListener(this);
 
         mImageView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
@@ -89,7 +88,7 @@ public class StillshotPreviewFragment extends BaseGalleryFragment {
     public void onClick(View v) {
         if (v.getId() == R.id.retry)
             mInterface.onRetry(mOutputUri);
-        else if (v.getId() == R.id.useVideo)
+        else if (v.getId() == R.id.confirm)
             mInterface.useVideo(mOutputUri);
     }
 }
