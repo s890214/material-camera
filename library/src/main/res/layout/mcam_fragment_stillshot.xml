@@ -50,7 +50,7 @@
 
 
             <Button
-                android:id="@+id/useVideo"
+                android:id="@+id/confirm"
                 style="?borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
