@@ -69,11 +69,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .showPortraitWarning(true)
                 .allowRetry(true)
                 .defaultToFrontFacing(true)
-        ;
+                .labelConfirm(R.string.mcam_use_video);
 
         if (view.getId() == R.id.launchCameraStillshot)
-            materialCamera.stillShot(); // launches the Camera in stillshot mode
-
+            materialCamera
+                    .stillShot() // launches the Camera in stillshot mode
+                    .labelConfirm(R.string.mcam_use_stillshot);
         materialCamera.start(CAMERA_RQ);
     }
 

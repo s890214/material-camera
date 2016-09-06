@@ -6,7 +6,6 @@ import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.hardware.Camera;
 import android.media.CamcorderProfile;
 import android.net.Uri;
 import android.os.Build;
@@ -31,8 +30,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import java.io.File;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -512,10 +509,17 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
         return getIntent().getIntExtra(CameraIntentKey.LABEL_RETRY, R.string.mcam_retry);
     }
 
+    @Deprecated
     @StringRes
     @Override
     public int labelUseVideo() {
-        return getIntent().getIntExtra(CameraIntentKey.LABEL_USE_VIDEO, R.string.mcam_use_video);
+        return getIntent().getIntExtra(CameraIntentKey.LABEL_CONFIRM, R.string.mcam_use_video);
+    }
+
+    @StringRes
+    @Override
+    public int labelConfirm() {
+        return getIntent().getIntExtra(CameraIntentKey.LABEL_CONFIRM, useStillshot() ? R.string.mcam_use_stillshot : R.string.mcam_use_video);
     }
 
     @DrawableRes
@@ -556,4 +560,6 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     public boolean shouldHideFlash() {
         return !useStillshot() || mFlashModes == null;
     }
+
+
 }

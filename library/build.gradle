@@ -3,13 +3,13 @@ apply plugin: 'com.android.library'
 ext {
     PUBLISH_GROUP_ID = 'com.afollestad'
     PUBLISH_ARTIFACT_ID = 'material-camera'
-    PUBLISH_VERSION = '0.2.14'
-    PUBLISH_VERSION_CODE = 17
-    SUPPORT_LIB_VERSION = '24.0.0'
-    VIDEO_PLAYER_VERSION = '0.2.8'
-    MD_VERSION = '0.8.6.0'
+    PUBLISH_VERSION = '0.3.2'
+    PUBLISH_VERSION_CODE = 21
+    SUPPORT_LIB_VERSION = '24.2.0'
+    VIDEO_PLAYER_VERSION = '0.2.12'
+    MD_VERSION = '0.9.0.1'
     TARGET_SDK = 24
-    BUILD_TOOLS = "24.0.0"
+    BUILD_TOOLS = "24.0.1"
 }
 
 android {

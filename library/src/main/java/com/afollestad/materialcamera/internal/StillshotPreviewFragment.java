@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.afollestad.materialcamera.R;
@@ -24,7 +25,6 @@ public class StillshotPreviewFragment extends BaseGalleryFragment {
      * Reference to the bitmap, in case 'onConfigurationChange' event comes, so we do not recreate the bitmap
      */
     private Bitmap mBitmap;
-
 
     public static StillshotPreviewFragment newInstance(String outputUri, boolean allowRetry, int primaryColor) {
         StillshotPreviewFragment fragment = new StillshotPreviewFragment();
@@ -48,8 +48,11 @@ public class StillshotPreviewFragment extends BaseGalleryFragment {
         super.onViewCreated(view, savedInstanceState);
         mImageView = (ImageView) view.findViewById(R.id.stillshot_imageview);
 
+        ((Button) mConfirm).setText(mInterface.labelConfirm());
+        ((Button) mRetry).setText(mInterface.labelRetry());
+
         mRetry.setOnClickListener(this);
-        mUseVideo.setOnClickListener(this);
+        mConfirm.setOnClickListener(this);
 
         mImageView.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
@@ -85,7 +88,7 @@ public class StillshotPreviewFragment extends BaseGalleryFragment {
     public void onClick(View v) {
         if (v.getId() == R.id.retry)
             mInterface.onRetry(mOutputUri);
-        else if (v.getId() == R.id.useVideo)
+        else if (v.getId() == R.id.confirm)
             mInterface.useVideo(mOutputUri);
     }
 }

@@ -147,6 +147,14 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
     }
 
     @Override
+    public void onStarted(EasyVideoPlayer player) {
+    }
+
+    @Override
+    public void onPaused(EasyVideoPlayer player) {
+    }
+
+    @Override
     public void onPreparing(EasyVideoPlayer player) {
     }
 

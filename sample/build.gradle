@@ -1,10 +1,10 @@
 apply plugin: 'com.android.application'
 
 ext {
-    PUBLISH_VERSION = "0.2.14"
+    PUBLISH_VERSION = "0.3.2"
     TARGET_SDK = 24
-    BUILD_TOOLS = "24.0.0"
-    GOOGLE_LIBS = "24.0.0"
+    BUILD_TOOLS = "24.0.1"
+    GOOGLE_LIBS = "24.2.0"
 }
 
 android {
@@ -18,7 +18,7 @@ android {
         applicationId "com.afollestad.materialcamerasample"
         minSdkVersion 14
         targetSdkVersion TARGET_SDK
-        versionCode 17
+        versionCode 21
         versionName PUBLISH_VERSION
     }
     buildTypes {

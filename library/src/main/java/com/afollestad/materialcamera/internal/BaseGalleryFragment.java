@@ -20,7 +20,7 @@ public abstract class BaseGalleryFragment extends Fragment implements CameraUriI
     String mOutputUri;
     View mControlsFrame;
     View mRetry;
-    View mUseVideo;
+    View mConfirm;
 
 
     @SuppressWarnings("deprecation")
@@ -43,7 +43,7 @@ public abstract class BaseGalleryFragment extends Fragment implements CameraUriI
         mOutputUri = getArguments().getString("output_uri");
         mControlsFrame = view.findViewById(R.id.controlsFrame);
         mRetry = view.findViewById(R.id.retry);
-        mUseVideo = view.findViewById(R.id.useVideo);
+        mConfirm = view.findViewById(R.id.confirm);
 
         mPrimaryColor = CameraUtil.darkenColor(getArguments().getInt(CameraIntentKey.PRIMARY_COLOR));
         int primaryColor = mPrimaryColor;
