@@ -224,6 +224,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
 
             mFlashModes = CameraUtil.getSupportedFlashModes(this.getActivity(), parameters);
             mInterface.setFlashModes(mFlashModes);
+            onFlashModesLoaded();
 
             Camera.Size mStillShotSize = getHighestSupportedStillShotSize(parameters.getSupportedPictureSizes());
             parameters.setPictureSize(mStillShotSize.width, mStillShotSize.height);

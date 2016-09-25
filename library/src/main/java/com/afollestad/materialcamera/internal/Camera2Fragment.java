@@ -632,6 +632,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
             configureTransform(width, height);
 
             mInterface.setFlashModes(CameraUtil.getSupportedFlashModes(getActivity(), characteristics));
+            onFlashModesLoaded();
 
             // noinspection ResourceType
             manager.openCamera((String) mInterface.getCurrentCameraId(), mStateCallback, null);
@@ -675,9 +676,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
         if (mPreviewSession == null || mPreviewBuilder == null) {
             return;
         }
-
         setFlashMode(mPreviewBuilder);
-
         mPreviewRequest = mPreviewBuilder.build();
         try {
             mPreviewSession.setRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler);

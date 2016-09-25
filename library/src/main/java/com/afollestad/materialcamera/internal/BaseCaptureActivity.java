@@ -569,6 +569,4 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     public boolean shouldHideFlash() {
         return !useStillshot() || mFlashModes == null;
     }
-
-
 }
