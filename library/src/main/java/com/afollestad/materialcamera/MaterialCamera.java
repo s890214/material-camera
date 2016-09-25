@@ -65,7 +65,7 @@ public class MaterialCamera {
     private boolean mContinueTimerInPlayback = true;
     private boolean mForceCamera1 = false;
     private boolean mStillShot;
-    private long mAutoRecord;
+    private long mAutoRecord = -1;
 
     private int mVideoEncodingBitRate = -1;
     private int mAudioEncodingBitRate = -1;

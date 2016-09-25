@@ -71,7 +71,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .defaultToFrontFacing(true)
                 .allowRetry(true)
                 .autoSubmit(false)
-                .autoRecordWithDelaySec(6)
                 .labelConfirm(R.string.mcam_use_video);
 
         if (view.getId() == R.id.launchCameraStillshot)
