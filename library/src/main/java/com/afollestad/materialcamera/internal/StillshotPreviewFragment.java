@@ -14,20 +14,16 @@ import android.widget.ImageView;
 import com.afollestad.materialcamera.R;
 import com.afollestad.materialcamera.util.ImageUtil;
 
-/**
- * Created by tomiurankar on 04/03/16.
- */
 public class StillshotPreviewFragment extends BaseGalleryFragment {
-
 
     private ImageView mImageView;
     /**
      * Reference to the bitmap, in case 'onConfigurationChange' event comes, so we do not recreate the bitmap
      */
-    private Bitmap mBitmap;
+    private static Bitmap mBitmap;
 
     public static StillshotPreviewFragment newInstance(String outputUri, boolean allowRetry, int primaryColor) {
-        StillshotPreviewFragment fragment = new StillshotPreviewFragment();
+        final StillshotPreviewFragment fragment = new StillshotPreviewFragment();
         fragment.setRetainInstance(true);
         Bundle args = new Bundle();
         args.putString("output_uri", outputUri);
@@ -65,6 +61,18 @@ public class StillshotPreviewFragment extends BaseGalleryFragment {
         });
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (mBitmap != null) {
+            try {
+                mBitmap.recycle();
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }
+    }
+
     /**
      * Sets bitmap to ImageView widget
      */
@@ -73,10 +81,9 @@ public class StillshotPreviewFragment extends BaseGalleryFragment {
         final int width = mImageView.getMeasuredWidth();
         final int height = mImageView.getMeasuredHeight();
 
-        if (mBitmap == null) {
-            Bitmap bitmap = ImageUtil.getRotatedBitmap(Uri.parse(mOutputUri).getPath(), width, height);
-            mBitmap = bitmap;
-        }
+        // TODO IMPROVE MEMORY USAGE HERE, ESPECIALLY ON LOW-END DEVICES.
+        if (mBitmap == null)
+            mBitmap = ImageUtil.getRotatedBitmap(Uri.parse(mOutputUri).getPath(), width, height);
 
         if (mBitmap == null)
             showDialog("Image preview error", "Could not decode bitmap");

@@ -11,10 +11,8 @@ import com.afollestad.materialcamera.R;
 import com.afollestad.materialcamera.util.CameraUtil;
 import com.afollestad.materialdialogs.MaterialDialog;
 
-/**
- * Created by tomiurankar on 04/03/16.
- */
 public abstract class BaseGalleryFragment extends Fragment implements CameraUriInterface, View.OnClickListener {
+
     BaseCaptureInterface mInterface;
     int mPrimaryColor;
     String mOutputUri;
@@ -66,5 +64,4 @@ public abstract class BaseGalleryFragment extends Fragment implements CameraUriI
                 .positiveText(android.R.string.ok)
                 .show();
     }
-
 }

@@ -7,7 +7,6 @@ import android.content.pm.ActivityInfo;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,10 +34,6 @@ import static com.afollestad.materialcamera.internal.BaseCaptureActivity.FLASH_M
  * @author Aidan Follestad (afollestad)
  */
 abstract class BaseCameraFragment extends Fragment implements CameraUriInterface, View.OnClickListener {
-    /**
-     * Handler to UI thread.
-     */
-    final Handler mUiHandler = new Handler(Looper.getMainLooper());
 
     protected ImageButton mButtonVideo;
     protected ImageButton mButtonStillshot;
@@ -51,9 +46,6 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
     protected BaseCaptureInterface mInterface;
     protected Handler mPositionHandler;
     protected MediaRecorder mMediaRecorder;
-
-    @BaseCaptureActivity.FlashMode
-    private int mFlashMode = FLASH_MODE_AUTO;
 
     protected static void LOG(Object context, String message) {
         Log.d(context instanceof Class<?> ? ((Class<?>) context).getSimpleName() :
@@ -114,8 +106,11 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
         mButtonFacing.setOnClickListener(this);
         mButtonFlash.setOnClickListener(this);
 
-        final int primaryColor = getArguments().getInt(CameraIntentKey.PRIMARY_COLOR);
-        view.findViewById(R.id.controlsFrame).setBackgroundColor(CameraUtil.darkenColor(primaryColor));
+        int primaryColor = getArguments().getInt(CameraIntentKey.PRIMARY_COLOR);
+        if (CameraUtil.isColorDark(primaryColor)) {
+            primaryColor = CameraUtil.darkenColor(primaryColor);
+        }
+        view.findViewById(R.id.controlsFrame).setBackgroundColor(primaryColor);
 
         if (savedInstanceState != null)
             mOutputUri = savedInstanceState.getString("output_uri");
