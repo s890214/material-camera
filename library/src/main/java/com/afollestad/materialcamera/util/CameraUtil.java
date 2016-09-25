@@ -30,7 +30,7 @@ public class CameraUtil {
     private CameraUtil() {
     }
 
-    public static boolean isArcWelder() {
+    public static boolean isChromium() {
         return Build.BRAND.equalsIgnoreCase("chromium") &&
                 Build.MANUFACTURER.equalsIgnoreCase("chromium");
     }

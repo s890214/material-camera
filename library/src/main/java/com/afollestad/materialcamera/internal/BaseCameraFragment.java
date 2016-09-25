@@ -4,15 +4,20 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.graphics.drawable.Drawable;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afollestad.materialcamera.MaterialCamera;
@@ -46,6 +51,7 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
     protected BaseCaptureInterface mInterface;
     protected Handler mPositionHandler;
     protected MediaRecorder mMediaRecorder;
+    private int mIconTextColor;
 
     protected static void LOG(Object context, String message) {
         Log.d(context instanceof Class<?> ? ((Class<?>) context).getSimpleName() :
@@ -80,6 +86,13 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
         return inflater.inflate(R.layout.mcam_fragment_videocapture, container, false);
     }
 
+    private void setImageRes(ImageView iv, @DrawableRes int res) {
+        Drawable d = ContextCompat.getDrawable(iv.getContext(), res);
+        d = DrawableCompat.wrap(d.mutate());
+        DrawableCompat.setTint(d, mIconTextColor);
+        iv.setImageDrawable(d);
+    }
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -87,15 +100,15 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
         mButtonVideo = (ImageButton) view.findViewById(R.id.video);
         mButtonStillshot = (ImageButton) view.findViewById(R.id.stillshot);
         mButtonFacing = (ImageButton) view.findViewById(R.id.facing);
-        if (CameraUtil.isArcWelder())
+        if (CameraUtil.isChromium())
             mButtonFacing.setVisibility(View.GONE);
         mRecordDuration = (TextView) view.findViewById(R.id.recordDuration);
-        mButtonFacing.setImageResource(mInterface.getCurrentCameraPosition() == CAMERA_POSITION_BACK ?
+        setImageRes(mButtonFacing, mInterface.getCurrentCameraPosition() == CAMERA_POSITION_BACK ?
                 mInterface.iconFrontCamera() : mInterface.iconRearCamera());
         if (mMediaRecorder != null && mIsRecording) {
-            mButtonVideo.setImageResource(mInterface.iconStop());
+            setImageRes(mButtonVideo, mInterface.iconStop());
         } else {
-            mButtonVideo.setImageResource(mInterface.iconRecord());
+            setImageRes(mButtonVideo, mInterface.iconRecord());
             mInterface.setDidRecord(false);
         }
         mButtonFlash = (ImageButton) view.findViewById(R.id.flash);
@@ -108,9 +121,13 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
 
         int primaryColor = getArguments().getInt(CameraIntentKey.PRIMARY_COLOR);
         if (CameraUtil.isColorDark(primaryColor)) {
+            mIconTextColor = ContextCompat.getColor(getActivity(), R.color.mcam_color_light);
             primaryColor = CameraUtil.darkenColor(primaryColor);
+        } else {
+            mIconTextColor = ContextCompat.getColor(getActivity(), R.color.mcam_color_dark);
         }
         view.findViewById(R.id.controlsFrame).setBackgroundColor(primaryColor);
+        mRecordDuration.setTextColor(mIconTextColor);
 
         if (savedInstanceState != null)
             mOutputUri = savedInstanceState.getString("output_uri");
@@ -119,7 +136,7 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
             mButtonVideo.setVisibility(View.GONE);
             mRecordDuration.setVisibility(View.GONE);
             mButtonStillshot.setVisibility(View.VISIBLE);
-            mButtonStillshot.setImageResource(mInterface.iconStillshot());
+            setImageRes(mButtonStillshot, mInterface.iconStillshot());
             mButtonFlash.setVisibility(View.VISIBLE);
         }
     }
@@ -278,7 +295,7 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
         final int id = view.getId();
         if (id == R.id.facing) {
             mInterface.toggleCameraPosition();
-            mButtonFacing.setImageResource(mInterface.getCurrentCameraPosition() == BaseCaptureActivity.CAMERA_POSITION_BACK ?
+            setImageRes(mButtonFacing, mInterface.getCurrentCameraPosition() == BaseCaptureActivity.CAMERA_POSITION_BACK ?
                     mInterface.iconFrontCamera() : mInterface.iconRearCamera());
             closeCamera();
             openCamera();
@@ -336,6 +353,6 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
                 res = mInterface.iconFlashOff();
         }
 
-        mButtonFlash.setImageResource(res);
+        setImageRes(mButtonFlash, res);
     }
 }

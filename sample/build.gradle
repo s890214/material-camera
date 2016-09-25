@@ -20,6 +20,7 @@ android {
         targetSdkVersion TARGET_SDK
         versionCode 22
         versionName PUBLISH_VERSION
+        vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
         release {

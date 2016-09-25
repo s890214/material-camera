@@ -855,7 +855,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
         try {
             // UI
             mButtonVideo.setImageResource(mInterface.iconStop());
-            if (!CameraUtil.isArcWelder())
+            if (!CameraUtil.isChromium())
                 mButtonFacing.setVisibility(View.GONE);
 
             // Only start counter if count down wasn't already started
@@ -902,7 +902,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
 
         releaseRecorder();
         mButtonVideo.setImageResource(mInterface.iconRecord());
-        if (!CameraUtil.isArcWelder())
+        if (!CameraUtil.isChromium())
             mButtonFacing.setVisibility(View.VISIBLE);
         if (mInterface.getRecordingStart() > -1 && getActivity() != null)
             mInterface.onShowPreview(mOutputUri, reachedZero);

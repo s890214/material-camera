@@ -269,7 +269,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
 
         int previewOrientation;
         int jpegOrientation;
-        if (CameraUtil.isArcWelder()) {
+        if (CameraUtil.isChromium()) {
             previewOrientation = 0;
             jpegOrientation = 0;
         } else {
@@ -396,7 +396,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             try {
                 // UI
                 mButtonVideo.setImageResource(mInterface.iconStop());
-                if (!CameraUtil.isArcWelder())
+                if (!CameraUtil.isChromium())
                     mButtonFacing.setVisibility(View.GONE);
 
                 // Only start counter if count down wasn't already started
@@ -461,7 +461,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             mOutputUri = null;
 
         mButtonVideo.setImageResource(mInterface.iconRecord());
-        if (!CameraUtil.isArcWelder())
+        if (!CameraUtil.isChromium())
             mButtonFacing.setVisibility(View.VISIBLE);
         if (mInterface.getRecordingStart() > -1 && getActivity() != null)
             mInterface.onShowPreview(mOutputUri, reachedZero);

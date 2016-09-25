@@ -20,7 +20,6 @@ public abstract class BaseGalleryFragment extends Fragment implements CameraUriI
     View mRetry;
     View mConfirm;
 
-
     @SuppressWarnings("deprecation")
     @Override
     public void onAttach(Activity activity) {
