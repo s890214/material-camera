@@ -1,6 +1,7 @@
 package com.afollestad.materialcamera;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.media.CamcorderProfile;
 import android.support.annotation.AttrRes;
@@ -45,7 +46,11 @@ public class MaterialCamera {
     public static final int STATUS_RECORDED = 1;
     public static final int STATUS_RETRY = 2;
 
-    private Activity mContext;
+    private Context mContext;
+    private Activity mActivityContext;
+    private android.app.Fragment mAppFragment;
+    private android.support.v4.app.Fragment mSupportFragment;
+    private boolean mIsFragment = false;
     private long mLengthLimit = -1;
     private boolean mAllowRetry = true;
     private boolean mAutoSubmit = false;
@@ -82,7 +87,24 @@ public class MaterialCamera {
 
     public MaterialCamera(@NonNull Activity context) {
         mContext = context;
+        mActivityContext = context;
         mPrimaryColor = DialogUtils.resolveColor(context, R.attr.colorPrimary);
+    }
+
+    public MaterialCamera(@NonNull android.app.Fragment context) {
+        mIsFragment = true;
+        mContext = context.getActivity();
+        mAppFragment = context;
+        mSupportFragment = null;
+        mPrimaryColor = DialogUtils.resolveColor(mContext, R.attr.colorPrimary);
+    }
+
+    public MaterialCamera(@NonNull android.support.v4.app.Fragment context) {
+        mIsFragment = true;
+        mContext = context.getContext();
+        mSupportFragment = context;
+        mAppFragment = null;
+        mPrimaryColor = DialogUtils.resolveColor(mContext, R.attr.colorPrimary);
     }
 
     public MaterialCamera countdownMillis(long lengthLimitMs) {
@@ -333,6 +355,11 @@ public class MaterialCamera {
     }
 
     public void start(int requestCode) {
-        mContext.startActivityForResult(getIntent(), requestCode);
+        if( mIsFragment && mSupportFragment != null )
+            mSupportFragment.startActivityForResult(getIntent(), requestCode);
+        else if( mIsFragment && mAppFragment != null )
+            mAppFragment.startActivityForResult(getIntent(), requestCode);
+        else
+            mActivityContext.startActivityForResult(getIntent(), requestCode);
     }
 }
