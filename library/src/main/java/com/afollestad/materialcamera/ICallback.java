@@ -1,8 +1,5 @@
 package com.afollestad.materialcamera;
 
-/**
- * Created by tomiurankar on 04/03/16.
- */
 public interface ICallback {
     /**
      * It is called when the background operation completes.

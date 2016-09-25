@@ -20,7 +20,7 @@ public class Degrees {
     @IntDef({ActivityInfo.SCREEN_ORIENTATION_PORTRAIT, ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE,
             ActivityInfo.SCREEN_ORIENTATION_REVERSE_PORTRAIT, ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE})
     @Retention(RetentionPolicy.SOURCE)
-    public @interface ActivityOrientation {
+    @interface ActivityOrientation {
     }
 
     @IntDef({DEGREES_0, DEGREES_90, DEGREES_180, DEGREES_270, DEGREES_360})
@@ -32,7 +32,7 @@ public class Degrees {
     public static final int DEGREES_90 = 90;
     public static final int DEGREES_180 = 180;
     public static final int DEGREES_270 = 270;
-    public static final int DEGREES_360 = 360;
+    static final int DEGREES_360 = 360;
 
     private Degrees() {
     }
@@ -41,6 +41,7 @@ public class Degrees {
     public static int mirror(@DegreeUnits int orientation) {
         switch (orientation) {
             case DEGREES_0:
+            case DEGREES_360:
                 return DEGREES_180;
             case DEGREES_90:
                 return DEGREES_270;
@@ -54,7 +55,7 @@ public class Degrees {
 
     @SuppressWarnings("ResourceType")
     @DegreeUnits
-    public static int naturalize(@DegreeUnits int orientation) {
+    private static int naturalize(@DegreeUnits int orientation) {
         if (orientation == 360)
             orientation = 0;
         else if (orientation > 360) {
@@ -106,6 +107,7 @@ public class Degrees {
         final int rotation = getDisplayRotation(context);
         switch (rotation) {
             case DEGREES_0:
+            case DEGREES_360:
                 return ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
             case DEGREES_90:
                 return ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE;
@@ -131,7 +133,7 @@ public class Degrees {
         return degrees == DEGREES_0 || degrees == DEGREES_180 || degrees == DEGREES_360;
     }
 
-    public static boolean isLandscape(@Degrees.DegreeUnits int degrees) {
+    private static boolean isLandscape(@Degrees.DegreeUnits int degrees) {
         return degrees == DEGREES_90 || degrees == DEGREES_270;
     }
 }

@@ -73,7 +73,7 @@ public class ImageUtil {
      * @return rotated bitmap or null
      */
     @Nullable
-    public static Bitmap getRotatedBitmap(String inputFile, int reqWidth, int reqHeight, int inSampleSize) {
+    private static Bitmap getRotatedBitmap(String inputFile, int reqWidth, int reqHeight, int inSampleSize) {
         final int rotationInDegrees = getExifDegreesFromJpeg(inputFile);
 
         final BitmapFactory.Options opts = new BitmapFactory.Options();
@@ -120,11 +120,10 @@ public class ImageUtil {
         return inSampleSize;
     }
 
-    public static int getExifDegreesFromJpeg(String inputFile) {
+    private static int getExifDegreesFromJpeg(String inputFile) {
         try {
-            ExifInterface exif = new ExifInterface(inputFile);
-            int exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-
+            final ExifInterface exif = new ExifInterface(inputFile);
+            final int exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
             if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) {
                 return 90;
             } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180) {
@@ -132,12 +131,9 @@ public class ImageUtil {
             } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270) {
                 return 270;
             }
-
         } catch (IOException e) {
             Log.e("exif", "Error when trying to get exif data from : " + inputFile, e);
         }
-
         return 0;
     }
-
 }
