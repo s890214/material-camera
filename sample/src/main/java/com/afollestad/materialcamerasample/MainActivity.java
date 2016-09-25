@@ -6,7 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
-import android.support.v4.app.*;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -44,12 +44,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     public void onClick(View view) {
-        if( view.getId() == R.id.launchFromFragment ) {
+        if (view.getId() == R.id.launchFromFragment) {
             Intent intent = new Intent(this, FragmentActivity.class);
             startActivity(intent);
             return;
         }
-        if( view.getId() == R.id.launchFromFragmentSupport ) {
+        if (view.getId() == R.id.launchFromFragmentSupport) {
             Intent intent = new Intent(this, FragmentActivity.class);
             intent.putExtra("support", true);
             startActivity(intent);

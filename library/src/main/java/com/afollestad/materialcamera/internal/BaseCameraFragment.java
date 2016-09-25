@@ -26,7 +26,10 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import java.io.File;
 
 import static android.app.Activity.RESULT_CANCELED;
-import static com.afollestad.materialcamera.internal.BaseCaptureActivity.*;
+import static com.afollestad.materialcamera.internal.BaseCaptureActivity.CAMERA_POSITION_BACK;
+import static com.afollestad.materialcamera.internal.BaseCaptureActivity.FLASH_MODE_ALWAYS_ON;
+import static com.afollestad.materialcamera.internal.BaseCaptureActivity.FLASH_MODE_AUTO;
+import static com.afollestad.materialcamera.internal.BaseCaptureActivity.FLASH_MODE_OFF;
 
 /**
  * @author Aidan Follestad (afollestad)

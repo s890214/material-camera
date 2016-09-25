@@ -3,29 +3,18 @@ package com.afollestad.materialcamera.util;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraManager;
-import android.media.ExifInterface;
-import android.net.Uri;
 import android.os.Build;
-import android.os.Handler;
 import android.support.annotation.ColorInt;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
-import com.afollestad.materialcamera.ICallback;
 import com.afollestad.materialcamera.internal.BaseCaptureActivity;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -71,14 +60,14 @@ public class CameraUtil {
 
     public static List<Integer> getSupportedFlashModes(Context context, Camera.Parameters parameters) {
         //check has system feature for flash
-        if(context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
+        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
             List<String> modes = parameters.getSupportedFlashModes();
-            if (modes == null || (modes.size() == 1 && modes.get(0).equals(parameters.FLASH_MODE_OFF))) {
+            if (modes == null || (modes.size() == 1 && modes.get(0).equals(Camera.Parameters.FLASH_MODE_OFF))) {
                 return null; //not supported
             } else {
                 ArrayList<Integer> flashModes = new ArrayList<>();
-                for(String mode : modes){
-                    switch(mode){
+                for (String mode : modes) {
+                    switch (mode) {
                         case Camera.Parameters.FLASH_MODE_AUTO:
                             if (!flashModes.contains(BaseCaptureActivity.FLASH_MODE_AUTO))
                                 flashModes.add(BaseCaptureActivity.FLASH_MODE_AUTO);
@@ -116,9 +105,9 @@ public class CameraUtil {
             if (modes == null || (modes.length == 1 && modes[0] == CameraCharacteristics.CONTROL_AE_MODE_OFF)) {
                 return null; //not supported
             } else {
-                ArrayList<Integer> flashModes = new ArrayList<>();
-                for (int i = 0; i < modes.length; i++) {
-                    switch (modes[i]) {
+                ArrayList<Integer> flashModes = new ArrayList<>(3);
+                for (int mode : modes) {
+                    switch (mode) {
                         case CameraCharacteristics.CONTROL_AE_MODE_ON_AUTO_FLASH:
                             if (!flashModes.contains(BaseCaptureActivity.FLASH_MODE_AUTO))
                                 flashModes.add(BaseCaptureActivity.FLASH_MODE_AUTO);
@@ -133,9 +122,11 @@ public class CameraUtil {
                         default:
                             break;
                     }
-                } return flashModes;
+                }
+                return flashModes;
             }
-        } return null; //not supported
+        }
+        return null; //not supported
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -178,5 +169,10 @@ public class CameraUtil {
         hsv[2] *= 0.8f; // value component
         color = Color.HSVToColor(hsv);
         return color;
+    }
+
+    public static boolean isColorDark(int color) {
+        double darkness = 1 - (0.299 * Color.red(color) + 0.587 * Color.green(color) + 0.114 * Color.blue(color)) / 255;
+        return darkness >= 0.5;
     }
 }

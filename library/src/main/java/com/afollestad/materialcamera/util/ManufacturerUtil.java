@@ -8,7 +8,8 @@ import android.os.Build;
  */
 public class ManufacturerUtil {
 
-    public ManufacturerUtil() {}
+    public ManufacturerUtil() {
+    }
 
     // Samsung device info
     private static final String SAMSUNG_MANUFACTURER = "samsung";

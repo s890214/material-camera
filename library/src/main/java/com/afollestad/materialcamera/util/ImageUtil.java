@@ -20,8 +20,9 @@ import java.io.IOException;
 public class ImageUtil {
     /**
      * Saves byte[] array to disk
-     * @param input byte array
-     * @param output path to output file
+     *
+     * @param input    byte array
+     * @param output   path to output file
      * @param callback will always return in originating thread
      */
     public static void saveToDiskAsync(final byte[] input, final File output, final ICallback callback) {
@@ -93,7 +94,7 @@ public class ImageUtil {
         try {
             return Bitmap.createBitmap(origBitmap, 0, 0, origBitmap.getWidth(), origBitmap.getHeight(), matrix, true);
         } catch (OutOfMemoryError e) {
-            return getRotatedBitmap(inputFile, reqWidth, reqHeight, opts.inSampleSize+1);
+            return getRotatedBitmap(inputFile, reqWidth, reqHeight, opts.inSampleSize + 1);
         }
     }
 

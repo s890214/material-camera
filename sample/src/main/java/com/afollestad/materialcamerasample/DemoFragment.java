@@ -2,13 +2,13 @@ package com.afollestad.materialcamerasample;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
-import android.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -43,7 +43,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_demo, null, false);
+        return inflater.inflate(R.layout.fragment_demo, container, false);
     }
 
     @Override
@@ -77,8 +77,7 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
                 .saveDir(saveDir)
                 .showPortraitWarning(true)
                 .allowRetry(true)
-                .defaultToFrontFacing(true)
-                ;
+                .defaultToFrontFacing(true);
 
         if (view.getId() == R.id.launchCameraStillshot)
             materialCamera.stillShot(); // launches the Camera in stillshot mode
@@ -126,5 +125,4 @@ public class DemoFragment extends Fragment implements View.OnClickListener {
             Toast.makeText(getActivity(), "Videos will be saved in a cache directory instead of an external storage directory since permission was denied.", Toast.LENGTH_LONG).show();
         }
     }
-
 }

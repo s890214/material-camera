@@ -59,7 +59,7 @@ public abstract class BaseGalleryFragment extends Fragment implements CameraUriI
         return getArguments().getString("output_uri");
     }
 
-    void showDialog( String title, String errorMsg) {
+    void showDialog(String title, String errorMsg) {
         new MaterialDialog.Builder(getActivity())
                 .title(title)
                 .content(errorMsg)

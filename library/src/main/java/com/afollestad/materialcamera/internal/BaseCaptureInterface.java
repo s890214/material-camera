@@ -111,7 +111,6 @@ public interface BaseCaptureInterface {
     int iconStillshot();
 
     /**
-     *
      * @return true if we only want to take photographs instead of video capture
      */
     boolean useStillshot();

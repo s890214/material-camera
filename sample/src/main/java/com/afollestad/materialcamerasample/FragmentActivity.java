@@ -15,11 +15,10 @@ public class FragmentActivity extends AppCompatActivity {
         boolean support = intent.getBooleanExtra("support", false);
 
         if (savedInstanceState == null) {
-            if( support )
+            if (support)
                 getSupportFragmentManager().beginTransaction().add(R.id.container, DemoSupportFragment.getInstance()).commit();
             else
                 getFragmentManager().beginTransaction().add(R.id.container, DemoFragment.getInstance()).commit();
         }
     }
-
 }

@@ -29,7 +29,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.afollestad.materialcamera.internal.BaseCaptureActivity.*;
+import static com.afollestad.materialcamera.internal.BaseCaptureActivity.CAMERA_POSITION_BACK;
+import static com.afollestad.materialcamera.internal.BaseCaptureActivity.CAMERA_POSITION_FRONT;
+import static com.afollestad.materialcamera.internal.BaseCaptureActivity.CAMERA_POSITION_UNKNOWN;
+import static com.afollestad.materialcamera.internal.BaseCaptureActivity.FLASH_MODE_ALWAYS_ON;
+import static com.afollestad.materialcamera.internal.BaseCaptureActivity.FLASH_MODE_AUTO;
+import static com.afollestad.materialcamera.internal.BaseCaptureActivity.FLASH_MODE_OFF;
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -210,7 +215,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
 
             if (ManufacturerUtil.isSamsungGalaxyS3()) {
                 parameters.setPreviewSize(ManufacturerUtil.SAMSUNG_S3_PREVIEW_WIDTH,
-                                          ManufacturerUtil.SAMSUNG_S3_PREVIEW_HEIGHT);
+                        ManufacturerUtil.SAMSUNG_S3_PREVIEW_HEIGHT);
             } else {
                 parameters.setPreviewSize(previewSize.width, previewSize.height);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
@@ -478,7 +483,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             default:
                 break;
         }
-        if(flashMode != null) {
+        if (flashMode != null) {
             Camera.Parameters parameters = mCamera.getParameters();
             parameters.setFlashMode(flashMode);
             mCamera.setParameters(parameters);
@@ -538,7 +543,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
 
             //mCamera.enableShutterSound(false);
         }
-        
+
         mButtonStillshot.setEnabled(false);
         mCamera.takePicture(shutterCallback, rawCallback, jpegCallback);
     }

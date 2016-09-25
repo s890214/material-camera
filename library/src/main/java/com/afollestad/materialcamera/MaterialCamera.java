@@ -27,6 +27,7 @@ import java.lang.annotation.RetentionPolicy;
 /**
  * @author Aidan Follestad (afollestad)
  */
+@SuppressWarnings("WeakerAccess")
 public class MaterialCamera {
 
     @IntDef({QUALITY_HIGH, QUALITY_LOW, QUALITY_480P, QUALITY_720P, QUALITY_1080P})
@@ -189,8 +190,6 @@ public class MaterialCamera {
     }
 
     /**
-     * @param rate
-     * @return
      * @deprecated Renamed to videoEncodingBitRate(int).
      */
     @Deprecated
@@ -288,12 +287,7 @@ public class MaterialCamera {
     }
 
     /**
-     * Will take a still shot instead of recording
-     * Note: Current implementation will default to using Camera1 API.
-     * Also the library owner has chosen to disregard the Camera2 API regardless of settings, so
-     * this is a non issue anyway.
-     *
-     * @return
+     * Will take a still shot instead of recording.
      */
     public MaterialCamera stillShot() {
         mStillShot = true;
@@ -355,9 +349,9 @@ public class MaterialCamera {
     }
 
     public void start(int requestCode) {
-        if( mIsFragment && mSupportFragment != null )
+        if (mIsFragment && mSupportFragment != null)
             mSupportFragment.startActivityForResult(getIntent(), requestCode);
-        else if( mIsFragment && mAppFragment != null )
+        else if (mIsFragment && mAppFragment != null)
             mAppFragment.startActivityForResult(getIntent(), requestCode);
         else
             mActivityContext.startActivityForResult(getIntent(), requestCode);
