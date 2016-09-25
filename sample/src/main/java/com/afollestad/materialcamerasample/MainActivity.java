@@ -68,7 +68,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .saveDir(saveDir)
                 .showPortraitWarning(true)
                 .allowRetry(true)
-                .defaultToFrontFacing(false)
+                .defaultToFrontFacing(true)
+                .countdownSeconds(2)
+                .allowRetry(true)
+                .autoSubmit(false)
                 .labelConfirm(R.string.mcam_use_video);
 
         if (view.getId() == R.id.launchCameraStillshot)
