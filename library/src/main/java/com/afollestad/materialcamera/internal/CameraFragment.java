@@ -212,7 +212,6 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             Camera.Size previewSize = chooseOptimalSize(parameters.getSupportedPreviewSizes(),
                     mWindowSize.x, mWindowSize.y, mVideoSize);
 
-
             if (ManufacturerUtil.isSamsungGalaxyS3()) {
                 parameters.setPreviewSize(ManufacturerUtil.SAMSUNG_S3_PREVIEW_WIDTH,
                         ManufacturerUtil.SAMSUNG_S3_PREVIEW_HEIGHT);
@@ -251,8 +250,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             }
         });
         Camera.Size maxSize = supportedPictureSizes.get(0);
-
-        Log.d("stillshot", "using resolution: " + maxSize.width + "x" + maxSize.height);
+        Log.d("CameraFragment", "Using resolution: " + maxSize.width + "x" + maxSize.height);
         return maxSize;
     }
 
@@ -497,37 +495,28 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
 
     @Override
     public void takeStillshot() {
-
-        //https://github.com/josnidhin/Android-Camera-Example/blob/master/src/com/example/cam/CamTestActivity.java
-        final String TAG = "takeStillShot";
-
         Camera.ShutterCallback shutterCallback = new Camera.ShutterCallback() {
             public void onShutter() {
 //                			 Log.d(TAG, "onShutter'd");
             }
         };
-
         Camera.PictureCallback rawCallback = new Camera.PictureCallback() {
             public void onPictureTaken(byte[] data, Camera camera) {
 //                			 Log.d(TAG, "onPictureTaken - raw. Raw is null: " + (data == null));
             }
         };
-
         Camera.PictureCallback jpegCallback = new Camera.PictureCallback() {
             public void onPictureTaken(final byte[] data, Camera camera) {
 //                Log.d(TAG, "onPictureTaken - jpeg, size: " + data.length);
-
                 final File outputPic = getOutputPictureFile();
-
                 // lets save the image to disk
                 ImageUtil.saveToDiskAsync(data, outputPic, new ICallback() {
                     @Override
                     public void done(Exception e) {
                         if (e == null) {
-                            Log.d(TAG, "picture saved to disk - jpeg, size: " + data.length);
+                            Log.d("CameraFragment", "Picture saved to disk - jpeg, size: " + data.length);
                             mOutputUri = Uri.fromFile(outputPic).toString();
                             mInterface.onShowStillshot(mOutputUri);
-
 //                            mCamera.startPreview();
                             mButtonStillshot.setEnabled(true);
                         } else {
@@ -538,11 +527,10 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             }
         };
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            //We could have configurable shutter sound here
-
-            //mCamera.enableShutterSound(false);
-        }
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        //We could have configurable shutter sound here
+        //mCamera.enableShutterSound(false);
+//        }
 
         mButtonStillshot.setEnabled(false);
         mCamera.takePicture(shutterCallback, rawCallback, jpegCallback);
