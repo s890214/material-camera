@@ -479,10 +479,10 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
                 if (getArguments().getBoolean(CameraIntentKey.DEFAULT_TO_FRONT_FACING, false)) {
                     // Check front facing first
                     if (mInterface.getFrontCamera() != null) {
-                        mButtonFacing.setImageResource(mInterface.iconRearCamera());
+                        setImageRes(mButtonFacing, mInterface.iconRearCamera());
                         mInterface.setCameraPosition(CAMERA_POSITION_FRONT);
                     } else {
-                        mButtonFacing.setImageResource(mInterface.iconFrontCamera());
+                        setImageRes(mButtonFacing, mInterface.iconFrontCamera());
                         if (mInterface.getBackCamera() != null)
                             mInterface.setCameraPosition(CAMERA_POSITION_BACK);
                         else mInterface.setCameraPosition(CAMERA_POSITION_UNKNOWN);
@@ -490,10 +490,10 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
                 } else {
                     // Check back facing first
                     if (mInterface.getBackCamera() != null) {
-                        mButtonFacing.setImageResource(mInterface.iconFrontCamera());
+                        setImageRes(mButtonFacing, mInterface.iconFrontCamera());
                         mInterface.setCameraPosition(CAMERA_POSITION_BACK);
                     } else {
-                        mButtonFacing.setImageResource(mInterface.iconRearCamera());
+                        setImageRes(mButtonFacing, mInterface.iconRearCamera());
                         if (mInterface.getFrontCamera() != null)
                             mInterface.setCameraPosition(CAMERA_POSITION_FRONT);
                         else mInterface.setCameraPosition(CAMERA_POSITION_UNKNOWN);
@@ -854,7 +854,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
         super.startRecordingVideo();
         try {
             // UI
-            mButtonVideo.setImageResource(mInterface.iconStop());
+            setImageRes(mButtonVideo, mInterface.iconStop());
             if (!CameraUtil.isChromium())
                 mButtonFacing.setVisibility(View.GONE);
 
@@ -901,7 +901,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
             mOutputUri = null;
 
         releaseRecorder();
-        mButtonVideo.setImageResource(mInterface.iconRecord());
+        setImageRes(mButtonVideo, mInterface.iconRecord());
         if (!CameraUtil.isChromium())
             mButtonFacing.setVisibility(View.VISIBLE);
         if (mInterface.getRecordingStart() > -1 && getActivity() != null)

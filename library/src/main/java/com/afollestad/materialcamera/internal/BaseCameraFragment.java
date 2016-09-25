@@ -86,7 +86,7 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
         return inflater.inflate(R.layout.mcam_fragment_videocapture, container, false);
     }
 
-    private void setImageRes(ImageView iv, @DrawableRes int res) {
+    protected void setImageRes(ImageView iv, @DrawableRes int res) {
         Drawable d = ContextCompat.getDrawable(iv.getContext(), res);
         d = DrawableCompat.wrap(d.mutate());
         DrawableCompat.setTint(d, mIconTextColor);
