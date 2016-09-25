@@ -1,5 +1,6 @@
 package com.afollestad.materialcamera.internal;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
@@ -45,6 +46,7 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
     protected ImageButton mButtonFacing;
     protected ImageButton mButtonFlash;
     protected TextView mRecordDuration;
+    protected TextView mDelayStartCountdown;
 
     private boolean mIsRecording;
     protected String mOutputUri;
@@ -93,10 +95,12 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
         iv.setImageDrawable(d);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        mDelayStartCountdown = (TextView) view.findViewById(R.id.delayStartCountdown);
         mButtonVideo = (ImageButton) view.findViewById(R.id.video);
         mButtonStillshot = (ImageButton) view.findViewById(R.id.stillshot);
         mButtonFacing = (ImageButton) view.findViewById(R.id.facing);
@@ -141,12 +145,79 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
             setImageRes(mButtonStillshot, mInterface.iconStillshot());
             mButtonFlash.setVisibility(View.VISIBLE);
         }
+
+        if (mInterface.autoRecordDelay() < 1000) {
+            mDelayStartCountdown.setVisibility(View.GONE);
+        } else {
+            mDelayStartCountdown.setText(Long.toString(mInterface.autoRecordDelay() / 1000));
+        }
     }
 
     protected void onFlashModesLoaded() {
         if (getCurrentCameraPosition() != BaseCaptureActivity.CAMERA_POSITION_FRONT) {
             invalidateFlash();
         }
+    }
+
+    private boolean mDidAutoRecord = false;
+    private Handler mDelayHandler;
+    private int mDelayCurrentSecond = -1;
+
+    protected void onCameraOpened() {
+        if (mDidAutoRecord || mInterface == null || mInterface.useStillshot() || mInterface.autoRecordDelay() < 0 || getActivity() == null) {
+            mDelayStartCountdown.setVisibility(View.GONE);
+            mDelayHandler = null;
+            return;
+        }
+        mDidAutoRecord = true;
+        mButtonFacing.setVisibility(View.GONE);
+
+        if (mInterface.autoRecordDelay() == 0) {
+            mDelayStartCountdown.setVisibility(View.GONE);
+            mIsRecording = startRecordingVideo();
+            mDelayHandler = null;
+            return;
+        }
+
+        mDelayHandler = new Handler();
+        mButtonVideo.setEnabled(false);
+
+        if (mInterface.autoRecordDelay() < 1000) {
+            // Less than a second delay
+            mDelayStartCountdown.setVisibility(View.GONE);
+            mDelayHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (!isAdded() || getActivity() == null || mIsRecording) return;
+                    mButtonVideo.setEnabled(true);
+                    mIsRecording = startRecordingVideo();
+                    mDelayHandler = null;
+                }
+            }, mInterface.autoRecordDelay());
+            return;
+        }
+
+        mDelayStartCountdown.setVisibility(View.VISIBLE);
+        mDelayCurrentSecond = (int) mInterface.autoRecordDelay() / 1000;
+        mDelayHandler.postDelayed(new Runnable() {
+            @SuppressLint("SetTextI18n")
+            @Override
+            public void run() {
+                if (!isAdded() || getActivity() == null || mIsRecording) return;
+                mDelayCurrentSecond -= 1;
+                mDelayStartCountdown.setText(Integer.toString(mDelayCurrentSecond));
+
+                if (mDelayCurrentSecond == 0) {
+                    mDelayStartCountdown.setVisibility(View.GONE);
+                    mButtonVideo.setEnabled(true);
+                    mIsRecording = startRecordingVideo();
+                    mDelayHandler = null;
+                    return;
+                }
+
+                mDelayHandler.postDelayed(this, 1000);
+            }
+        }, 1000);
     }
 
     @Override

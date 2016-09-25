@@ -65,7 +65,7 @@ public class MaterialCamera {
     private boolean mContinueTimerInPlayback = true;
     private boolean mForceCamera1 = false;
     private boolean mStillShot;
-
+    private long mAutoRecord;
 
     private int mVideoEncodingBitRate = -1;
     private int mAudioEncodingBitRate = -1;
@@ -294,6 +294,16 @@ public class MaterialCamera {
         return this;
     }
 
+    public MaterialCamera autoRecordWithDelayMs(@IntRange(from = -1, to = Long.MAX_VALUE) long delayMillis) {
+        mAutoRecord = delayMillis;
+        return this;
+    }
+
+    public MaterialCamera autoRecordWithDelaySec(@IntRange(from = -1, to = Long.MAX_VALUE) int delaySeconds) {
+        mAutoRecord = delaySeconds * 1000;
+        return this;
+    }
+
     public Intent getIntent() {
         final Class<?> cls = !mForceCamera1 && CameraUtil.hasCamera2(mContext, mStillShot) ?
                 CaptureActivity2.class : CaptureActivity.class;
@@ -309,7 +319,8 @@ public class MaterialCamera {
                 .putExtra(CameraIntentKey.RETRY_EXITS, mRetryExists)
                 .putExtra(CameraIntentKey.RESTART_TIMER_ON_RETRY, mRestartTimerOnRetry)
                 .putExtra(CameraIntentKey.CONTINUE_TIMER_IN_PLAYBACK, mContinueTimerInPlayback)
-                .putExtra(CameraIntentKey.STILL_SHOT, mStillShot);
+                .putExtra(CameraIntentKey.STILL_SHOT, mStillShot)
+                .putExtra(CameraIntentKey.AUTO_RECORD, mAutoRecord);
 
         if (mVideoEncodingBitRate > 0)
             intent.putExtra(CameraIntentKey.VIDEO_BIT_RATE, mVideoEncodingBitRate);

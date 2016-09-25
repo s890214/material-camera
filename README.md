@@ -94,7 +94,9 @@ new MaterialCamera(this)                               // Constructor takes an A
     .iconPause(R.drawable.evp_action_pause)            // Sets a custom icon used to pause playback
     .iconRestart(R.drawable.evp_action_restart)        // Sets a custom icon used to restart playback
     .labelRetry(R.string.mcam_retry)                   // Sets a custom button label for the button used to retry recording, when available
-    .labelUseVideo(R.string.mcam_use_video)            // Sets a custom button label for the button used to confirm a recording
+    .labelConfirm(R.string.mcam_use_video)             // Sets a custom button label for the button used to confirm/submit a recording
+    .autoRecordWithDelaySec(5)                         // The video camera will start recording automatically after a 5 second countdown. This disables switching between the front and back camera initially.
+    .autoRecordWithDelayMs(5000)                       // Same as the above, expressed with milliseconds instead of seconds.
     .start(CAMERA_RQ);                                 // Starts the camera activity, the result will be sent back to the current Activity
 ```
 

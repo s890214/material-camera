@@ -130,6 +130,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
             if (null != mTextureView) {
                 configureTransform(mTextureView.getWidth(), mTextureView.getHeight());
             }
+            onCameraOpened();
         }
 
         @Override
@@ -221,12 +222,6 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
      * Max preview height that is guaranteed by Camera2 API
      */
     private static final int MAX_PREVIEW_HEIGHT = 1080;
-
-    /**
-     * Whether the current camera device supports Flash or not.
-     */
-    private boolean mFlashSupported;
-
 
     /**
      * A {@link CameraCaptureSession.CaptureCallback} that handles events related to JPEG capture.

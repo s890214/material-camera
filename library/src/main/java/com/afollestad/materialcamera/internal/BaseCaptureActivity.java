@@ -569,4 +569,9 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     public boolean shouldHideFlash() {
         return !useStillshot() || mFlashModes == null;
     }
+
+    @Override
+    public long autoRecordDelay() {
+        return getIntent().getLongExtra(CameraIntentKey.AUTO_RECORD, -1);
+    }
 }

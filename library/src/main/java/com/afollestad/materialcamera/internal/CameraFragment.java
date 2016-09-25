@@ -234,6 +234,8 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             mCamera.setParameters(parameters);
             createPreview();
             mMediaRecorder = new MediaRecorder();
+
+            onCameraOpened();
         } catch (IllegalStateException e) {
             throwError(new Exception("Cannot access the camera.", e));
         } catch (RuntimeException e2) {
