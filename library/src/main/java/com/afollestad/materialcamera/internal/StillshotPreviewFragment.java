@@ -61,17 +61,17 @@ public class StillshotPreviewFragment extends BaseGalleryFragment {
         });
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        if (mBitmap != null) {
-            try {
-                mBitmap.recycle();
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
-        }
-    }
+//    @Override
+//    public void onDestroyView() {
+//        super.onDestroyView();
+//        if (mBitmap != null) {
+//            try {
+//                mBitmap.recycle();
+//            } catch (Throwable t) {
+//                t.printStackTrace();
+//            }
+//        }
+//    }
 
     /**
      * Sets bitmap to ImageView widget

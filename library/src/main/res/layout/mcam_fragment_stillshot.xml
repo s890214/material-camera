@@ -1,28 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:foreground="?selectableItemBackground"
     tools:ignore="UnusedAttribute">
 
-    <RelativeLayout
+    <ImageView
+        android:id="@+id/stillshot_imageview"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ImageView
-            android:id="@+id/stillshot_imageview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </RelativeLayout>
+        android:layout_height="match_parent" />
 
     <LinearLayout
         android:id="@+id/controlsFrame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:background="#80000000"
         android:orientation="vertical"
         android:paddingBottom="@dimen/mcam_content_inset_less"
         android:paddingLeft="@dimen/mcam_content_inset"
@@ -32,7 +25,8 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="start|bottom">
+            android:layout_gravity="start|bottom"
+            tools:ignore="UselessParent">
 
             <Button
                 android:id="@+id/retry"

@@ -3,7 +3,6 @@ package com.afollestad.materialcamera.internal;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.pm.ActivityInfo;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
 
@@ -42,10 +41,11 @@ public abstract class BaseGalleryFragment extends Fragment implements CameraUriI
         mRetry = view.findViewById(R.id.retry);
         mConfirm = view.findViewById(R.id.confirm);
 
-        mPrimaryColor = CameraUtil.darkenColor(getArguments().getInt(CameraIntentKey.PRIMARY_COLOR));
-        int primaryColor = mPrimaryColor;
-        primaryColor = Color.argb((int) (255 * 0.75f), Color.red(primaryColor), Color.green(primaryColor), Color.blue(primaryColor));
-        mControlsFrame.setBackgroundColor(primaryColor);
+        mPrimaryColor = getArguments().getInt(CameraIntentKey.PRIMARY_COLOR);
+        if (CameraUtil.isColorDark(mPrimaryColor)) {
+            mPrimaryColor = CameraUtil.darkenColor(mPrimaryColor);
+        }
+        mControlsFrame.setBackgroundColor(mPrimaryColor);
 
         mRetry.setVisibility(getArguments().getBoolean(CameraIntentKey.ALLOW_RETRY, true) ? View.VISIBLE : View.GONE);
 
