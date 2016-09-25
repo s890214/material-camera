@@ -42,7 +42,6 @@
                 android:textColor="#fff"
                 android:textSize="@dimen/mcam_regular_title_fontsize" />
 
-
             <Button
                 android:id="@+id/confirm"
                 style="?borderlessButtonStyle"

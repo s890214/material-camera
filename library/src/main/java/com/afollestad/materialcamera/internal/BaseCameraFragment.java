@@ -105,12 +105,7 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
         mRecordDuration = (TextView) view.findViewById(R.id.recordDuration);
         setImageRes(mButtonFacing, mInterface.getCurrentCameraPosition() == CAMERA_POSITION_BACK ?
                 mInterface.iconFrontCamera() : mInterface.iconRearCamera());
-        if (mMediaRecorder != null && mIsRecording) {
-            setImageRes(mButtonVideo, mInterface.iconStop());
-        } else {
-            setImageRes(mButtonVideo, mInterface.iconRecord());
-            mInterface.setDidRecord(false);
-        }
+
         mButtonFlash = (ImageButton) view.findViewById(R.id.flash);
         setupFlashMode();
 
@@ -128,6 +123,13 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
         }
         view.findViewById(R.id.controlsFrame).setBackgroundColor(primaryColor);
         mRecordDuration.setTextColor(mIconTextColor);
+
+        if (mMediaRecorder != null && mIsRecording) {
+            setImageRes(mButtonVideo, mInterface.iconStop());
+        } else {
+            setImageRes(mButtonVideo, mInterface.iconRecord());
+            mInterface.setDidRecord(false);
+        }
 
         if (savedInstanceState != null)
             mOutputUri = savedInstanceState.getString("output_uri");

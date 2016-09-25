@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import com.afollestad.materialcamera.R;
@@ -44,8 +43,8 @@ public class StillshotPreviewFragment extends BaseGalleryFragment {
         super.onViewCreated(view, savedInstanceState);
         mImageView = (ImageView) view.findViewById(R.id.stillshot_imageview);
 
-        ((Button) mConfirm).setText(mInterface.labelConfirm());
-        ((Button) mRetry).setText(mInterface.labelRetry());
+        mConfirm.setText(mInterface.labelConfirm());
+        mRetry.setText(mInterface.labelRetry());
 
         mRetry.setOnClickListener(this);
         mConfirm.setOnClickListener(this);

@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
+import android.widget.Button;
 
 import com.afollestad.materialcamera.R;
 import com.afollestad.materialcamera.util.CameraUtil;
@@ -16,8 +18,8 @@ public abstract class BaseGalleryFragment extends Fragment implements CameraUriI
     int mPrimaryColor;
     String mOutputUri;
     View mControlsFrame;
-    View mRetry;
-    View mConfirm;
+    Button mRetry;
+    Button mConfirm;
 
     @SuppressWarnings("deprecation")
     @Override
@@ -38,12 +40,19 @@ public abstract class BaseGalleryFragment extends Fragment implements CameraUriI
         super.onViewCreated(view, savedInstanceState);
         mOutputUri = getArguments().getString("output_uri");
         mControlsFrame = view.findViewById(R.id.controlsFrame);
-        mRetry = view.findViewById(R.id.retry);
-        mConfirm = view.findViewById(R.id.confirm);
+        mRetry = (Button) view.findViewById(R.id.retry);
+        mConfirm = (Button) view.findViewById(R.id.confirm);
 
         mPrimaryColor = getArguments().getInt(CameraIntentKey.PRIMARY_COLOR);
         if (CameraUtil.isColorDark(mPrimaryColor)) {
             mPrimaryColor = CameraUtil.darkenColor(mPrimaryColor);
+            final int textColor = ContextCompat.getColor(view.getContext(), R.color.mcam_color_light);
+            mRetry.setTextColor(textColor);
+            mConfirm.setTextColor(textColor);
+        } else {
+            final int textColor = ContextCompat.getColor(view.getContext(), R.color.mcam_color_dark);
+            mRetry.setTextColor(textColor);
+            mConfirm.setTextColor(textColor);
         }
         mControlsFrame.setBackgroundColor(mPrimaryColor);
 
