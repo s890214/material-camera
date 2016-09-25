@@ -5,8 +5,11 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
+import android.graphics.drawable.RippleDrawable;
 import android.media.MediaRecorder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.DrawableRes;
@@ -89,6 +92,10 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
     }
 
     protected void setImageRes(ImageView iv, @DrawableRes int res) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP && iv.getBackground() instanceof RippleDrawable) {
+            RippleDrawable rd = (RippleDrawable) iv.getBackground();
+            rd.setColor(ColorStateList.valueOf(CameraUtil.adjustAlpha(mIconTextColor, 0.3f)));
+        }
         Drawable d = ContextCompat.getDrawable(iv.getContext(), res);
         d = DrawableCompat.wrap(d.mutate());
         DrawableCompat.setTint(d, mIconTextColor);
