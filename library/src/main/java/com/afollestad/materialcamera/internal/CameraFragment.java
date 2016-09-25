@@ -11,6 +11,7 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
@@ -325,7 +326,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
 
             boolean canUseAudio = true;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                canUseAudio = activity.checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+                canUseAudio = ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
 
             if (canUseAudio) {
                 mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);

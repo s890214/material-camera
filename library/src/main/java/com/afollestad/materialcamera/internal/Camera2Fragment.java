@@ -33,6 +33,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
@@ -797,7 +798,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
 
         boolean canUseAudio = true;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            canUseAudio = activity.checkSelfPermission(Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+            canUseAudio = ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
 
         if (canUseAudio) {
             mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
