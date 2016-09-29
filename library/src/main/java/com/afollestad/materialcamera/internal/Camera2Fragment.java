@@ -669,15 +669,15 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
 
     @Override
     public void onPreferencesUpdated() {
-        if (mPreviewSession == null || mPreviewBuilder == null) {
+        if (mInterface == null || !mInterface.useStillshot() || mPreviewSession == null || mPreviewBuilder == null) {
             return;
         }
         setFlashMode(mPreviewBuilder);
         mPreviewRequest = mPreviewBuilder.build();
         try {
             mPreviewSession.setRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler);
-        } catch (CameraAccessException e) {
-            e.printStackTrace();
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
     }
 
