@@ -21,6 +21,7 @@ public class CameraIntentKey {
     public static final String CONTINUE_TIMER_IN_PLAYBACK = "continue_timer_in_playback";
     public static final String VIDEO_BIT_RATE = "video_bit_rate";
     public static final String AUDIO_ENCODING_BIT_RATE = "audio_encoding_bit_rate";
+    public static final String AUDIO_DISABLED = "audio_disabled";
     public static final String VIDEO_FRAME_RATE = "video_frame_rate";
     public static final String VIDEO_PREFERRED_HEIGHT = "video_preferred_height";
     public static final String VIDEO_PREFERRED_ASPECT = "video_preferred_aspect";

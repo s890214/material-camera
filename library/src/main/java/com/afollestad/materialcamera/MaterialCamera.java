@@ -65,6 +65,7 @@ public class MaterialCamera {
     private boolean mContinueTimerInPlayback = true;
     private boolean mForceCamera1 = false;
     private boolean mStillShot;
+    private boolean mAudioDisabled = false;
     private long mAutoRecord = -1;
 
     private int mVideoEncodingBitRate = -1;
@@ -186,6 +187,11 @@ public class MaterialCamera {
 
     public MaterialCamera forceCamera1() {
         mForceCamera1 = true;
+        return this;
+    }
+
+    public MaterialCamera audioDisabled(boolean disabled) {
+        mAudioDisabled = disabled;
         return this;
     }
 
@@ -320,7 +326,8 @@ public class MaterialCamera {
                 .putExtra(CameraIntentKey.RESTART_TIMER_ON_RETRY, mRestartTimerOnRetry)
                 .putExtra(CameraIntentKey.CONTINUE_TIMER_IN_PLAYBACK, mContinueTimerInPlayback)
                 .putExtra(CameraIntentKey.STILL_SHOT, mStillShot)
-                .putExtra(CameraIntentKey.AUTO_RECORD, mAutoRecord);
+                .putExtra(CameraIntentKey.AUTO_RECORD, mAutoRecord)
+                .putExtra(CameraIntentKey.AUDIO_DISABLED, mAudioDisabled);
 
         if (mVideoEncodingBitRate > 0)
             intent.putExtra(CameraIntentKey.VIDEO_BIT_RATE, mVideoEncodingBitRate);
