@@ -16,6 +16,7 @@ import com.afollestad.materialcamera.util.ImageUtil;
 public class StillshotPreviewFragment extends BaseGalleryFragment {
 
     private ImageView mImageView;
+
     /**
      * Reference to the bitmap, in case 'onConfigurationChange' event comes, so we do not recreate the bitmap
      */
@@ -60,23 +61,24 @@ public class StillshotPreviewFragment extends BaseGalleryFragment {
         });
     }
 
-//    @Override
-//    public void onDestroyView() {
-//        super.onDestroyView();
-//        if (mBitmap != null) {
-//            try {
-//                mBitmap.recycle();
-//            } catch (Throwable t) {
-//                t.printStackTrace();
-//            }
-//        }
-//    }
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (mBitmap != null && !mBitmap.isRecycled()) {
+            try {
+                mBitmap.recycle();
+                mBitmap = null;
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }
+    }
+
 
     /**
      * Sets bitmap to ImageView widget
      */
     private void setImageBitmap() {
-
         final int width = mImageView.getMeasuredWidth();
         final int height = mImageView.getMeasuredHeight();
 
@@ -85,7 +87,7 @@ public class StillshotPreviewFragment extends BaseGalleryFragment {
             mBitmap = ImageUtil.getRotatedBitmap(Uri.parse(mOutputUri).getPath(), width, height);
 
         if (mBitmap == null)
-            showDialog("Image preview error", "Could not decode bitmap");
+            showDialog(getString(R.string.mcam_image_preview_error_title), getString(R.string.mcam_image_preview_error_message));
         else
             mImageView.setImageBitmap(mBitmap);
     }
