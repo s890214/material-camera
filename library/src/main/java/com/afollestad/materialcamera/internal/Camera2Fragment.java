@@ -168,7 +168,6 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
         }
     };
 
-    //////////////////////// STILL CAPTURE ///////////////////////
     /**
      * Conversion from screen rotation to JPEG orientation.
      */
@@ -291,9 +290,6 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
         }
 
     };
-
-
-    //////////////////////// END OF STILL CAPTURE ///////////////////////
 
     public static Camera2Fragment newInstance() {
         Camera2Fragment fragment = new Camera2Fragment();
@@ -905,11 +901,12 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
         stopCounter();
     }
 
-    ///////////////////////// STILL SHOT
     @Override
+    /**
+     * @link http://pierrchen.blogspot.si/2015/01/android-camera2-api-explained.html
+     * @link https://github.com/googlesamples/android-Camera2Basic/blob/master/Application/src/main/java/com/example/android/camera2basic/Camera2BasicFragment.java
+     */
     public void takeStillshot() {
-        // http://pierrchen.blogspot.si/2015/01/android-camera2-api-explained.html
-        // https://github.com/googlesamples/android-Camera2Basic/blob/master/Application/src/main/java/com/example/android/camera2basic/Camera2BasicFragment.java
         lockFocus();
     }
 
@@ -1053,7 +1050,6 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
         requestBuilder.set(CaptureRequest.FLASH_MODE, flashMode);
     }
 
-    //////////////////////// END OF STILL SHOT
     static class CompareSizesByArea implements Comparator<Size> {
         @Override
         public int compare(Size lhs, Size rhs) {

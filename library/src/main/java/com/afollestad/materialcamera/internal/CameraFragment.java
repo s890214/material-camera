@@ -501,17 +501,17 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
     public void takeStillshot() {
         Camera.ShutterCallback shutterCallback = new Camera.ShutterCallback() {
             public void onShutter() {
-//                			 Log.d(TAG, "onShutter'd");
+                //Log.d(TAG, "onShutter'd");
             }
         };
         Camera.PictureCallback rawCallback = new Camera.PictureCallback() {
             public void onPictureTaken(byte[] data, Camera camera) {
-//                			 Log.d(TAG, "onPictureTaken - raw. Raw is null: " + (data == null));
+                //Log.d(TAG, "onPictureTaken - raw. Raw is null: " + (data == null));
             }
         };
         Camera.PictureCallback jpegCallback = new Camera.PictureCallback() {
             public void onPictureTaken(final byte[] data, Camera camera) {
-//                Log.d(TAG, "onPictureTaken - jpeg, size: " + data.length);
+                //Log.d(TAG, "onPictureTaken - jpeg, size: " + data.length);
                 final File outputPic = getOutputPictureFile();
                 // lets save the image to disk
                 ImageUtil.saveToDiskAsync(data, outputPic, new ICallback() {
@@ -521,7 +521,7 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
                             Log.d("CameraFragment", "Picture saved to disk - jpeg, size: " + data.length);
                             mOutputUri = Uri.fromFile(outputPic).toString();
                             mInterface.onShowStillshot(mOutputUri);
-//                            mCamera.startPreview();
+                            //mCamera.startPreview();
                             mButtonStillshot.setEnabled(true);
                         } else {
                             throwError(e);
@@ -532,8 +532,8 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
         };
 
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-        //We could have configurable shutter sound here
-        //mCamera.enableShutterSound(false);
+//            // We could have configurable shutter sound here
+//            mCamera.enableShutterSound(false);
 //        }
 
         mButtonStillshot.setEnabled(false);
