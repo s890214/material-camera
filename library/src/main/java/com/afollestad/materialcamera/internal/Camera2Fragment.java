@@ -45,6 +45,7 @@ import android.widget.Toast;
 import com.afollestad.materialcamera.R;
 import com.afollestad.materialcamera.util.CameraUtil;
 import com.afollestad.materialcamera.util.Degrees;
+import com.afollestad.materialcamera.util.ManufacturerUtil;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
@@ -788,17 +789,14 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
             mMediaRecorder = new MediaRecorder();
 
         boolean canUseAudio = true;
-        if (!mInterface.audioDisabled()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                canUseAudio = ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+        boolean audioEnabled = !mInterface.audioDisabled();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            canUseAudio = ContextCompat.checkSelfPermission(activity, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
 
-            if (canUseAudio) {
-                mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
-            } else {
-                Toast.makeText(getActivity(), R.string.mcam_no_audio_access, Toast.LENGTH_LONG).show();
-            }
-        } else {
-            canUseAudio = false;
+        if (canUseAudio && audioEnabled) {
+            mMediaRecorder.setAudioSource(MediaRecorder.AudioSource.DEFAULT);
+        } else if(audioEnabled) {
+            Toast.makeText(getActivity(), R.string.mcam_no_audio_access, Toast.LENGTH_LONG).show();
         }
         mMediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
 
@@ -809,7 +807,7 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
         mMediaRecorder.setVideoEncodingBitRate(mInterface.videoEncodingBitRate(profile.videoBitRate));
         mMediaRecorder.setVideoEncoder(profile.videoCodec);
 
-        if (canUseAudio) {
+        if (canUseAudio && audioEnabled) {
             mMediaRecorder.setAudioEncodingBitRate(mInterface.audioEncodingBitRate(profile.audioBitRate));
             mMediaRecorder.setAudioChannels(profile.audioChannels);
             mMediaRecorder.setAudioSamplingRate(profile.audioSampleRate);
