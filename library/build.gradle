@@ -9,7 +9,7 @@ ext {
     VIDEO_PLAYER_VERSION = '0.2.13'
     MD_VERSION = '0.9.0.2'
     TARGET_SDK = 24
-    BUILD_TOOLS = "24.0.2"
+    BUILD_TOOLS = "24.0.3"
 }
 
 android {
