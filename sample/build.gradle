@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 ext {
     PUBLISH_VERSION = "0.4.2"
     TARGET_SDK = 24
-    BUILD_TOOLS = "24.0.2"
+    BUILD_TOOLS = "24.0.3"
     GOOGLE_LIBS = "24.2.1"
 }
 
