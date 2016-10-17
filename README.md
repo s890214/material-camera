@@ -29,6 +29,16 @@ jCenter is the default Maven repository used by Android Studio.
 
 ### Dependency
 
+Add Bintray to your repositories, for some reason this specific library doesn't seem to work via jCenter
+even though all of my other libraries do.
+
+```gradle
+repositories {
+    jcenter()
+    maven { url "https://dl.bintray.com/drummer-aidan/maven" }
+}
+```
+
 Add this in your module's `build.gradle` file:
 
 ```gradle
