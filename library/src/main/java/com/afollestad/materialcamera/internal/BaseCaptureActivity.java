@@ -19,6 +19,7 @@ import android.support.annotation.StringRes;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -92,7 +93,9 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
 
     @Override
     protected final void onCreate(Bundle savedInstanceState) {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
         super.onCreate(savedInstanceState);
+
         if (!CameraUtil.hasCamera(this)) {
             new MaterialDialog.Builder(this)
                     .title(R.string.mcam_error)
