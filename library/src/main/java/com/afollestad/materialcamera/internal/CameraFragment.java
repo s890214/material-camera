@@ -232,16 +232,18 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
                     parameters.setRecordingHint(true);
             }
 
-
-            mFlashModes = CameraUtil.getSupportedFlashModes(this.getActivity(), parameters);
-            mInterface.setFlashModes(mFlashModes);
-            onFlashModesLoaded();
-
             Camera.Size mStillShotSize = getHighestSupportedStillShotSize(parameters.getSupportedPictureSizes());
             parameters.setPictureSize(mStillShotSize.width, mStillShotSize.height);
 
             setCameraDisplayOrientation(parameters);
             mCamera.setParameters(parameters);
+
+            // NOTE: onFlashModesLoaded should not be called while modifying camera parameters as
+            //       the flash parameters set in setupFlashMode will then be overwritten
+            mFlashModes = CameraUtil.getSupportedFlashModes(this.getActivity(), parameters);
+            mInterface.setFlashModes(mFlashModes);
+            onFlashModesLoaded();
+
             createPreview();
             mMediaRecorder = new MediaRecorder();
 
