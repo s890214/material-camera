@@ -55,17 +55,6 @@ public class ImageUtil {
     }
 
     /**
-     * Helper function for getRotatedBitmap(String, int, int, int)
-     *
-     * @param inputFile inputFile Expects an JPEG file if corrected orientation wants to be set.
-     * @return rotated bitmap or null
-     */
-    public static Bitmap getRotatedBitmap(String inputFile, int reqWidth, int reqHeight) {
-        final int IN_SAMPLE_SIZE_DEFAULT_VAL = 1;
-        return getRotatedBitmap(inputFile, reqWidth, reqHeight, IN_SAMPLE_SIZE_DEFAULT_VAL);
-    }
-
-    /**
      * Rotates the bitmap per their EXIF flag. This is a recursive function that will
      * be called again if the image needs to be downsized more.
      *
@@ -73,13 +62,13 @@ public class ImageUtil {
      * @return rotated bitmap or null
      */
     @Nullable
-    private static Bitmap getRotatedBitmap(String inputFile, int reqWidth, int reqHeight, int inSampleSize) {
+    public static Bitmap getRotatedBitmap(String inputFile, int reqWidth, int reqHeight) {
         final int rotationInDegrees = getExifDegreesFromJpeg(inputFile);
 
         final BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(inputFile, opts);
-        opts.inSampleSize = calculateInSampleSize(opts, reqWidth, reqHeight, inSampleSize);
+        opts.inSampleSize = calculateInSampleSize(opts, reqWidth, reqHeight);
         opts.inJustDecodeBounds = false;
 
         final Bitmap origBitmap = BitmapFactory.decodeFile(inputFile, opts);
@@ -91,32 +80,26 @@ public class ImageUtil {
         matrix.preRotate(rotationInDegrees);
         // we need not check if the rotation is not needed, since the below function will then return the same bitmap. Thus no memory loss occurs.
 
-        try {
-            return Bitmap.createBitmap(origBitmap, 0, 0, origBitmap.getWidth(), origBitmap.getHeight(), matrix, true);
-        } catch (OutOfMemoryError e) {
-            return getRotatedBitmap(inputFile, reqWidth, reqHeight, opts.inSampleSize + 1);
-        }
+        return Bitmap.createBitmap(origBitmap, 0, 0, origBitmap.getWidth(), origBitmap.getHeight(), matrix, true);
     }
 
-    private static int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight, int inSampleSize) {
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+
         // Raw height and width of image
         final int height = options.outHeight;
         final int width = options.outWidth;
+        int inSampleSize = 1;
 
         if (height > reqHeight || width > reqWidth) {
+            // Calculate ratios of height and width to requested height and width
+            final int heightRatio = Math.round((float) height / (float) reqHeight);
+            final int widthRatio = Math.round((float) width / (float) reqWidth);
 
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
-            while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
-                inSampleSize *= 2;
-            }
+            // Choose the smallest ratio as inSampleSize value, this will guarantee
+            // a final image with both dimensions larger than or equal to the
+            // requested height and width.
+            inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
         }
-
         return inSampleSize;
     }
 
