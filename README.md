@@ -107,6 +107,7 @@ new MaterialCamera(this)                               // Constructor takes an A
     .labelConfirm(R.string.mcam_use_video)             // Sets a custom button label for the button used to confirm/submit a recording
     .autoRecordWithDelaySec(5)                         // The video camera will start recording automatically after a 5 second countdown. This disables switching between the front and back camera initially.
     .autoRecordWithDelayMs(5000)                       // Same as the above, expressed with milliseconds instead of seconds.
+    .audioDisabled(false)                              // Set to true to record video without any audio.
     .start(CAMERA_RQ);                                 // Starts the camera activity, the result will be sent back to the current Activity
 ```
 
