@@ -331,7 +331,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
                 finish();
                 return;
             }
-            useVideo(outputUri);
+            useMedia(outputUri);
         } else {
             if (!hasLengthLimit() || !continueTimerInPlayback()) {
                 // No countdown or countdown should not continue through playback, reset timer to 0
@@ -348,7 +348,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     @Override
     public void onShowStillshot(String outputUri) {
         if (shouldAutoSubmit()) {
-            useVideo(outputUri);
+            useMedia(outputUri);
         } else {
             Fragment frag = StillshotPreviewFragment.newInstance(outputUri, allowRetry(),
                     getIntent().getIntExtra(CameraIntentKey.PRIMARY_COLOR, 0));
@@ -401,7 +401,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     }
 
     @Override
-    public final void useVideo(String uri) {
+    public final void useMedia(String uri) {
         if (uri != null) {
             setResult(Activity.RESULT_OK, getIntent()
                     .putExtra(MaterialCamera.STATUS_EXTRA, MaterialCamera.STATUS_RECORDED)
