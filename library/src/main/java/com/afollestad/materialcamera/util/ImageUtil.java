@@ -81,6 +81,7 @@ public class ImageUtil {
 
         Matrix matrix = new Matrix();
         matrix.preRotate(rotationInDegrees);
+        // we need not check if the rotation is not needed, since the below function will then return the same bitmap. Thus no memory loss occurs.
 
         return Bitmap.createBitmap(origBitmap, 0, 0, origBitmap.getWidth(), origBitmap.getHeight(), matrix, true);
     }

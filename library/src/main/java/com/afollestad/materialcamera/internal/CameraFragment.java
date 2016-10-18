@@ -177,20 +177,20 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
 
             switch (getCurrentCameraPosition()) {
                 case CAMERA_POSITION_FRONT:
-                    setImageRes(mButtonFacing, mInterface.iconFrontCamera());
+                    setImageRes(mButtonFacing, mInterface.iconRearCamera());
                     break;
                 case CAMERA_POSITION_BACK:
-                    setImageRes(mButtonFacing, mInterface.iconRearCamera());
+                    setImageRes(mButtonFacing, mInterface.iconFrontCamera());
                     break;
                 case CAMERA_POSITION_UNKNOWN:
                 default:
                     if (getArguments().getBoolean(CameraIntentKey.DEFAULT_TO_FRONT_FACING, false)) {
                         // Check front facing first
                         if (mInterface.getFrontCamera() != null && (Integer) mInterface.getFrontCamera() != -1) {
-                            setImageRes(mButtonFacing, mInterface.iconFrontCamera());
+                            setImageRes(mButtonFacing, mInterface.iconRearCamera());
                             mInterface.setCameraPosition(CAMERA_POSITION_FRONT);
                         } else {
-                            setImageRes(mButtonFacing, mInterface.iconRearCamera());
+                            setImageRes(mButtonFacing, mInterface.iconFrontCamera());
                             if (mInterface.getBackCamera() != null && (Integer) mInterface.getBackCamera() != -1)
                                 mInterface.setCameraPosition(CAMERA_POSITION_BACK);
                             else mInterface.setCameraPosition(CAMERA_POSITION_UNKNOWN);
@@ -198,10 +198,10 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
                     } else {
                         // Check back facing first
                         if (mInterface.getBackCamera() != null && (Integer) mInterface.getBackCamera() != -1) {
-                            setImageRes(mButtonFacing, mInterface.iconRearCamera());
+                            setImageRes(mButtonFacing, mInterface.iconFrontCamera());
                             mInterface.setCameraPosition(CAMERA_POSITION_BACK);
                         } else {
-                            setImageRes(mButtonFacing, mInterface.iconFrontCamera());
+                            setImageRes(mButtonFacing, mInterface.iconRearCamera());
                             if (mInterface.getFrontCamera() != null && (Integer) mInterface.getFrontCamera() != -1)
                                 mInterface.setCameraPosition(CAMERA_POSITION_FRONT);
                             else mInterface.setCameraPosition(CAMERA_POSITION_UNKNOWN);
