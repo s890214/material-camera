@@ -14,6 +14,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import static com.afollestad.materialcamera.util.Degrees.DEGREES_270;
+import static com.afollestad.materialcamera.util.Degrees.DEGREES_90;
+
 /**
  * Created by tomiurankar on 06/03/16.
  */
@@ -68,7 +71,7 @@ public class ImageUtil {
         final BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inJustDecodeBounds = true;
         BitmapFactory.decodeFile(inputFile, opts);
-        opts.inSampleSize = calculateInSampleSize(opts, reqWidth, reqHeight);
+        opts.inSampleSize = calculateInSampleSize(opts, reqWidth, reqHeight, rotationInDegrees);
         opts.inJustDecodeBounds = false;
 
         final Bitmap origBitmap = BitmapFactory.decodeFile(inputFile, opts);
@@ -78,17 +81,25 @@ public class ImageUtil {
 
         Matrix matrix = new Matrix();
         matrix.preRotate(rotationInDegrees);
-        // we need not check if the rotation is not needed, since the below function will then return the same bitmap. Thus no memory loss occurs.
 
         return Bitmap.createBitmap(origBitmap, 0, 0, origBitmap.getWidth(), origBitmap.getHeight(), matrix, true);
     }
 
-    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight, int rotationInDegrees) {
 
         // Raw height and width of image
-        final int height = options.outHeight;
-        final int width = options.outWidth;
+        final int height;
+        final int width;
         int inSampleSize = 1;
+
+        // Check rotation
+        if(rotationInDegrees == DEGREES_90 || rotationInDegrees == DEGREES_270){
+            width = options.outHeight;
+            height = options.outWidth;
+        } else {
+            height = options.outHeight;
+            width = options.outWidth;
+        }
 
         if (height > reqHeight || width > reqWidth) {
             // Calculate ratios of height and width to requested height and width
