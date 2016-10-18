@@ -155,7 +155,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
         }
         final boolean cameraGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
         final boolean audioGranted = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
-        final boolean audioNeeded = !useStillshot();
+        final boolean audioNeeded = !useStillshot() && !audioDisabled();
 
         String[] perms = null;
         if (cameraGranted) {
@@ -580,5 +580,10 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     @Override
     public long autoRecordDelay() {
         return getIntent().getLongExtra(CameraIntentKey.AUTO_RECORD, -1);
+    }
+
+    @Override
+    public boolean audioDisabled() {
+        return getIntent().getBooleanExtra(CameraIntentKey.AUDIO_DISABLED, false);
     }
 }

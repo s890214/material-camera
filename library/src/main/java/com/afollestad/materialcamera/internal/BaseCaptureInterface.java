@@ -134,4 +134,6 @@ public interface BaseCaptureInterface {
     boolean shouldHideFlash();
 
     long autoRecordDelay();
+
+    boolean audioDisabled();
 }
