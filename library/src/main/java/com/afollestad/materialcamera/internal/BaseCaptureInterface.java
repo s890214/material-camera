@@ -48,7 +48,7 @@ public interface BaseCaptureInterface {
 
     Object getBackCamera();
 
-    void useVideo(String uri);
+    void useMedia(String uri);
 
     boolean shouldAutoSubmit();
 

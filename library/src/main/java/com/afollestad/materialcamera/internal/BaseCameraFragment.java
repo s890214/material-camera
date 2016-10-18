@@ -162,7 +162,7 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
 
     protected void onFlashModesLoaded() {
         if (getCurrentCameraPosition() != BaseCaptureActivity.CAMERA_POSITION_FRONT) {
-            invalidateFlash();
+            invalidateFlash(false);
         }
     }
 
@@ -412,12 +412,12 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
         } else if (id == R.id.stillshot) {
             takeStillshot();
         } else if (id == R.id.flash) {
-            invalidateFlash();
+            invalidateFlash(true);
         }
     }
 
-    private void invalidateFlash() {
-        mInterface.toggleFlashMode();
+    private void invalidateFlash(boolean toggle) {
+        if (toggle) mInterface.toggleFlashMode();
         setupFlashMode();
         onPreferencesUpdated();
     }

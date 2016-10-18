@@ -138,7 +138,7 @@ public class PlaybackVideoFragment extends Fragment implements CameraUriInterfac
             mPlayer = null;
         }
         if (mInterface != null)
-            mInterface.useVideo(mOutputUri);
+            mInterface.useMedia(mOutputUri);
     }
 
     @Override
