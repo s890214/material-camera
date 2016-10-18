@@ -92,7 +92,7 @@ public class ImageUtil {
         final int width;
         int inSampleSize = 1;
 
-        // Check rotation
+        // Check for rotation
         if(rotationInDegrees == DEGREES_90 || rotationInDegrees == DEGREES_270){
             width = options.outHeight;
             height = options.outWidth;
