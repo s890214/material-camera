@@ -45,7 +45,7 @@ Add this in your module's `build.gradle` file:
 dependencies {
     // ... other dependencies
 
-    compile 'com.afollestad:material-camera:0.4.3'
+    compile 'com.afollestad:material-camera:0.4.4'
 }
 ```
 
