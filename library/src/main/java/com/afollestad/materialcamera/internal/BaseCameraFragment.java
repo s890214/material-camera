@@ -110,12 +110,14 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
         mDelayStartCountdown = (TextView) view.findViewById(R.id.delayStartCountdown);
         mButtonVideo = (ImageButton) view.findViewById(R.id.video);
         mButtonStillshot = (ImageButton) view.findViewById(R.id.stillshot);
-        mButtonFacing = (ImageButton) view.findViewById(R.id.facing);
-        if (CameraUtil.isChromium())
-            mButtonFacing.setVisibility(View.GONE);
         mRecordDuration = (TextView) view.findViewById(R.id.recordDuration);
-        setImageRes(mButtonFacing, mInterface.getCurrentCameraPosition() == CAMERA_POSITION_BACK ?
-                mInterface.iconFrontCamera() : mInterface.iconRearCamera());
+        mButtonFacing = (ImageButton) view.findViewById(R.id.facing);
+        if (mInterface.shouldHideCameraFacing() || CameraUtil.isChromium()) {
+            mButtonFacing.setVisibility(View.GONE);
+        } else {
+            setImageRes(mButtonFacing, mInterface.getCurrentCameraPosition() == CAMERA_POSITION_BACK ?
+                    mInterface.iconFrontCamera() : mInterface.iconRearCamera());
+        }
 
         mButtonFlash = (ImageButton) view.findViewById(R.id.flash);
         setupFlashMode();

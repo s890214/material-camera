@@ -586,4 +586,9 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     public boolean audioDisabled() {
         return getIntent().getBooleanExtra(CameraIntentKey.AUDIO_DISABLED, false);
     }
+
+    @Override
+    public boolean shouldHideCameraFacing() {
+        return !getIntent().getBooleanExtra(CameraIntentKey.ALLOW_CHANGE_CAMERA, false);
+    }
 }

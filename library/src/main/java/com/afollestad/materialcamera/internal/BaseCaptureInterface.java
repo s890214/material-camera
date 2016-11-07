@@ -136,4 +136,6 @@ public interface BaseCaptureInterface {
     long autoRecordDelay();
 
     boolean audioDisabled();
+
+    boolean shouldHideCameraFacing();
 }

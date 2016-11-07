@@ -27,6 +27,7 @@ public class CameraIntentKey {
     public static final String VIDEO_PREFERRED_ASPECT = "video_preferred_aspect";
     public static final String MAX_ALLOWED_FILE_SIZE = "max_allowed_file_size";
     public static final String QUALITY_PROFILE = "quality_profile";
+    public static final String ALLOW_CHANGE_CAMERA = "allow_change_camera";
 
     public static final String ICON_RECORD = "icon_record";
     public static final String ICON_STOP = "icon_stop";
