@@ -4,7 +4,7 @@ Android's video recording APIs are very difficult to figure out, especially sinc
 like to mount their camera sensors upside down or sideways. This library is a result of lots of research
 and experimentation to get video recording to work universally.
 
-<img src="https://raw.githubusercontent.com/afollestad/material-camera/master/art/showcase.png" width="400px" />
+<img src="https://raw.githubusercontent.com/afollestad/material-camera/master/art/showcase1.png" width="400px" />
 
 ---
 
