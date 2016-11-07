@@ -150,7 +150,7 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
             mRecordDuration.setVisibility(View.GONE);
             mButtonStillshot.setVisibility(View.VISIBLE);
             setImageRes(mButtonStillshot, mInterface.iconStillshot());
-            mButtonFlash.setVisibility(View.VISIBLE);
+            // mButtonFlash.setVisibility(View.VISIBLE); TODO: JEREMIAH
         }
 
         if (mInterface.autoRecordDelay() < 1000) {
@@ -431,7 +431,7 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
         }
 
         final int res;
-        switch (mInterface.getFlashMode()) {
+        switch (mInterface.getFlashMode()) { // TODO: JEREMIAH Check if need to add torch check or if ALWAYS_ON will work
             case FLASH_MODE_AUTO:
                 res = mInterface.iconFlashAuto();
                 break;

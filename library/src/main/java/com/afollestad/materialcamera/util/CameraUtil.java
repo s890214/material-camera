@@ -80,6 +80,10 @@ public class CameraUtil {
                             if (!flashModes.contains(BaseCaptureActivity.FLASH_MODE_OFF))
                                 flashModes.add(BaseCaptureActivity.FLASH_MODE_OFF);
                             break;
+                        case Camera.Parameters.FLASH_MODE_TORCH:
+                            if (!flashModes.contains(BaseCaptureActivity.FLASH_MODE_TORCH))
+                                flashModes.add(BaseCaptureActivity.FLASH_MODE_TORCH);
+                            break;
                         default:
                             break;
                     }
@@ -119,6 +123,7 @@ public class CameraUtil {
                         case CameraCharacteristics.CONTROL_AE_MODE_ON:
                             if (!flashModes.contains(BaseCaptureActivity.FLASH_MODE_OFF))
                                 flashModes.add(BaseCaptureActivity.FLASH_MODE_OFF);
+                            break;
                         default:
                             break;
                     }

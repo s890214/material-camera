@@ -241,6 +241,9 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             // NOTE: onFlashModesLoaded should not be called while modifying camera parameters as
             //       the flash parameters set in setupFlashMode will then be overwritten
             mFlashModes = CameraUtil.getSupportedFlashModes(this.getActivity(), parameters);
+
+            
+
             mInterface.setFlashModes(mFlashModes);
             onFlashModesLoaded();
 
@@ -491,10 +494,15 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
                 flashMode = Camera.Parameters.FLASH_MODE_AUTO;
                 break;
             case FLASH_MODE_ALWAYS_ON:
-                flashMode = Camera.Parameters.FLASH_MODE_ON;
+                if (mInterface.useStillshot())
+                    flashMode = Camera.Parameters.FLASH_MODE_ON;
+                else
+
+                    flashMode = Camera.Parameters.FLASH_MODE_TORCH;
                 break;
             case FLASH_MODE_OFF:
                 flashMode = Camera.Parameters.FLASH_MODE_OFF;
+                break;
             default:
                 break;
         }

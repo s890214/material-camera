@@ -70,6 +70,8 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     public static final int FLASH_MODE_OFF = 0;
     public static final int FLASH_MODE_ALWAYS_ON = 1;
     public static final int FLASH_MODE_AUTO = 2;
+    // public static final int FLASH_MODE_TORCH = 3; TODO: JEREMIAH DO I NEED?
+
 
     @Override
     protected final void onSaveInstanceState(Bundle outState) {
@@ -574,7 +576,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
 
     @Override
     public boolean shouldHideFlash() {
-        return !useStillshot() || mFlashModes == null;
+        return mFlashModes == null;
     }
 
     @Override
