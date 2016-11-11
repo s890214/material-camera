@@ -243,19 +243,19 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             //       the flash parameters set in setupFlashMode will then be overwritten
             mFlashModes = CameraUtil.getSupportedFlashModes(this.getActivity(), parameters);
             if (mFlashModes != null) {
-                if (mInterface.useStillshot()) {
+                if (mInterface.useStillshot()) { // TODO: Should stillshot include torch?
                     if (mFlashModes.contains(FLASH_MODE_TORCH)) {
-                        mFlashModes.remove(FLASH_MODE_TORCH);
+                        mFlashModes.remove(mFlashModes.indexOf(FLASH_MODE_TORCH));
                     }
-                } else {
+                } else { // Camera1 Video flash does not only supports torch and off
                     if (mFlashModes.contains(FLASH_MODE_AUTO)) {
-                        mFlashModes.remove(FLASH_MODE_AUTO);
+                        mFlashModes.remove(mFlashModes.indexOf(FLASH_MODE_AUTO));
                     }
                     if (mFlashModes.contains(FLASH_MODE_ALWAYS_ON)) {
-                        mFlashModes.remove(FLASH_MODE_ALWAYS_ON);
+                        mFlashModes.remove(mFlashModes.indexOf(FLASH_MODE_ALWAYS_ON));
                     }
                 }
-            } Log.i("JEREMIAH", (mFlashModes == null) ? "No flash modes." : mFlashModes.toString());
+            }
             mInterface.setFlashModes(mFlashModes);
             onFlashModesLoaded();
 
