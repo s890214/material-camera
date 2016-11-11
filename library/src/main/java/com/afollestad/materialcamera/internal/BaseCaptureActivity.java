@@ -62,7 +62,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     public static final int CAMERA_POSITION_FRONT = 1;
     public static final int CAMERA_POSITION_BACK = 2;
 
-    @IntDef({FLASH_MODE_OFF, FLASH_MODE_ALWAYS_ON, FLASH_MODE_AUTO})
+    @IntDef({FLASH_MODE_OFF, FLASH_MODE_ALWAYS_ON, FLASH_MODE_AUTO, FLASH_MODE_TORCH})
     @Retention(RetentionPolicy.SOURCE)
     public @interface FlashMode {
     }
@@ -70,7 +70,7 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     public static final int FLASH_MODE_OFF = 0;
     public static final int FLASH_MODE_ALWAYS_ON = 1;
     public static final int FLASH_MODE_AUTO = 2;
-    // public static final int FLASH_MODE_TORCH = 3; TODO: JEREMIAH DO I NEED?
+    public static final int FLASH_MODE_TORCH = 3;
 
 
     @Override
@@ -567,6 +567,12 @@ public abstract class BaseCaptureActivity extends AppCompatActivity implements B
     @Override
     public int iconFlashOff() {
         return getIntent().getIntExtra(CameraIntentKey.ICON_FLASH_OFF, R.drawable.mcam_action_flash_off);
+    }
+
+    @DrawableRes
+    @Override
+    public int iconFlashTorch() {
+        return getIntent().getIntExtra(CameraIntentKey.ICON_FLASH_TORCH, R.drawable.mcam_action_flash);
     }
 
     @Override

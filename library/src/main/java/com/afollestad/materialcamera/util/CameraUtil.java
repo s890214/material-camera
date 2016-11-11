@@ -91,15 +91,14 @@ public class CameraUtil {
                 return flashModes;
             }
         } else {
-            return null; //not supported
+            return null; // not supported
         }
     }
 
-    // TODO: Take a hard look at how this works
     // Camera2
     public static List<Integer> getSupportedFlashModes(Context context, CameraCharacteristics characteristics) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            return null; //doesn't support camera2
+            return null; // doesn't support camera2
         } else if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
             Boolean flashAvailable = characteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE);
             if (flashAvailable == null || !flashAvailable)

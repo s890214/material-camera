@@ -38,6 +38,7 @@ import static com.afollestad.materialcamera.internal.BaseCaptureActivity.CAMERA_
 import static com.afollestad.materialcamera.internal.BaseCaptureActivity.FLASH_MODE_ALWAYS_ON;
 import static com.afollestad.materialcamera.internal.BaseCaptureActivity.FLASH_MODE_AUTO;
 import static com.afollestad.materialcamera.internal.BaseCaptureActivity.FLASH_MODE_OFF;
+import static com.afollestad.materialcamera.internal.BaseCaptureActivity.FLASH_MODE_TORCH;
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -150,7 +151,6 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
             mRecordDuration.setVisibility(View.GONE);
             mButtonStillshot.setVisibility(View.VISIBLE);
             setImageRes(mButtonStillshot, mInterface.iconStillshot());
-            // mButtonFlash.setVisibility(View.VISIBLE); TODO: JEREMIAH
         }
 
         if (mInterface.autoRecordDelay() < 1000) {
@@ -178,6 +178,7 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
         }
         mDidAutoRecord = true;
         mButtonFacing.setVisibility(View.GONE);
+        mButtonFlash.setVisibility(View.GONE);
 
         if (mInterface.autoRecordDelay() == 0) {
             mDelayStartCountdown.setVisibility(View.GONE);
@@ -431,12 +432,15 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
         }
 
         final int res;
-        switch (mInterface.getFlashMode()) { // TODO: JEREMIAH Check if need to add torch check or if ALWAYS_ON will work
+        switch (mInterface.getFlashMode()) {
             case FLASH_MODE_AUTO:
                 res = mInterface.iconFlashAuto();
                 break;
             case FLASH_MODE_ALWAYS_ON:
                 res = mInterface.iconFlashOn();
+                break;
+            case FLASH_MODE_TORCH:
+                res = mInterface.iconFlashTorch();
                 break;
             case FLASH_MODE_OFF:
             default:

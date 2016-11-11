@@ -66,6 +66,7 @@ import static com.afollestad.materialcamera.internal.BaseCaptureActivity.CAMERA_
 import static com.afollestad.materialcamera.internal.BaseCaptureActivity.FLASH_MODE_ALWAYS_ON;
 import static com.afollestad.materialcamera.internal.BaseCaptureActivity.FLASH_MODE_AUTO;
 import static com.afollestad.materialcamera.internal.BaseCaptureActivity.FLASH_MODE_OFF;
+import static com.afollestad.materialcamera.internal.BaseCaptureActivity.FLASH_MODE_TORCH;
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -632,7 +633,9 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
 
             configureTransform(width, height);
 
-            mInterface.setFlashModes(CameraUtil.getSupportedFlashModes(getActivity(), characteristics));
+            List flashModes = CameraUtil.getSupportedFlashModes(getActivity(), characteristics);
+            Log.i("JEREMIAH2", (flashModes == null) ? "No flash modes." : flashModes.toString());
+            mInterface.setFlashModes(flashModes);
             onFlashModesLoaded();
 
             // noinspection ResourceType
@@ -1040,14 +1043,21 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
 
         int aeMode;
         int flashMode;
+
+        if (mInterface.useStillshot())
+            flashMode = CameraMetadata.FLASH_MODE_SINGLE;
+        else
+            flashMode = CameraMetadata.FLASH_MODE_TORCH;
+
         switch (mInterface.getFlashMode()) {
             case FLASH_MODE_AUTO:
                 aeMode = CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH;
-                flashMode = CameraMetadata.FLASH_MODE_SINGLE;
+//                flashMode = CameraMetadata.FLASH_MODE_SINGLE;
                 break;
+            case FLASH_MODE_TORCH:
             case FLASH_MODE_ALWAYS_ON:
                 aeMode = CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH;
-                flashMode = CameraMetadata.FLASH_MODE_TORCH;
+//                flashMode = CameraMetadata.FLASH_MODE_TORCH;
                 break;
             case FLASH_MODE_OFF:
             default:

@@ -36,6 +36,7 @@ import static com.afollestad.materialcamera.internal.BaseCaptureActivity.CAMERA_
 import static com.afollestad.materialcamera.internal.BaseCaptureActivity.FLASH_MODE_ALWAYS_ON;
 import static com.afollestad.materialcamera.internal.BaseCaptureActivity.FLASH_MODE_AUTO;
 import static com.afollestad.materialcamera.internal.BaseCaptureActivity.FLASH_MODE_OFF;
+import static com.afollestad.materialcamera.internal.BaseCaptureActivity.FLASH_MODE_TORCH;
 
 /**
  * @author Aidan Follestad (afollestad)
@@ -241,9 +242,20 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
             // NOTE: onFlashModesLoaded should not be called while modifying camera parameters as
             //       the flash parameters set in setupFlashMode will then be overwritten
             mFlashModes = CameraUtil.getSupportedFlashModes(this.getActivity(), parameters);
-
-            
-
+            if (mFlashModes != null) {
+                if (mInterface.useStillshot()) {
+                    if (mFlashModes.contains(FLASH_MODE_TORCH)) {
+                        mFlashModes.remove(FLASH_MODE_TORCH);
+                    }
+                } else {
+                    if (mFlashModes.contains(FLASH_MODE_AUTO)) {
+                        mFlashModes.remove(FLASH_MODE_AUTO);
+                    }
+                    if (mFlashModes.contains(FLASH_MODE_ALWAYS_ON)) {
+                        mFlashModes.remove(FLASH_MODE_ALWAYS_ON);
+                    }
+                }
+            } Log.i("JEREMIAH", (mFlashModes == null) ? "No flash modes." : mFlashModes.toString());
             mInterface.setFlashModes(mFlashModes);
             onFlashModesLoaded();
 
@@ -494,14 +506,13 @@ public class CameraFragment extends BaseCameraFragment implements View.OnClickLi
                 flashMode = Camera.Parameters.FLASH_MODE_AUTO;
                 break;
             case FLASH_MODE_ALWAYS_ON:
-                if (mInterface.useStillshot())
-                    flashMode = Camera.Parameters.FLASH_MODE_ON;
-                else
-
-                    flashMode = Camera.Parameters.FLASH_MODE_TORCH;
+                flashMode = Camera.Parameters.FLASH_MODE_ON;
                 break;
             case FLASH_MODE_OFF:
                 flashMode = Camera.Parameters.FLASH_MODE_OFF;
+                break;
+            case FLASH_MODE_TORCH:
+                flashMode = Camera.Parameters.FLASH_MODE_TORCH;
                 break;
             default:
                 break;

@@ -39,6 +39,7 @@ public class CameraIntentKey {
     public static final String ICON_FLASH_AUTO = "icon_flash_auto";
     public static final String ICON_FLASH_ON = "icon_flash_on";
     public static final String ICON_FLASH_OFF = "icon_flash_off";
+    public static final String ICON_FLASH_TORCH = "icon_flash_torch";
 
     public static final String LABEL_RETRY = "label_retry";
     public static final String LABEL_CONFIRM = "label_confirm";
