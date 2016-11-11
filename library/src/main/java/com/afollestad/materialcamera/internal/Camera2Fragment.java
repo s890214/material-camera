@@ -677,13 +677,13 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
 
     @Override
     public void onPreferencesUpdated() {
-        if (mInterface == null || !mInterface.useStillshot() || mPreviewSession == null || mPreviewBuilder == null) {
+        if (mInterface == null || mPreviewSession == null || mPreviewBuilder == null) {
             return;
         }
         setFlashMode(mPreviewBuilder);
         mPreviewRequest = mPreviewBuilder.build();
         try {
-            mPreviewSession.setRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler);
+            mPreviewSession.setRepeatingRequest(mPreviewRequest, mInterface.useStillshot() ? mCaptureCallback : null, mBackgroundHandler);
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -754,6 +754,9 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
                 mPreviewRequest = mPreviewBuilder.build();
                 mPreviewSession.setRepeatingRequest(mPreviewRequest, mCaptureCallback, mBackgroundHandler);
             } else {
+
+                setFlashMode(mPreviewBuilder);
+
                 setUpCaptureRequestBuilder(mPreviewBuilder);
                 mPreviewRequest = mPreviewBuilder.build();
                 mPreviewSession.setRepeatingRequest(mPreviewRequest, null, mBackgroundHandler);
@@ -861,6 +864,8 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
             setImageRes(mButtonVideo, mInterface.iconStop());
             if (!CameraUtil.isChromium())
                 mButtonFacing.setVisibility(View.GONE);
+
+            // TODO: Hide mButtonFlash here if we want to limit flash control during recording
 
             // Only start counter if count down wasn't already started
             if (!mInterface.hasLengthLimit()) {
@@ -1052,12 +1057,13 @@ public class Camera2Fragment extends BaseCameraFragment implements View.OnClickL
         switch (mInterface.getFlashMode()) {
             case FLASH_MODE_AUTO:
                 aeMode = CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH;
-//                flashMode = CameraMetadata.FLASH_MODE_SINGLE;
                 break;
             case FLASH_MODE_TORCH:
             case FLASH_MODE_ALWAYS_ON:
-                aeMode = CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH;
-//                flashMode = CameraMetadata.FLASH_MODE_TORCH;
+                if (mInterface.useStillshot())
+                    aeMode = CaptureRequest.CONTROL_AE_MODE_ON_ALWAYS_FLASH;
+                else
+                    aeMode = CaptureRequest.CONTROL_AE_MODE_ON;
                 break;
             case FLASH_MODE_OFF:
             default:
