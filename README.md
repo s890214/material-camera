@@ -86,6 +86,7 @@ new MaterialCamera(this)                               // Constructor takes an A
     .primaryColorAttr(R.attr.colorPrimary)             // The theme color used for the camera, defaults to colorPrimary of Activity in the constructor
     .showPortraitWarning(true)                         // Whether or not a warning is displayed if the user presses record in portrait orientation
     .defaultToFrontFacing(false)                       // Whether or not the camera will initially show the front facing camera
+    .allowChangeCamera(true)                           // Allows the user to change cameras. 
     .retryExits(false)                                 // If true, the 'Retry' button in the playback screen will exit the camera instead of going back to the recorder
     .restartTimerOnRetry(false)                        // If true, the countdown timer is reset to 0 when the user taps 'Retry' in playback
     .continueTimerInPlayback(false)                    // If true, the countdown timer will continue to go down during playback, rather than pausing.
