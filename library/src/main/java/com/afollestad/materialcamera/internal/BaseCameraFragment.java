@@ -16,6 +16,7 @@ import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
+import android.support.v7.content.res.AppCompatResources;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -96,7 +97,7 @@ abstract class BaseCameraFragment extends Fragment implements CameraUriInterface
             RippleDrawable rd = (RippleDrawable) iv.getBackground();
             rd.setColor(ColorStateList.valueOf(CameraUtil.adjustAlpha(mIconTextColor, 0.3f)));
         }
-        Drawable d = ContextCompat.getDrawable(iv.getContext(), res);
+        Drawable d = AppCompatResources.getDrawable(iv.getContext(), res);
         d = DrawableCompat.wrap(d.mutate());
         DrawableCompat.setTint(d, mIconTextColor);
         iv.setImageDrawable(d);
