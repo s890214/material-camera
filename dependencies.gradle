@@ -1,0 +1,12 @@
+ext.versions = [
+        minSdk            : 14,
+        compileSdk        : 26,
+        buildTools        : '26.0.0',
+        publishVersion    : '0.4.4',
+        publishVersionCode: 25,
+        gradlePlugin      : '2.3.2',
+        spotlessPlugin    : '3.4.0',
+        supportLib        : '25.3.1',
+        easyVideoPlayer   : '0.3.0',
+        materialDialogs   : '0.9.4.3'
+]

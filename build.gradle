@@ -1,15 +1,36 @@
+apply from: './dependencies.gradle'
+
 buildscript {
+    apply from: './dependencies.gradle'
+
     repositories {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.2'
+        classpath 'com.android.tools.build:gradle:' + versions.gradlePlugin
+        classpath "com.diffplug.spotless:spotless-plugin-gradle:" + versions.spotlessPlugin
     }
 }
 
 allprojects {
     repositories {
         jcenter()
+    }
+
+    buildscript {
+        repositories {
+            maven { url "https://plugins.gradle.org/m2/" }
+        }
+    }
+    apply plugin: "com.diffplug.gradle.spotless"
+    spotless {
+        java {
+            target "**/*.java"
+            trimTrailingWhitespace()
+            removeUnusedImports()
+            googleJavaFormat()
+            endWithNewline()
+        }
     }
 }
 
