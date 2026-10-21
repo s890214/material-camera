@@ -1,5 +1,7 @@
 # Material Camera
 
+> **来源说明**：本仓库是 Aidan Follestad 的 material-camera 项目的副本，版权归原作者所有，按 Apache License 2.0 发布（见 [LICENSE.md](LICENSE.md)）。
+
 Android's video recording APIs are very difficult to figure out, especially since a lot of manufacturers
 like to mount their camera sensors upside down or sideways. This library is a result of lots of research
 and experimentation to get video recording to work universally.
